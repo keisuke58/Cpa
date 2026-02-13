@@ -12,10 +12,19 @@ st.set_page_config(page_title="CPA Perfect Platform 2027", layout="wide", page_i
 DATA_FILE = "cpa_data.json"
 
 def load_data():
+    defaults = {"scores": [], "logs": [], "xp": 0, "level": 1, "badges": []}
     if os.path.exists(DATA_FILE):
         with open(DATA_FILE, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    return {"scores": [], "logs": []}
+            try:
+                data = json.load(f)
+                # Merge defaults for backward compatibility
+                for k, v in defaults.items():
+                    if k not in data:
+                        data[k] = v
+                return data
+            except:
+                return defaults
+    return defaults
 
 def save_data(data):
     with open(DATA_FILE, 'w', encoding='utf-8') as f:
@@ -400,7 +409,24 @@ roadmap_md = """
 
 # Navigation
 st.sidebar.title("CPA Platform 2027")
-page = st.sidebar.radio("Navigation", ["Dashboard", "Study Timer", "Mock Exams", "Scores", "Drills", "Roadmap", "Big 4 Job Hunting"])
+
+# User Profile in Sidebar
+with st.sidebar.container():
+    col1, col2 = st.columns([1, 2])
+    with col1:
+        st.markdown("### 🎓")
+    with col2:
+        curr_level = st.session_state.data.get('level', 1)
+        st.write(f"**Level {curr_level}**")
+    
+    curr_xp = st.session_state.data.get('xp', 0)
+    next_level_xp = curr_level * 100
+    progress = min(curr_xp / next_level_xp, 1.0)
+    st.progress(progress)
+    st.caption(f"XP: {curr_xp} / {next_level_xp}")
+
+st.sidebar.markdown("---")
+page = st.sidebar.radio("Navigation", ["Dashboard", "Study Timer", "Mock Exams", "Scores", "Drills", "Survival Mode ⚡", "Roadmap", "Big 4 Job Hunting"])
 
 if page == "Dashboard":
     st.header("Dashboard")
@@ -424,6 +450,22 @@ if page == "Dashboard":
         target = date(2027, 8, 20)
         diff = (target - today).days
         st.markdown(f"""<div class="metric-card"><h4>Aug 2027 Essay</h4><h1>{max(0, diff)} Days</h1></div>""", unsafe_allow_html=True)
+    
+    st.markdown("---")
+    
+    # Daily Tip
+    st.subheader("💡 Daily CPA Tip")
+    tips = [
+        "Consistency is key. 30 minutes every day is better than 5 hours once a week.",
+        "Focus on 'why', not just 'how'. Understanding the logic helps in applied questions.",
+        "Don't ignore the theory. It's 40-50% of the exam.",
+        "Review your mistakes. The 'incorrect' options are learning opportunities.",
+        "Sleep is part of studying. Memory consolidation happens during sleep.",
+        "Use the 'Survival Mode' to build speed and accuracy under pressure!",
+        "Audit isn't just memorization; imagine you are the auditor in that situation."
+    ]
+    import random
+    st.info(random.choice(tips))
     
     st.markdown("---")
     
@@ -671,8 +713,43 @@ elif page == "Drills":
                         qs['selected_option'] = None
                         st.rerun()
                 else:
-                    st.success(f"Quiz Completed! Score: {qs['score']} / {total_q}")
-                    if st.button("Finish"):
+                    score = qs['score']
+                    st.success(f"Quiz Completed! Score: {score} / {total_q}")
+                    
+                    if st.button("Finish & Claim XP"):
+                        # XP Logic
+                        earned_xp = score * 10
+                        current_xp = st.session_state.data.get('xp', 0)
+                        current_level = st.session_state.data.get('level', 1)
+                        
+                        new_xp = current_xp + earned_xp
+                        required_xp = current_level * 100
+                        
+                        leveled_up = False
+                        while new_xp >= required_xp:
+                            new_xp -= required_xp
+                            current_level += 1
+                            required_xp = current_level * 100
+                            leveled_up = True
+                        
+                        st.session_state.data['xp'] = new_xp
+                        st.session_state.data['level'] = current_level
+                        
+                        # Save score history
+                        st.session_state.data["scores"].append({
+                            'name': f"Drill: {qs.get('subject', 'General')} Lv{qs.get('level', '?')}",
+                            'date': date.today().strftime("%Y-%m-%d"),
+                            'subject': qs.get('subject', 'General'),
+                            'val': (score / total_q) * 100 if total_q > 0 else 0
+                        })
+                        save_data(st.session_state.data)
+                        
+                        if leveled_up:
+                            st.balloons()
+                            st.success(f"LEVEL UP! You are now Level {current_level}!")
+                        else:
+                            st.success(f"Earned {earned_xp} XP!")
+                            
                         qs['active'] = False
                         st.rerun()
                         
@@ -690,6 +767,147 @@ elif page == "Drills":
                         st.warning("Please select an option.")
         else:
             st.info("Select a subject and level from the sidebar to start.")
+
+elif page == "Survival Mode ⚡":
+    st.header("⚡ Survival Mode")
+    st.markdown("### Challenge your limits! 3 Strikes and you're out.")
+    
+    # Initialize State
+    if 'survival' not in st.session_state:
+        st.session_state.survival = {
+            'active': False,
+            'lives': 3,
+            'streak': 0,
+            'score': 0,
+            'q': None,
+            'feedback': False,
+            'user_ans': None
+        }
+    
+    ss = st.session_state.survival
+    
+    # Load Questions Logic
+    if 'all_questions' not in st.session_state:
+        all_qs = []
+        # Static
+        for sub, qs in drill_questions.items():
+            for q in qs:
+                # Create a copy to avoid modifying original
+                q_copy = q.copy()
+                q_copy['subject'] = sub
+                all_qs.append(q_copy)
+        # Generated
+        json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'questions.json')
+        if os.path.exists(json_path):
+             try:
+                with open(json_path, 'r', encoding='utf-8') as f:
+                    gen_qs = json.load(f)
+                    for sub, qs in gen_qs.items():
+                        for q in qs:
+                            q_copy = q.copy()
+                            q_copy['subject'] = sub
+                            all_qs.append(q_copy)
+             except:
+                 pass
+        st.session_state.all_questions = all_qs
+    
+    if not ss['active']:
+        if st.button("🚀 Start Challenge", use_container_width=True):
+            ss['active'] = True
+            ss['lives'] = 3
+            ss['streak'] = 0
+            ss['score'] = 0
+            ss['q'] = None
+            ss['feedback'] = False
+            st.rerun()
+            
+    else:
+        # Metrics
+        c1, c2, c3 = st.columns(3)
+        c1.metric("Lives", "❤️" * ss['lives'])
+        c2.metric("Streak", f"🔥 {ss['streak']}")
+        c3.metric("Score", ss['score'])
+        
+        if ss['lives'] <= 0:
+            st.error("💀 GAME OVER")
+            st.markdown(f"### Final Score: {ss['score']}")
+            
+            # Save High Score
+            if ss['score'] > 0:
+                st.session_state.data["scores"].append({
+                    'name': 'Survival Mode ⚡',
+                    'date': date.today().strftime("%Y-%m-%d"),
+                    'subject': 'Survival',
+                    'val': ss['score'] # Just storing score
+                })
+                save_data(st.session_state.data)
+            
+            if st.button("Try Again", use_container_width=True):
+                ss['active'] = False
+                st.rerun()
+        else:
+            # Get Question
+            if ss['q'] is None:
+                import random
+                if st.session_state.all_questions:
+                    q_data = random.choice(st.session_state.all_questions)
+                    # Shuffle options
+                    opts = q_data['options'].copy()
+                    correct_text = q_data['options'][q_data['correct']]
+                    random.shuffle(opts)
+                    
+                    ss['q'] = {
+                        'q': q_data['q'],
+                        'options': opts,
+                        'correct_idx': opts.index(correct_text),
+                        'explanation': q_data['explanation'],
+                        'subject': q_data.get('subject', 'General')
+                    }
+                else:
+                    st.error("No questions found!")
+                    st.stop()
+            
+            q = ss['q']
+            
+            st.markdown(f"**[{q['subject']}]** {q['q']}")
+            
+            if not ss['feedback']:
+                # Use a form to prevent reload on radio selection
+                with st.form(key=f"surv_form_{ss['score']}_{ss['lives']}"):
+                    ans = st.radio("Select Answer:", q['options'])
+                    submit = st.form_submit_button("Submit Answer")
+                    
+                    if submit:
+                        ss['user_ans'] = q['options'].index(ans)
+                        ss['feedback'] = True
+                        
+                        if ss['user_ans'] == q['correct_idx']:
+                            # Bonus XP for streak
+                            bonus = ss['streak'] * 2
+                            points = 10 + bonus
+                            ss['score'] += points
+                            ss['streak'] += 1
+                            st.session_state.data['xp'] = st.session_state.data.get('xp', 0) + points
+                            st.toast(f"Correct! +{points} XP", icon="✅")
+                        else:
+                            ss['lives'] -= 1
+                            ss['streak'] = 0
+                            st.toast("Wrong Answer!", icon="❌")
+                        
+                        st.rerun()
+            else:
+                # Show Feedback
+                if ss['user_ans'] == q['correct_idx']:
+                    st.success("✅ Correct!")
+                else:
+                    st.error(f"❌ Wrong! Correct: {q['options'][q['correct_idx']]}")
+                
+                st.info(f"**Explanation:**\n\n{q['explanation']}")
+                
+                if st.button("Next Question ➡", use_container_width=True):
+                    ss['q'] = None
+                    ss['feedback'] = False
+                    st.rerun()
 
 elif page == "Roadmap":
     st.header("Roadmap")

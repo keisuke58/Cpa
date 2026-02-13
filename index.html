@@ -1135,20 +1135,18 @@
                 
                 // Filter by level if specified
                 if (level) {
-                    const leveledQuestions = questions.filter(q => q.level === level);
+                    let leveledQuestions = [];
+                    if (level === 1) {
+                        // Level 1 includes Level 0 (Intro), Level 1 (Basic), and legacy (undefined)
+                        leveledQuestions = questions.filter(q => q.level === 0 || q.level === 1 || q.level === undefined);
+                    } else {
+                        leveledQuestions = questions.filter(q => q.level === level);
+                    }
+
                     if (leveledQuestions.length > 0) {
                         questions = leveledQuestions;
-                    } else if (level === 1) {
-                        const legacyQuestions = questions.filter(q => q.level === undefined);
-                        if (legacyQuestions.length > 0) {
-                            questions = legacyQuestions;
-                        } else {
-                            // Truly no questions
-                            alert(`No questions available for ${subj} yet.`);
-                            return;
-                        }
                     } else {
-                        alert(`Level ${level} questions for ${subj} are coming soon! Please try Level 1.`);
+                        alert(`Level ${level} questions for ${subj} are coming soon! Please try another level.`);
                         return;
                     }
                 }

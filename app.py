@@ -552,61 +552,128 @@ st.sidebar.markdown("---")
 page = st.sidebar.radio("Navigation", ["Dashboard", "My Syllabus 📚", "Old Exams 📄", "Study Timer", "Mock Exams", "Scores", "Drills", "Survival Mode ⚡", "Roadmap", "Big 4 Job Hunting", "Company Directory 🏢", "Future 🚀"])
 
 if page == "Dashboard":
-    st.header("Dashboard")
-    st.subheader("Goal: 2027 May Short & Aug Essay")
+    st.header("Dashboard 🚀")
     
-    # Countdowns
-    col1, col2, col3 = st.columns(3)
+    # --- Top Metrics Row ---
+    st.subheader("📊 At a Glance")
     today = date.today()
     
-    with col1:
-        target = date(2026, 12, 13)
-        diff = (target - today).days
-        st.markdown(f"""<div class="metric-card"><h4>Dec 2026 Short</h4><h1>{max(0, diff)} Days</h1></div>""", unsafe_allow_html=True)
-        
-    with col2:
-        target = date(2027, 5, 23)
-        diff = (target - today).days
-        st.markdown(f"""<div class="metric-card"><h4>May 2027 Short</h4><h1>{max(0, diff)} Days</h1></div>""", unsafe_allow_html=True)
-        
-    with col3:
-        target = date(2027, 8, 20)
-        diff = (target - today).days
-        st.markdown(f"""<div class="metric-card"><h4>Aug 2027 Essay</h4><h1>{max(0, diff)} Days</h1></div>""", unsafe_allow_html=True)
+    # Calculate Metrics
+    # 1. Study Time Today
+    logs_df = pd.DataFrame(st.session_state.data.get("logs", []))
+    minutes_today = 0
+    if not logs_df.empty:
+        today_str = today.strftime("%Y-%m-%d")
+        today_logs = logs_df[logs_df['date'] == today_str]
+        minutes_today = today_logs['duration'].sum()
+    
+    # 2. Quizzes Today
+    scores_df = pd.DataFrame(st.session_state.data.get("scores", []))
+    quizzes_today = 0
+    avg_score_today = 0
+    if not scores_df.empty:
+        today_str = today.strftime("%Y-%m-%d")
+        today_scores = scores_df[scores_df['date'] == today_str]
+        quizzes_today = len(today_scores)
+        if quizzes_today > 0:
+            avg_score_today = today_scores['val'].mean()
+
+    # 3. Total XP
+    total_xp = st.session_state.data.get('xp', 0)
+
+    m1, m2, m3, m4 = st.columns(4)
+    m1.metric("Study Time (Today)", f"{minutes_today} min", delta=f"{minutes_today/60:.1f} hrs")
+    m2.metric("Quizzes Completed", f"{quizzes_today}", delta=f"Avg: {avg_score_today:.0f}%" if quizzes_today > 0 else None)
+    m3.metric("Total XP", f"{total_xp}", delta="Level Up Soon?" if total_xp % 100 > 80 else None)
+    
+    # 4. Nearest Deadline
+    target_short = date(2026, 12, 13)
+    days_short = (target_short - today).days
+    m4.metric("Next Exam (Dec Short)", f"{days_short} Days", delta="-1 Day", delta_color="inverse")
     
     st.markdown("---")
+
+    # --- Main Content Grid ---
+    c_main_1, c_main_2 = st.columns([2, 1])
     
-    # Daily Tip
-    st.subheader("💡 Daily CPA Tip")
-    tips = [
-        "Consistency is key. 30 minutes every day is better than 5 hours once a week.",
-        "Focus on 'why', not just 'how'. Understanding the logic helps in applied questions.",
-        "Don't ignore the theory. It's 40-50% of the exam.",
-        "Review your mistakes. The 'incorrect' options are learning opportunities.",
-        "Sleep is part of studying. Memory consolidation happens during sleep.",
-        "Use the 'Survival Mode' to build speed and accuracy under pressure!",
-        "Audit isn't just memorization; imagine you are the auditor in that situation."
-    ]
-    import random
-    st.info(random.choice(tips))
-    
-    st.markdown("---")
-    
-    # Study Time & Radar Chart
-    c1, c2 = st.columns([1, 1])
-    
-    with c1:
-        st.subheader("Skill Balance")
+    with c_main_1:
+        st.subheader("🗓️ Exam Countdown")
+        
+        # Enhanced Countdown Cards
+        cd1, cd2, cd3 = st.columns(3)
+        
+        with cd1:
+            target = date(2026, 12, 13)
+            diff = (target - today).days
+            st.info(f"**Dec 2026 Short**\n\n# {max(0, diff)} Days\n\n*Target: 60%*")
+            
+        with cd2:
+            target = date(2027, 5, 23)
+            diff = (target - today).days
+            st.warning(f"**May 2027 Short**\n\n# {max(0, diff)} Days\n\n*Target: PASS*")
+            
+        with cd3:
+            target = date(2027, 8, 20)
+            diff = (target - today).days
+            st.error(f"**Aug 2027 Essay**\n\n# {max(0, diff)} Days\n\n*Target: PASS*")
+
+        # Weakness Analysis
+        st.subheader("🧠 Weak Areas Analysis")
+        if not scores_df.empty:
+            # Group by subject and calculate mean
+            subject_perf = scores_df.groupby('subject')['val'].mean().sort_values()
+            weakest_subject = subject_perf.index[0]
+            weakest_score = subject_perf.iloc[0]
+            
+            st.markdown(f"""
+            <div style="padding: 15px; border-radius: 10px; background-color: #fff3cd; border: 1px solid #ffeeba; color: #856404;">
+                <h4>⚠️ Focus Area: {weakest_subject} ({weakest_score:.1f}%)</h4>
+                <p>Your performance in <b>{weakest_subject}</b> is lower than other subjects. Consider doing a targeted drill.</p>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            if st.button(f"🔥 Start {weakest_subject} Drill Now"):
+                # Redirect logic (simulated by setting session state)
+                # Note: Direct page switching in Streamlit is tricky without rerun, 
+                # but we can set the quiz state to active for this subject
+                # Ideally, user goes to Drills tab, but we can hint them.
+                st.toast(f"Go to 'Drills' tab and select {weakest_subject}!", icon="👉")
+        else:
+            st.info("Complete some drills to identify your weak areas.")
+
+        # Recent Activity Chart (Last 7 Days)
+        st.subheader("📈 Study Consistency (Last 7 Days)")
+        if not logs_df.empty:
+            # Filter last 7 days
+            logs_df['date'] = pd.to_datetime(logs_df['date']).dt.date
+            last_7_days = [today - pd.Timedelta(days=i) for i in range(6, -1, -1)]
+            
+            daily_minutes = []
+            for d in last_7_days:
+                day_logs = logs_df[logs_df['date'] == d]
+                daily_minutes.append(day_logs['duration'].sum())
+            
+            chart_data = pd.DataFrame({
+                "Date": last_7_days,
+                "Minutes": daily_minutes
+            })
+            
+            fig_activity = px.bar(chart_data, x="Date", y="Minutes", title="Daily Study Time")
+            st.plotly_chart(fig_activity, use_container_width=True)
+        else:
+            st.info("Log your study sessions to see your consistency chart.")
+
+
+    with c_main_2:
+        # Skill Radar
+        st.subheader("Skills")
         subjects = ['Financial', 'Management', 'Audit', 'Company', 'Tax', 'Elective']
-        # Mock scores for radar chart if empty
-        radar_scores = [60, 55, 40, 45, 30, 30]
+        radar_scores = [30] * 6 # Default
         
-        # Calculate from actual scores if available
-        if st.session_state.data["scores"]:
-            df_scores = pd.DataFrame(st.session_state.data["scores"])
+        if not scores_df.empty:
             avg_scores = []
             for sub in subjects:
-                sub_df = df_scores[df_scores['subject'] == sub]
+                sub_df = scores_df[scores_df['subject'] == sub]
                 if not sub_df.empty:
                     avg_scores.append(sub_df['val'].mean())
                 else:
@@ -619,17 +686,32 @@ if page == "Dashboard":
             fill='toself',
             name='Current Skill'
         ))
-        fig.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 100])), showlegend=False)
+        fig.update_layout(
+            polar=dict(radialaxis=dict(visible=True, range=[0, 100])), 
+            showlegend=False,
+            margin=dict(l=20, r=20, t=20, b=20),
+            height=300
+        )
         st.plotly_chart(fig, use_container_width=True)
         
-    with c2:
-        st.subheader("Phase Progress: Foundation")
+        # Daily Tip Card
+        st.subheader("💡 Daily Tip")
+        tips = [
+            "Consistency is key. 30 minutes every day is better than 5 hours once a week.",
+            "Focus on 'why', not just 'how'. Understanding the logic helps in applied questions.",
+            "Don't ignore the theory. It's 40-50% of the exam.",
+            "Review your mistakes. The 'incorrect' options are learning opportunities.",
+            "Sleep is part of studying. Memory consolidation happens during sleep.",
+            "Use the 'Survival Mode' to build speed and accuracy under pressure!",
+            "Audit isn't just memorization; imagine you are the auditor in that situation."
+        ]
+        import random
+        st.info(random.choice(tips))
+        
+        # Progress
+        st.subheader("Phase 0 Progress")
         st.progress(15)
-        st.markdown("""
-        * Focus: Financial & Management Accounting Calculation
-        * Goal: Complete basic lectures by Aug 2026
-        * Next Milestone: Dec 2026 Short Exam
-        """)
+        st.caption("Goal: Foundation Mastery")
 
 elif page == "My Syllabus 📚":
     st.header("My Study Syllabus 📚")
@@ -1011,13 +1093,24 @@ elif page == "Drills":
                     st.session_state.quiz_state['active'] = False
 
             else:
-                # Level 1 (Static questions)
+                # Level 1 (Static questions + Generated Level 0)
                 raw_questions = drill_questions.get(subject, [])
                 # Filter for Level 1 or undefined (legacy)
-                filtered_questions = [q for q in raw_questions if q.get('level', 1) == 1]
+                static_level1 = [q for q in raw_questions if q.get('level', 1) == 1]
                 
-                if filtered_questions:
-                    st.session_state.quiz_state['questions'] = filtered_questions
+                # Fetch Level 0 from generated questions
+                gen_qs = st.session_state.generated_questions.get(subject, [])
+                level0_gen_qs = [q for q in gen_qs if q.get('level') == 0]
+                
+                # Merge
+                all_level1_questions = static_level1 + level0_gen_qs
+                
+                if all_level1_questions:
+                    # Random sample if too many
+                    if len(all_level1_questions) > 10:
+                        st.session_state.quiz_state['questions'] = random.sample(all_level1_questions, 10)
+                    else:
+                        st.session_state.quiz_state['questions'] = all_level1_questions
                 else:
                     st.warning(f"No questions found for {subject} Level 1.")
                     st.session_state.quiz_state['active'] = False
@@ -1358,7 +1451,7 @@ elif page == "Big 4 Job Hunting":
     st.header("🏢 Big 4 CPA Job Hunting Strategy")
     st.markdown("Strategy guide and comparison for the major audit firms in Japan.")
 
-    tab1, tab2, tab3, tab4, tab5 = st.tabs(["Strategy & Timeline", "Big 4 Comparison", "Tech & Data Science Advantage 🤖", "Boston Career Forum 🇺🇸", "Interview & Case Prep 📝"])
+    tab1, tab2, tab_depts, tab3, tab4, tab5 = st.tabs(["Strategy & Timeline", "Big 4 Comparison", "Departments (FAS/Tax/...) 🏢", "Tech & Data Science Advantage 🤖", "Boston Career Forum 🇺🇸", "Interview & Case Prep 📝"])
 
     with tab1:
         st.subheader("📅 Job Hunting Timeline (Typical)")
@@ -1509,7 +1602,51 @@ elif page == "Big 4 Job Hunting":
                     st.markdown(f"**Culture:** {firm['Culture']}")
                 with col2:
                     st.link_button("Recruit Page", firm['Link'])
-    
+
+    with tab_depts:
+        st.subheader("🏢 Service Lines & Business Units")
+        st.markdown("Beyond Audit: Understanding the different career paths within Big 4.")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("### 🔍 Audit & Assurance (監査・保証)")
+            st.info("""
+            **The Core Business.**
+            *   **Role:** Examining financial statements to ensure accuracy and compliance.
+            *   **Pros:** Stability, clear career path, high demand for CPAs.
+            *   **Cons:** Can be repetitive, busy season is intense.
+            *   **For You:** "Digital Audit" roles are growing fast here.
+            """)
+            
+            st.markdown("### 💰 Financial Advisory (FAS)")
+            st.warning("""
+            **The "Deal" Makers.**
+            *   **Role:** M&A support, Valuations, Due Diligence, Forensic investigations.
+            *   **Pros:** High compensation, dynamic work, exposure to high-level strategy.
+            *   **Cons:** Very high pressure, long hours, up-or-out culture.
+            *   **For You:** **Forensic Technology** (Fraud Detection) is a perfect fit for Data Science skills.
+            """)
+
+        with col2:
+            st.markdown("### ⚖️ Tax (税務)")
+            st.info("""
+            **The Specialists.**
+            *   **Role:** Corporate tax compliance, Transfer Pricing, International Tax.
+            *   **Pros:** Deep expertise, high autonomy, stable.
+            *   **Cons:** Highly specialized (niche), constant regulatory changes.
+            *   **For You:** "Tax Technology" is emerging, but less common for new grads than Audit.
+            """)
+            
+            st.markdown("### 🚀 Consulting (コンサルティング)")
+            st.success("""
+            **The Problem Solvers.**
+            *   **Role:** Strategy, IT Implementation, Operations improvement.
+            *   **Note:** Usually a separate entity (e.g., Deloitte Tohmatsu Consulting vs. Deloitte Tohmatsu Audit).
+            *   **Pros:** Variety of projects, high pay.
+            *   **Cons:** Travel, unstable workload, "Jack of all trades" risk.
+            """)
+
     with tab3:
         st.subheader("🤖 Leveraging Data Science & ML in CPA Job Hunting")
         st.markdown("""
@@ -1522,6 +1659,14 @@ elif page == "Big 4 Job Hunting":
         
         Your background is a **massive differentiator** in the modern audit industry. All Big 4 firms are heavily investing in "Audit Transformation" and "Digital Audit".
         """)
+
+        st.markdown("---")
+        st.markdown("### 📚 Recommended Reading")
+        st.markdown("""
+        > **[The State of Generative AI in the Enterprise (Deloitte)](https://www.deloitte.com/global/en/issues/generative-ai/state-of-ai-in-enterprise.html)**  
+        > *This report highlights how enterprises are adopting GenAI. Essential reading for interviews to show commercial awareness.*
+        """)
+        st.markdown("---")
         
         col1, col2 = st.columns(2)
         

@@ -1,6 +1,164 @@
 import json
 import random
 
+def generate_intro_questions(count_per_subject=50):
+    """
+    Generates Level 0 (Intro/Basic) questions that serve as a bridge to Old Exams.
+    Simple definitions, basic formulas, and key concepts.
+    """
+    data = {
+        "Financial": [],
+        "Management": [],
+        "Audit": [],
+        "Company": []
+    }
+
+    # --- Financial Accounting Basics ---
+    for _ in range(count_per_subject):
+        q_type = random.choice(["equation", "elements", "pl_items"])
+        q = {}
+        if q_type == "equation":
+            q = {
+                "q": "貸借対照表等式: 資産(Assets) = 負債(Liabilities) + 【 A 】",
+                "options": ["純資産(Equity)", "収益(Revenue)", "費用(Expense)", "利益(Profit)"],
+                "correct": 0,
+                "explanation": "貸借対照表等式は、資産 = 負債 + 純資産 です。",
+                "level": 0
+            }
+        elif q_type == "elements":
+            item = random.choice([
+                ("売掛金", "資産"), ("買掛金", "負債"), ("資本金", "純資産"), 
+                ("売上高", "収益"), ("給料手当", "費用"), ("貸倒引当金", "資産のマイナス")
+            ])
+            opts = ["資産", "負債", "純資産", "収益", "費用"]
+            if item[1] == "資産のマイナス": opts.append("資産のマイナス")
+            options = [item[1]] + [o for o in opts if o != item[1]][:3]
+            
+            q = {
+                "q": f"勘定科目「{item[0]}」の区分として正しいものはどれか？",
+                "options": options,
+                "correct": 0,
+                "explanation": f"「{item[0]}」は{item[1]}に分類されます。",
+                "level": 0
+            }
+        elif q_type == "pl_items":
+            q = {
+                "q": "損益計算書において、売上高から売上原価を差し引いた利益は何か？",
+                "options": ["売上総利益", "営業利益", "経常利益", "税引前当期純利益"],
+                "correct": 0,
+                "explanation": "売上高 - 売上原価 = 売上総利益 (Gross Profit) です。",
+                "level": 0
+            }
+        
+        # Shuffle
+        if "options" in q:
+            correct_opt = q['options'][q['correct']]
+            random.shuffle(q['options'])
+            q['correct'] = q['options'].index(correct_opt)
+        data["Financial"].append(q)
+
+    # --- Management Accounting Basics ---
+    for _ in range(count_per_subject):
+        q_type = random.choice(["cost_behavior", "cvp_basic"])
+        q = {}
+        if q_type == "cost_behavior":
+            item = random.choice([
+                ("工場の家賃", "固定費"), ("材料費", "変動費"), ("社長の給料", "固定費"), ("外注加工費", "変動費")
+            ])
+            opts = ["固定費", "変動費", "準変動費", "機会原価"]
+            options = [item[1]] + [o for o in opts if o != item[1]][:3]
+            
+            q = {
+                "q": f"操業度（生産量）の増減に関わらず発生額が一定である「{item[0]}」は、原価態様による分類では何になるか？",
+                "options": options,
+                "correct": 0,
+                "explanation": f"{item[0]}は操業度の変化に関わらず一定額発生するため、固定費に分類されます。",
+                "level": 0
+            }
+        elif q_type == "cvp_basic":
+            q = {
+                "q": "CVP分析において、売上高から変動費を引いたものを何と呼ぶか？",
+                "options": ["貢献利益 (限界利益)", "営業利益", "売上総利益", "純利益"],
+                "correct": 0,
+                "explanation": "売上高 - 変動費 = 貢献利益 (Contribution Margin) です。固定費を回収し、利益を生み出す源泉となります。",
+                "level": 0
+            }
+        
+        # Shuffle
+        if "options" in q:
+            correct_opt = q['options'][q['correct']]
+            random.shuffle(q['options'])
+            q['correct'] = q['options'].index(correct_opt)
+        data["Management"].append(q)
+
+    # --- Audit Basics ---
+    audit_templates = [
+        {
+            "q": "公認会計士監査の主たる目的は何か？",
+            "options": ["財務諸表の適正性に関する意見表明", "不正の摘発", "経営指導", "税務申告書の作成"],
+            "correct": 0,
+            "explanation": "財務諸表監査の目的は、財務諸表が適正に作成されているかどうかについて監査人が意見を表明することです（不正摘発は主目的ではありません）。",
+            "level": 0
+        },
+        {
+            "q": "監査人が守るべき「独立性」において、第三者から見て独立しているように見えることを何というか？",
+            "options": ["外観的独立性", "精神的独立性", "経済的独立性", "物理的独立性"],
+            "correct": 0,
+            "explanation": "精神的独立性（事実上の独立性）だけでなく、第三者から疑われない外観的独立性も必要です。",
+            "level": 0
+        },
+        {
+            "q": "監査報告書において、財務諸表が適正であると認められる場合に表明される意見は？",
+            "options": ["無限定適正意見", "限定付適正意見", "不適正意見", "意見不表明"],
+            "correct": 0,
+            "explanation": "重要な虚偽表示がなく適正である場合は「無限定適正意見」が表明されます。",
+            "level": 0
+        }
+    ]
+    for _ in range(count_per_subject):
+        base = random.choice(audit_templates)
+        q = base.copy()
+        q['options'] = base['options'].copy()
+        correct_opt = q['options'][q['correct']]
+        random.shuffle(q['options'])
+        q['correct'] = q['options'].index(correct_opt)
+        data["Audit"].append(q)
+
+    # --- Company Law Basics ---
+    company_templates = [
+        {
+            "q": "株式会社の最高意思決定機関は何か？",
+            "options": ["株主総会", "取締役会", "監査役会", "代表取締役"],
+            "correct": 0,
+            "explanation": "株主総会は、株主によって構成される株式会社の最高意思決定機関です。",
+            "level": 0
+        },
+        {
+            "q": "取締役の任期は、原則として選任後何年以内に終了する事業年度のうち最終のものに関する定時株主総会の終結の時までか？",
+            "options": ["2年", "1年", "4年", "10年"],
+            "correct": 0,
+            "explanation": "公開会社における取締役の任期は原則として2年です（監査役は4年）。",
+            "level": 0
+        },
+        {
+            "q": "株式会社の設立に際して、出資される財産の価額の総額の2分の1を超えない額は、何として計上できるか？",
+            "options": ["資本準備金", "利益準備金", "任意積立金", "資本金"],
+            "correct": 0,
+            "explanation": "会社法上、払込金額の1/2を超えない額は資本金に計上せず、資本準備金とすることができます。",
+            "level": 0
+        }
+    ]
+    for _ in range(count_per_subject):
+        base = random.choice(company_templates)
+        q = base.copy()
+        q['options'] = base['options'].copy()
+        correct_opt = q['options'][q['correct']]
+        random.shuffle(q['options'])
+        q['correct'] = q['options'].index(correct_opt)
+        data["Company"].append(q)
+        
+    return data
+
 def generate_financial_questions(count):
     questions = []
     for _ in range(count):
@@ -68,6 +226,31 @@ def generate_financial_questions(count):
             "level": 2
         }
         questions.append(q3)
+
+        # Type 4: Consolidation (Goodwill) - Level 3
+        parent_invest = random.randint(500, 2000) * 1000
+        sub_net_assets = random.randint(300, 1500) * 1000
+        ownership_rate = random.choice([0.6, 0.7, 0.8, 1.0])
+        goodwill = parent_invest - (sub_net_assets * ownership_rate)
+        
+        # Ensure positive goodwill for simplicity
+        if goodwill < 0:
+             parent_invest = int(sub_net_assets * ownership_rate) + random.randint(10, 100) * 1000
+             goodwill = parent_invest - (sub_net_assets * ownership_rate)
+             
+        q4 = {
+            "q": f"P社はS社の発行済株式の{int(ownership_rate*100)}%を{parent_invest:,}円で取得し支配を獲得した。支配獲得日のS社の純資産が{sub_net_assets:,}円（すべて時価）であった場合、のれんの金額はいくらか？",
+            "options": [
+                f"{int(goodwill):,}円",
+                f"{int(parent_invest - sub_net_assets):,}円",
+                f"{int(goodwill * 1.1):,}円",
+                f"{int(sub_net_assets * (1-ownership_rate)):,}円"
+            ],
+            "correct": 0,
+            "explanation": f"のれん = 投資額 - (子会社純資産 × 持分比率) = {parent_invest:,} - ({sub_net_assets:,} × {ownership_rate}) = {int(goodwill):,}円",
+            "level": 3
+        }
+        questions.append(q4)
 
     return questions
 
@@ -239,6 +422,20 @@ def generate_company_law_questions(count):
             "level": 2
         },
         {
+            "q": "吸収合併において、存続会社が消滅会社の株主に対して交付する対価として認められるものは何か？",
+            "options": ["金銭、株式、その他の財産すべて認められる", "株式のみ", "金銭のみ", "社債のみ"],
+            "correct": 0,
+            "explanation": "会社法上、合併対価の柔軟化により、株式だけでなく金銭やその他の財産（親会社株式など）も対価として認められる（交付金合併など）。",
+            "level": 3
+        },
+        {
+            "q": "株式交換において、完全子会社となる会社の株主総会決議は原則として何決議が必要か？",
+            "options": ["特別決議", "普通決議", "特殊決議", "取締役会決議のみ"],
+            "correct": 0,
+            "explanation": "株式交換契約の承認には、原則として株主総会の特別決議（議決権の過半数出席＋2/3以上の賛成）が必要である。",
+            "level": 3
+        },
+        {
             "q": "取締役会設置会社において、取締役の任期は原則として選任後{item}年以内に終了する事業年度のうち最終のものに関する定時株主総会の終結の時までである。",
             "options": ["2", "1", "4", "10"],
             "correct": 0,
@@ -316,7 +513,10 @@ def generate_company_law_questions(count):
 import os
 
 def main():
-    # Generate ~2000 questions total
+    # Generate Intro/Basic Questions (Level 0)
+    intro_data = generate_intro_questions(50)
+
+    # Generate Standard/Advanced Questions (Level 2/3)
     # Financial: 3 types * 200 = 600
     # Management: 3 types * 200 = 600
     # Audit: 10 templates * 40 = 400
@@ -326,6 +526,12 @@ def main():
     management = generate_management_questions(600)
     audit = generate_audit_questions(400)
     company = generate_company_law_questions(400)
+    
+    # Merge Intro questions
+    financial.extend(intro_data["Financial"])
+    management.extend(intro_data["Management"])
+    audit.extend(intro_data["Audit"])
+    company.extend(intro_data["Company"])
     
     all_data = {
         "Financial": financial,

@@ -1040,7 +1040,8 @@ elif page == "Survival Mode ⚡":
             'score': 0,
             'q': None,
             'feedback': False,
-            'user_ans': None
+            'user_ans': None,
+            'target_streak': "Unlimited"
         }
     
     ss = st.session_state.survival
@@ -1071,6 +1072,9 @@ elif page == "Survival Mode ⚡":
         st.session_state.all_questions = all_qs
     
     if not ss['active']:
+        st.subheader("Select Challenge Mode")
+        streak_target = st.radio("Target Streak", ["Unlimited", 1, 5, 10], horizontal=True, format_func=lambda x: "∞ Unlimited" if x == "Unlimited" else f"Target: {x} 🔥")
+
         if st.button("🚀 Start Challenge", use_container_width=True):
             ss['active'] = True
             ss['lives'] = 3
@@ -1078,23 +1082,33 @@ elif page == "Survival Mode ⚡":
             ss['score'] = 0
             ss['q'] = None
             ss['feedback'] = False
+            ss['target_streak'] = streak_target
             st.rerun()
             
     else:
         # Metrics
         c1, c2, c3 = st.columns(3)
         c1.metric("Lives", "❤️" * ss['lives'])
-        c2.metric("Streak", f"🔥 {ss['streak']}")
+        target_display = "∞" if ss.get('target_streak', "Unlimited") == "Unlimited" else ss['target_streak']
+        c2.metric("Streak", f"🔥 {ss['streak']} / {target_display}")
         c3.metric("Score", ss['score'])
         
-        if ss['lives'] <= 0:
-            st.error("💀 GAME OVER")
+        target = ss.get('target_streak', "Unlimited")
+        is_win = target != "Unlimited" and ss['streak'] >= target
+
+        if ss['lives'] <= 0 or is_win:
+            if is_win:
+                st.balloons()
+                st.success(f"🎉 MISSION ACCOMPLISHED! You reached a {ss['streak']} streak!")
+            else:
+                st.error("💀 GAME OVER")
+            
             st.markdown(f"### Final Score: {ss['score']}")
             
             # Save High Score
             if ss['score'] > 0:
                 st.session_state.data["scores"].append({
-                    'name': 'Survival Mode ⚡',
+                    'name': f"Survival Mode ⚡ (Target {target})",
                     'date': date.today().strftime("%Y-%m-%d"),
                     'subject': 'Survival',
                     'val': ss['score'] # Just storing score
@@ -1148,6 +1162,11 @@ elif page == "Survival Mode ⚡":
                             ss['streak'] += 1
                             st.session_state.data['xp'] = st.session_state.data.get('xp', 0) + points
                             st.toast(f"Correct! +{points} XP", icon="✅")
+                            
+                            # Check Win
+                            target = ss.get('target_streak', "Unlimited")
+                            if target != "Unlimited" and ss['streak'] >= target:
+                                st.rerun()
                         else:
                             ss['lives'] -= 1
                             ss['streak'] = 0

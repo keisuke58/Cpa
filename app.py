@@ -103,7 +103,12 @@ vocab_data = {
         {'term': 'Goodwill', 'jp': 'のれん', 'desc': '企業買収等の際に支払った対価が、受け入れた純資産の時価を上回る超過収益力。', 'desc_en': 'An intangible asset arising from a business combination, representing the excess of purchase price over fair value of net assets.'},
         {'term': 'Comprehensive Income', 'jp': '包括利益', 'desc': '純資産の変動額のうち、資本取引によらない部分。当期純利益＋その他の包括利益。', 'desc_en': 'The change in equity during a period from transactions and other events, excluding those with owners.'},
         {'term': 'Provision', 'jp': '引当金', 'desc': '将来の特定の費用や損失に備えて、当期の費用として計上される金額。', 'desc_en': 'A liability of uncertain timing or amount.'},
-        {'term': 'Contingent Liability', 'jp': '偶発債務', 'desc': '将来の事象の発生・不発生によって債務が確定する潜在的な義務。', 'desc_en': 'A potential obligation that depends on the outcome of a future event.'}
+        {'term': 'Contingent Liability', 'jp': '偶発債務', 'desc': '将来の事象の発生・不発生によって債務が確定する潜在的な義務。', 'desc_en': 'A potential obligation that depends on the outcome of a future event.'},
+        {'term': 'Functional Currency', 'jp': '機能通貨', 'desc': '企業が営業活動を行う主たる経済環境の通貨。', 'desc_en': 'The currency of the primary economic environment in which the entity operates.'},
+        {'term': 'Revaluation Surplus', 'jp': '再評価剰余金', 'desc': '資産の再評価（時価評価）によって生じた純資産の増加額。', 'desc_en': 'An equity reserve created when an asset is revalued at a higher amount than its carrying value.'},
+        {'term': 'Retained Earnings', 'jp': '利益剰余金', 'desc': '企業が過去に獲得した利益のうち、配当せずに内部留保したもの。', 'desc_en': 'The cumulative net income of a company less any dividends declared.'},
+        {'term': 'Non-controlling Interest', 'jp': '非支配株主持分', 'desc': '子会社の資本のうち、親会社に帰属しない部分。', 'desc_en': 'The portion of equity ownership in a subsidiary not attributable to the parent company.'},
+        {'term': 'Cash Flow Statement', 'jp': 'キャッシュ・フロー計算書', 'desc': '一会計期間における現金の流入と流出を表す財務諸表。', 'desc_en': 'A financial statement that summarizes the amount of cash and cash equivalents entering and leaving a company.'}
     ],
     'Management': [
         {'term': 'Opportunity Cost', 'jp': '機会原価', 'desc': 'ある代替案を選択したことによって犠牲となった（諦めた）最大の利益。', 'desc_en': 'The potential benefit lost when one alternative is chosen over another.'},
@@ -117,7 +122,12 @@ vocab_data = {
         {'term': 'ROI (Return on Investment)', 'jp': '投下資本利益率', 'desc': '投資した資本に対してどれだけの利益を上げたかを示す収益性指標。', 'desc_en': 'A performance measure used to evaluate the efficiency of an investment.'},
         {'term': 'Balanced Scorecard', 'jp': 'バランスト・スコアカード', 'desc': '財務、顧客、業務プロセス、学習と成長の4つの視点から業績を評価する手法。', 'desc_en': 'A strategic management performance metric used to identify and improve internal business functions.'},
         {'term': 'Just-In-Time (JIT)', 'jp': 'ジャスト・イン・タイム', 'desc': '必要なものを、必要な時に、必要な量だけ生産・供給する生産方式。', 'desc_en': 'An inventory strategy to increase efficiency by receiving goods only as they are needed.'},
-        {'term': 'Kaizen Costing', 'jp': '改善原価計算', 'desc': '製造段階において、継続的な改善活動を通じて原価低減を図る手法。', 'desc_en': 'A system of continuous improvement in cost reduction during the manufacturing phase.'}
+        {'term': 'Kaizen Costing', 'jp': '改善原価計算', 'desc': '製造段階において、継続的な改善活動を通じて原価低減を図る手法。', 'desc_en': 'A system of continuous improvement in cost reduction during the manufacturing phase.'},
+        {'term': 'Activity-Based Costing (ABC)', 'jp': '活動基準原価計算', 'desc': '間接費を活動（アクティビティ）ごとに集計し、活動量（コストドライバー）に基づいて製品に配賦する手法。', 'desc_en': 'A costing method that assigns overhead and indirect costs to related products and services.'},
+        {'term': 'Target Costing', 'jp': '原価企画', 'desc': '製品の企画・開発段階で目標原価を設定し、その達成を目指して原価を作り込む活動。', 'desc_en': 'A system under which a company plans in advance for the price points, product costs, and margins.'},
+        {'term': 'Bottleneck', 'jp': 'ボトルネック', 'desc': '生産工程全体の中で能力が最も低く、全体の生産能力を制約している工程。', 'desc_en': 'A point of congestion in a production system that slows down the overall process.'},
+        {'term': 'Contribution Margin', 'jp': '貢献利益', 'desc': '売上高から変動費を差し引いた利益。固定費の回収と営業利益の創出に貢献する。', 'desc_en': 'Sales revenue less variable costs.'},
+        {'term': 'Variable Cost', 'jp': '変動費', 'desc': '操業度（生産量や売上高）の増減に比例して発生する原価。', 'desc_en': 'A corporate expense that changes in proportion to production output.'}
     ],
     'Audit': [
         {'term': 'Professional Skepticism', 'jp': '職業的懐疑心', 'desc': '常に疑念を持ち、監査証拠を批判的に評価する姿勢。', 'desc_en': 'An attitude that includes a questioning mind and a critical assessment of audit evidence.'},
@@ -130,7 +140,12 @@ vocab_data = {
         {'term': 'Audit Evidence', 'jp': '監査証拠', 'desc': '監査意見の基礎となる結論を導くために監査人が入手した情報。', 'desc_en': 'Information used by the auditor in arriving at the conclusions on which the auditor\'s opinion is based.'},
         {'term': 'Sampling Risk', 'jp': '試査リスク', 'desc': '監査人が母集団の一部（試査）に基づいて結論を出す際に、母集団全体を精査した場合と異なる結論になるリスク。', 'desc_en': 'The risk that the auditor\'s conclusion based on a sample may be different from the conclusion if the entire population were subjected to the same audit procedure.'},
         {'term': 'Management Representation Letter', 'jp': '経営者確認書', 'desc': '経営者が監査人に対して、財務諸表作成責任の履行や情報の完全性などを文書で確認するもの。', 'desc_en': 'A letter from management confirming certain representations made to the auditor.'},
-        {'term': 'Subsequent Events', 'jp': '後発事象', 'desc': '決算日後に発生した事象で、次期以降の財政状態や経営成績に影響を及ぼすもの。', 'desc_en': 'Events occurring between the date of the financial statements and the date of the auditor\'s report.'}
+        {'term': 'Subsequent Events', 'jp': '後発事象', 'desc': '決算日後に発生した事象で、次期以降の財政状態や経営成績に影響を及ぼすもの。', 'desc_en': 'Events occurring between the date of the financial statements and the date of the auditor\'s report.'},
+        {'term': 'Audit Opinion', 'jp': '監査意見', 'desc': '財務諸表が適正に表示されているかどうかについての監査人の結論。', 'desc_en': 'The conclusion expressed by the auditor regarding the financial statements.'},
+        {'term': 'Emphasis of Matter Paragraph', 'jp': '強調事項区分', 'desc': '監査意見には影響しないが、財務諸表利用者の理解のために特に強調すべき事項を記載する区分。', 'desc_en': 'A paragraph included in the auditor\'s report that refers to a matter appropriately presented or disclosed in the financial statements.'},
+        {'term': 'Independence', 'jp': '独立性', 'desc': '監査人が被監査会社から精神的・外観的に独立していること。公正不偏な態度の保持。', 'desc_en': 'The state of being objective and not influenced by personal or business relationships.'},
+        {'term': 'Fraud Triangle', 'jp': '不正のトライアングル', 'desc': '不正発生の3要素（動機・プレッシャー、機会、正当化）を示すモデル。', 'desc_en': 'A framework designed to explain the reasoning behind a worker\'s decision to commit workplace fraud.'},
+        {'term': 'Analytical Procedures', 'jp': '分析的手続', 'desc': '財務データと非財務データの間の相関関係などを分析し、異常な変動を識別する手続。', 'desc_en': 'Evaluations of financial information through analysis of plausible relationships among both financial and non-financial data.'}
     ],
     'Company': [
         {'term': 'Fiduciary Duty', 'jp': '受託者責任', 'desc': '取締役などが会社や株主のために忠実に職務を遂行する義務（善管注意義務・忠実義務）。', 'desc_en': 'The legal duty to act solely in another party\'s interests.'},
@@ -550,7 +565,7 @@ st.sidebar.markdown("""
     """, unsafe_allow_html=True)
 
 st.sidebar.markdown("---")
-page = st.sidebar.radio("Navigation", ["Dashboard", "My Syllabus 📚", "Old Exams 📄", "Study Timer", "Mock Exams", "Scores", "Drills", "Survival Mode ⚡", "Roadmap", "Big 4 Job Hunting", "Company Directory 🏢", "Future 🚀"])
+page = st.sidebar.radio("Navigation", ["Dashboard", "My Syllabus 📚", "Vocabulary 📖", "Old Exams 📄", "Study Timer", "Mock Exams", "Scores", "Drills", "Survival Mode ⚡", "Roadmap", "Big 4 Job Hunting", "Company Directory 🏢", "Future 🚀"])
 
 if page == "Dashboard":
     st.header("Dashboard 🚀")

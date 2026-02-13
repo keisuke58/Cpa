@@ -390,13 +390,13 @@ if os.path.exists(json_path):
 
 # Load Study Materials (Syllabus)
 def load_study_materials():
-    # Looking for 'studying' folder in parent of 'platform'
-    # platform/app.py -> parent is CPA -> CPA/studying
-    materials_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'studying')
+    # Looking for 'studying' folder in 'platform' directory (moved inside)
+    materials_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'studying')
     syllabus = {}
+    extra_pdfs = []
     
     if not os.path.exists(materials_dir):
-        return {}
+        return {}, []
         
     for filename in os.listdir(materials_dir):
         if filename.endswith('.xlsx') and not filename.startswith('~$'): # Ignore temp files
@@ -441,10 +441,20 @@ def load_study_materials():
                     }
             except Exception as e:
                 print(f"Error loading {filename}: {e}")
+    
+    # Load extra PDFs from 'PDF' subdirectory
+    pdf_dir = os.path.join(materials_dir, 'PDF')
+    if os.path.exists(pdf_dir):
+        for f in os.listdir(pdf_dir):
+            if f.lower().endswith('.pdf'):
+                extra_pdfs.append({
+                    'name': f,
+                    'path': os.path.join(pdf_dir, f)
+                })
                 
-    return syllabus
+    return syllabus, extra_pdfs
 
-study_materials = load_study_materials()
+study_materials, extra_pdfs = load_study_materials()
 
 roadmap_md = """
 # CPA 1.5 Year Strategy Roadmap
@@ -577,7 +587,7 @@ elif page == "My Syllabus 📚":
     st.header("My Study Syllabus 📚")
     st.info("Based on your uploaded materials in 'studying' folder.")
     
-    if not study_materials:
+    if not study_materials and not extra_pdfs:
         st.warning("No study materials found in 'studying' folder.")
     else:
         # Progress Tracking
@@ -598,67 +608,84 @@ elif page == "My Syllabus 📚":
             save_data(st.session_state.data)
 
         # Tabs for subjects
-        subjects = list(study_materials.keys())
-        tabs = st.tabs(subjects)
-        
-        for i, subject in enumerate(subjects):
-            with tabs[i]:
-                data = study_materials[subject]
-                items = data['items']
-                pdf_path = data['pdf_path']
-                excel_path = data['excel_path']
-                
-                # Header Actions
-                c1, c2 = st.columns([3, 1])
-                with c1:
-                    st.subheader(f"{subject} ({len(items)} Lectures)")
-                with c2:
-                    if pdf_path:
-                        if st.button(f"📄 Open PDF", key=f"pdf_{subject}"):
-                            try:
-                                os.startfile(pdf_path)
-                                st.toast(f"Opening {subject} PDF...", icon="🚀")
-                            except Exception as e:
-                                st.error(f"Cannot open PDF: {e}")
+        if study_materials:
+            subjects = list(study_materials.keys())
+            tabs = st.tabs(subjects)
+            
+            for i, subject in enumerate(subjects):
+                with tabs[i]:
+                    data = study_materials[subject]
+                    items = data['items']
+                    pdf_path = data['pdf_path']
+                    excel_path = data['excel_path']
                     
-                    if st.button(f"📊 Open Excel", key=f"excel_{subject}"):
-                        try:
-                            os.startfile(excel_path)
-                            st.toast(f"Opening {subject} Excel...", icon="📊")
-                        except Exception as e:
-                            st.error(f"Cannot open Excel: {e}")
+                    # Header Actions
+                    c1, c2 = st.columns([3, 1])
+                    with c1:
+                        st.subheader(f"{subject} ({len(items)} Lectures)")
+                    with c2:
+                        if pdf_path:
+                            if st.button(f"📄 Open PDF", key=f"pdf_{subject}"):
+                                try:
+                                    os.startfile(pdf_path)
+                                    st.toast(f"Opening {subject} PDF...", icon="🚀")
+                                except Exception as e:
+                                    st.error(f"Cannot open PDF: {e}")
+                        
+                        if st.button(f"📊 Open Excel", key=f"excel_{subject}"):
+                            try:
+                                os.startfile(excel_path)
+                                st.toast(f"Opening {subject} Excel...", icon="📊")
+                            except Exception as e:
+                                st.error(f"Cannot open Excel: {e}")
 
-                
-                # Progress Bar for Subject
-                subject_completed = [item['title'] for item in items if f"{subject}|{item['title']}" in completed_items]
-                prog = len(subject_completed) / len(items) if items else 0
-                st.progress(prog)
-                st.caption(f"Progress: {len(subject_completed)} / {len(items)} ({prog:.1%})")
-                
-                # Group by Category/Subcategory
-                df = pd.DataFrame(items)
-                if not df.empty and 'category' in df.columns:
-                    for cat, group in df.groupby('category'):
-                        with st.expander(f"📂 {cat}", expanded=True):
-                            for _, row in group.iterrows():
-                                title = row['title']
-                                unique_key = f"{subject}|{title}"
-                                is_done = unique_key in completed_items
-                                
-                                c_chk, c_txt, c_time = st.columns([0.5, 4, 1.5])
-                                with c_chk:
-                                    st.checkbox("", value=is_done, key=f"chk_{unique_key}", on_change=toggle_syllabus, kwargs={'key': unique_key})
-                                
-                                with c_txt:
-                                    if is_done:
-                                        st.markdown(f"~~{title}~~")
-                                    else:
-                                        st.markdown(f"**{title}**")
-                                        if row['subcategory']:
-                                            st.caption(f"└ {row['subcategory']}")
-                                            
-                                with c_time:
-                                    st.caption(f"⏱️ {row['duration']}")
+                    
+                    # Progress Bar for Subject
+                    subject_completed = [item['title'] for item in items if f"{subject}|{item['title']}" in completed_items]
+                    prog = len(subject_completed) / len(items) if items else 0
+                    st.progress(prog)
+                    st.caption(f"Progress: {len(subject_completed)} / {len(items)} ({prog:.1%})")
+                    
+                    # Group by Category/Subcategory
+                    df = pd.DataFrame(items)
+                    if not df.empty and 'category' in df.columns:
+                        for cat, group in df.groupby('category'):
+                            with st.expander(f"📂 {cat}", expanded=True):
+                                for _, row in group.iterrows():
+                                    title = row['title']
+                                    unique_key = f"{subject}|{title}"
+                                    is_done = unique_key in completed_items
+                                    
+                                    c_chk, c_txt, c_time = st.columns([0.5, 4, 1.5])
+                                    with c_chk:
+                                        st.checkbox("", value=is_done, key=f"chk_{unique_key}", on_change=toggle_syllabus, kwargs={'key': unique_key})
+                                    
+                                    with c_txt:
+                                        if is_done:
+                                            st.markdown(f"~~{title}~~")
+                                        else:
+                                            st.markdown(f"**{title}**")
+                                            if row['subcategory']:
+                                                st.caption(f"└ {row['subcategory']}")
+                                                
+                                    with c_time:
+                                        st.caption(f"⏱️ {row['duration']}")
+
+        # Supplemental Resources (Extra PDFs)
+        if extra_pdfs:
+            st.markdown("---")
+            st.subheader("📚 Supplemental Resources")
+            for pdf in extra_pdfs:
+                c1, c2 = st.columns([4, 1])
+                with c1:
+                    st.markdown(f"📄 **{pdf['name']}**")
+                with c2:
+                    if st.button("Open", key=f"extra_pdf_{pdf['name']}"):
+                        try:
+                            os.startfile(pdf['path'])
+                            st.toast(f"Opening {pdf['name']}...", icon="🚀")
+                        except Exception as e:
+                            st.error(f"Cannot open PDF: {e}")
 
 elif page == "Old Exams 📄":
     st.header("Old Exam Papers 📄")

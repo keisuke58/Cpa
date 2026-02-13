@@ -8,6 +8,34 @@ import os
 # Set page config
 st.set_page_config(page_title="CPA Perfect Platform 2027", layout="wide", page_icon="📚")
 
+# Data Persistence
+DATA_FILE = "cpa_data.json"
+
+def load_data():
+    if os.path.exists(DATA_FILE):
+        with open(DATA_FILE, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    return {"scores": [], "logs": []}
+
+def save_data(data):
+    with open(DATA_FILE, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+# Initialize Session State
+if 'data' not in st.session_state:
+    st.session_state.data = load_data()
+
+if 'quiz_state' not in st.session_state:
+    st.session_state.quiz_state = {
+        'active': False,
+        'subject': None,
+        'level': None,
+        'q_index': 0,
+        'score': 0,
+        'show_feedback': False,
+        'selected_option': None
+    }
+
 # Custom CSS
 st.markdown("""
 <style>
@@ -39,22 +67,6 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
-
-# Initialize Session State
-if 'scores' not in st.session_state:
-    st.session_state.scores = []
-if 'logs' not in st.session_state:
-    st.session_state.logs = []
-if 'quiz_state' not in st.session_state:
-    st.session_state.quiz_state = {
-        'active': False,
-        'subject': None,
-        'level': None,
-        'q_index': 0,
-        'score': 0,
-        'show_feedback': False,
-        'selected_option': None
-    }
 
 # Mock Data
 mock_exams = [
@@ -352,8 +364,8 @@ if page == "Dashboard":
         radar_scores = [60, 55, 40, 45, 30, 30]
         
         # Calculate from actual scores if available
-        if st.session_state.scores:
-            df_scores = pd.DataFrame(st.session_state.scores)
+        if st.session_state.data["scores"]:
+            df_scores = pd.DataFrame(st.session_state.data["scores"])
             avg_scores = []
             for sub in subjects:
                 sub_df = df_scores[df_scores['subject'] == sub]
@@ -395,17 +407,19 @@ elif page == "Study Timer":
             submitted = st.form_submit_button("Log Session")
             
             if submitted:
-                st.session_state.logs.append({
+                new_log = {
                     'date': date_val.strftime("%Y-%m-%d"),
                     'subject': subject,
                     'duration': duration
-                })
+                }
+                st.session_state.data["logs"].append(new_log)
+                save_data(st.session_state.data)
                 st.success("Session logged!")
                 
     with col2:
         st.subheader("Recent Logs")
-        if st.session_state.logs:
-            df_logs = pd.DataFrame(st.session_state.logs)
+        if st.session_state.data["logs"]:
+            df_logs = pd.DataFrame(st.session_state.data["logs"])
             st.dataframe(df_logs.sort_values('date', ascending=False))
             
             total_mins = df_logs['duration'].sum()
@@ -434,17 +448,19 @@ elif page == "Scores":
             submitted = st.form_submit_button("Save Score")
             
             if submitted:
-                st.session_state.scores.append({
+                new_score = {
                     'name': name,
                     'date': date_val.strftime("%Y-%m-%d"),
                     'subject': subject,
                     'val': val
-                })
+                }
+                st.session_state.data["scores"].append(new_score)
+                save_data(st.session_state.data)
                 st.success("Score saved!")
                 
     with col2:
-        if st.session_state.scores:
-            df = pd.DataFrame(st.session_state.scores)
+        if st.session_state.data["scores"]:
+            df = pd.DataFrame(st.session_state.data["scores"])
             st.subheader("History")
             st.dataframe(df.sort_values('date', ascending=False))
             
@@ -509,9 +525,6 @@ elif page == "Drills":
             # Options
             options = current_q['options']
             
-            # Use a form to handle selection without auto-submit if desired, 
-            # but st.radio is easier. To prevent reset on interaction, we rely on session state logic.
-            
             # If feedback is shown, disable interaction or show result
             if qs['show_feedback']:
                 for idx, opt in enumerate(options):
@@ -555,4 +568,3 @@ elif page == "Drills":
 elif page == "Roadmap":
     st.header("Roadmap")
     st.markdown(roadmap_md)
-

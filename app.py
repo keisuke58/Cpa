@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
+import plotly.express as px
 from datetime import datetime, date
 import json
 import os
@@ -1448,3 +1449,138 @@ elif page == "Big 4 Job Hunting":
                 *   **Result**: "Improved to 90%, published a paper."
             *   **Key**: Show *process* and *problem-solving*, not just results.
             """)
+
+elif page == "Future 🚀":
+    st.header("🚀 100-Year Life & Career Plan: The 'Founder' Trajectory")
+    st.markdown("Your roadmap from **Master's Student** to **Tech CEO**. A comprehensive simulation of career, wealth, and life milestones.")
+
+    tab1, tab2, tab3, tab4 = st.tabs(["⏳ 100-Year Timeline", "💰 Wealth & Salary Sim", "🦄 Entrepreneurship Blueprint", "💍 Life & Family"])
+
+    with tab1:
+        st.subheader("The Century Plan (Age 24 - 100)")
+        
+        timeline_events = [
+            {"Age": 24, "Year": 2026, "Phase": "Foundation", "Event": "Master's (Germany/Japan) + CPA Study Start", "Status": "Current"},
+            {"Age": 25, "Year": 2027, "Phase": "Foundation", "Event": "Pass CPA Exam (May/Aug) 🏆", "Status": "Goal"},
+            {"Age": 26, "Year": 2028, "Phase": "Foundation", "Event": "Graduation & Join Big 4 (Digital Audit/FAS)", "Status": "Planned"},
+            {"Age": 29, "Year": 2031, "Phase": "Growth", "Event": "Promoted to Senior Associate. Lead ML Projects.", "Status": "Planned"},
+            {"Age": 30, "Year": 2032, "Phase": "Life", "Event": "Marriage 💍 (Target)", "Status": "Life"},
+            {"Age": 32, "Year": 2034, "Phase": "Growth", "Event": "Manager Promotion. Deep expertise in AI Governance.", "Status": "Planned"},
+            {"Age": 35, "Year": 2037, "Phase": "Launch", "Event": "🚀 FOUND YOUR COMPANY (AI Audit SaaS). Seed Round.", "Status": "Dream"},
+            {"Age": 40, "Year": 2042, "Phase": "Scale", "Event": "Series B Funding. Expansion to US/EU Markets.", "Status": "Dream"},
+            {"Age": 45, "Year": 2047, "Phase": "Exit", "Event": "IPO or Strategic Acquisition. Financial Freedom.", "Status": "Dream"},
+            {"Age": 50, "Year": 2052, "Phase": "Invest", "Event": "Angel Investor for Deep Tech. University Lecturer.", "Status": "Vision"},
+            {"Age": 60, "Year": 2062, "Phase": "Legacy", "Event": "Establish Scholarship Foundation.", "Status": "Vision"},
+            {"Age": 80, "Year": 2082, "Phase": "Wisdom", "Event": "Write Memoirs. Mentor next gen.", "Status": "Vision"},
+            {"Age": 100, "Year": 2102, "Phase": "Complete", "Event": "Die Empty. No regrets.", "Status": "Final"}
+        ]
+        
+        df_timeline = pd.DataFrame(timeline_events)
+        st.dataframe(df_timeline, use_container_width=True)
+        
+        # Visual Timeline
+        fig_timeline = px.scatter(df_timeline, x="Year", y="Age", color="Phase", text="Event", title="Life Trajectory", size_max=60)
+        fig_timeline.update_traces(textposition='top center')
+        fig_timeline.update_layout(height=500)
+        st.plotly_chart(fig_timeline, use_container_width=True)
+
+    with tab2:
+        st.subheader("💰 Financial Simulation: Salary & Asset Growth")
+        st.info("Simulating the 'J-Curve' effect of Entrepreneurship vs. Linear Corporate Growth.")
+        
+        # Simulation Data
+        years = list(range(2026, 2060))
+        ages = list(range(24, 58))
+        
+        # Salary Logic
+        salary_corp = []
+        assets_corp = []
+        current_asset = 100  # Initial 1M JPY
+        
+        for age in ages:
+            if age < 26: sal = 0  # Student
+            elif age < 30: sal = 600  # Junior
+            elif age < 35: sal = 1000 # Manager
+            elif age < 40: sal = 1500 # Senior Manager
+            else: sal = 2000 # Partner level
+            salary_corp.append(sal)
+            current_asset += (sal * 0.3) # Save 30%
+            current_asset *= 1.04 # 4% Investment return
+            assets_corp.append(current_asset)
+
+        # Founder Logic
+        salary_founder = []
+        assets_founder = []
+        founder_asset = 100
+        
+        for age in ages:
+            if age < 35: # Same as corp until 35
+                sal = salary_corp[ages.index(age)]
+                founder_asset = assets_corp[ages.index(age)]
+            elif age == 35: # STARTUP LAUNCH
+                sal = 400 # Drop salary to survive
+                founder_asset -= 500 # Initial Investment
+            elif age < 40: # Early Stage
+                sal = 600
+                founder_asset += (sal * 0.1) # Low saving
+            elif age == 45: # EXIT EVENT
+                sal = 5000
+                founder_asset += 50000 # 500M JPY Exit
+            else: # Investor
+                sal = 0
+                founder_asset *= 1.05 # 5% return on massive capital
+            
+            salary_founder.append(sal)
+            assets_founder.append(founder_asset)
+
+        # Plot
+        df_sim = pd.DataFrame({
+            "Year": years,
+            "Age": ages,
+            "Corp Asset (Safe Path)": assets_corp,
+            "Founder Asset (Risk Path)": assets_founder
+        })
+        
+        fig_sim = px.line(df_sim, x="Age", y=["Corp Asset (Safe Path)", "Founder Asset (Risk Path)"], 
+                          title="Asset Accumulation Simulation (Unit: 10k JPY)", markers=True)
+        st.plotly_chart(fig_sim, use_container_width=True)
+        
+        st.warning("⚠️ **The Founder Gap**: Notice the dip at age 35. That is the 'Valley of Death'. You need ~10M JPY liquidity before launching.")
+
+    with tab3:
+        st.subheader("🦄 Entrepreneurship Blueprint: 'AuditTech'")
+        st.markdown("""
+        **Vision**: Automate the "boring" parts of audit using **LLMs & GNNs**, allowing CPAs to focus on high-level risk assessment.
+        
+        **Phase 1: The "Insider" (Age 26-34)**
+        *   **Goal**: Become a domain expert. Understand *exactly* where the inefficiencies are in Big 4.
+        *   **Action**: Volunteer for "Digital Transformation" projects inside the firm. Network with Partners.
+        
+        **Phase 2: The "Prototype" (Age 34-35)**
+        *   **Goal**: Build MVP (Minimum Viable Product).
+        *   **Tech**: Python, LangChain, Neo4j (Graph DB).
+        *   **Team**: Find a Co-founder (Business/Sales focus) since you are Tech/Product.
+        
+        **Phase 3: The "Launch" (Age 35)**
+        *   **Target**: Mid-tier audit firms (who can't afford internal dev teams).
+        *   **Product**: "Auto-Vouching AI" or "Fraud Detection Copilot".
+        """)
+
+    with tab4:
+        st.subheader("💍 Life, Family & Happiness")
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown("### 👨‍👩‍👧 Family Goals")
+            st.write("*   **Age 30**: Marriage (Partner who understands the startup grind).")
+            st.write("*   **Age 32**: First Child.")
+            st.write("*   **Age 35**: Second Child (Coincides with Startup Launch - Tough!).")
+            st.write("*   **Policy**: Weekends are for family. No work on Sundays.")
+            
+        with col2:
+            st.markdown("### ✈️ Experiences")
+            st.write("*   **20s**: Backpacking Europe/Asia (Cheap travel).")
+            st.write("*   **30s**: Family trips to Hawaii/Okinawa.")
+            st.write("*   **40s**: World Cruise (Post-Exit).")
+            st.write("*   **Hobbies**: Hiking, Coding, Wine Tasting.")
+

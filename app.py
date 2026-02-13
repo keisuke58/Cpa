@@ -514,29 +514,36 @@ st.sidebar.markdown("---")
 # Quick Links
 st.sidebar.markdown("""
     <style>
-    .big-red-button {
+    .big-rocket-button {
         display: inline-block;
         width: 100%;
-        padding: 15px;
-        background-color: #FF4B4B;
+        padding: 20px;
+        background: linear-gradient(135deg, #FF4B4B 0%, #FF0000 100%);
         color: white !important;
         text-align: center;
-        font-size: 20px;
-        font-weight: bold;
-        border-radius: 10px;
+        font-size: 22px;
+        font-weight: 900;
+        border-radius: 15px;
         text-decoration: none;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        transition: all 0.3s ease;
-        border: 2px solid #FF0000;
+        box-shadow: 0 4px 15px rgba(255, 0, 0, 0.4);
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        text-transform: uppercase;
+        letter-spacing: 1px;
     }
-    .big-red-button:hover {
-        background-color: #FF0000;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 8px rgba(0,0,0,0.2);
+    .big-rocket-button:hover {
+        background: linear-gradient(135deg, #FF0000 0%, #D00000 100%);
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 8px 25px rgba(255, 0, 0, 0.6);
+        border-color: rgba(255, 255, 255, 0.5);
+    }
+    .big-rocket-button:active {
+        transform: translateY(1px);
+        box-shadow: 0 2px 10px rgba(255, 0, 0, 0.3);
     }
     </style>
-    <a href="https://member.studying.jp/top/" target="_blank" class="big-red-button">
-        🔗 Studying.jp Login
+    <a href="https://member.studying.jp/top/" target="_blank" class="big-rocket-button">
+        🚀 Studying.jp Login
     </a>
     """, unsafe_allow_html=True)
 

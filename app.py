@@ -512,7 +512,33 @@ with st.sidebar.container():
 st.sidebar.markdown("---")
 
 # Quick Links
-st.sidebar.link_button("🔗 Studying.jp Login", "https://member.studying.jp/top/")
+st.sidebar.markdown("""
+    <style>
+    .big-red-button {
+        display: inline-block;
+        width: 100%;
+        padding: 15px;
+        background-color: #FF4B4B;
+        color: white !important;
+        text-align: center;
+        font-size: 20px;
+        font-weight: bold;
+        border-radius: 10px;
+        text-decoration: none;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        border: 2px solid #FF0000;
+    }
+    .big-red-button:hover {
+        background-color: #FF0000;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 8px rgba(0,0,0,0.2);
+    }
+    </style>
+    <a href="https://member.studying.jp/top/" target="_blank" class="big-red-button">
+        🔗 Studying.jp Login
+    </a>
+    """, unsafe_allow_html=True)
 
 st.sidebar.markdown("---")
 page = st.sidebar.radio("Navigation", ["Dashboard", "My Syllabus 📚", "Old Exams 📄", "Study Timer", "Mock Exams", "Scores", "Drills", "Survival Mode ⚡", "Roadmap", "Big 4 Job Hunting"])

@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
 from datetime import datetime, date
@@ -91,59 +92,59 @@ mock_exams = [
 # Vocabulary Data
 vocab_data = {
     'Financial': [
-        {'term': 'Going Concern', 'jp': '継続企業の前提', 'desc': '企業が将来にわたって事業を継続するという前提。'},
-        {'term': 'Accrual Basis', 'jp': '発生主義', 'desc': '現金の収支にかかわらず、経済的事象の発生時点で収益・費用を認識する原則。'},
-        {'term': 'Materiality', 'jp': '重要性', 'desc': '財務諸表利用者の意思決定に影響を与える情報の性質や金額の大きさ。'},
-        {'term': 'Impairment', 'jp': '減損', 'desc': '資産の収益性が低下した結果、投資額の回収が見込めなくなった場合に帳簿価額を減額すること。'},
-        {'term': 'Asset Retirement Obligation', 'jp': '資産除去債務', 'desc': '有形固定資産の取得や使用によって生じる、除去に関する将来の法的義務。'},
-        {'term': 'Fair Value', 'jp': '公正価値', 'desc': '市場参加者間で秩序ある取引が行われた場合に成立する価格。'},
-        {'term': 'Deferred Tax Asset', 'jp': '繰延税金資産', 'desc': '将来の税金を減らす効果がある一時差異。回収可能性の検討が必要。'},
-        {'term': 'Equity Method', 'jp': '持分法', 'desc': '投資会社の持分に応じて、被投資会社の損益等を反映させる会計処理。関連会社等に適用。'},
-        {'term': 'Goodwill', 'jp': 'のれん', 'desc': '企業買収等の際に支払った対価が、受け入れた純資産の時価を上回る超過収益力。'},
-        {'term': 'Comprehensive Income', 'jp': '包括利益', 'desc': '純資産の変動額のうち、資本取引によらない部分。当期純利益＋その他の包括利益。'},
-        {'term': 'Provision', 'jp': '引当金', 'desc': '将来の特定の費用や損失に備えて、当期の費用として計上される金額。'},
-        {'term': 'Contingent Liability', 'jp': '偶発債務', 'desc': '将来の事象の発生・不発生によって債務が確定する潜在的な義務。'}
+        {'term': 'Going Concern', 'jp': '継続企業の前提', 'desc': '企業が将来にわたって事業を継続するという前提。', 'desc_en': 'The assumption that an entity will continue to operate for the foreseeable future.'},
+        {'term': 'Accrual Basis', 'jp': '発生主義', 'desc': '現金の収支にかかわらず、経済的事象の発生時点で収益・費用を認識する原則。', 'desc_en': 'The principle of recognizing revenues and expenses when they occur, regardless of cash flow.'},
+        {'term': 'Materiality', 'jp': '重要性', 'desc': '財務諸表利用者の意思決定に影響を与える情報の性質や金額の大きさ。', 'desc_en': 'The significance of information that could influence the economic decisions of users.'},
+        {'term': 'Impairment', 'jp': '減損', 'desc': '資産の収益性が低下した結果、投資額の回収が見込めなくなった場合に帳簿価額を減額すること。', 'desc_en': 'A reduction in the carrying amount of an asset when its recoverable amount is less than its carrying value.'},
+        {'term': 'Asset Retirement Obligation', 'jp': '資産除去債務', 'desc': '有形固定資産の取得や使用によって生じる、除去に関する将来の法的義務。', 'desc_en': 'A legal obligation associated with the retirement of a tangible long-lived asset.'},
+        {'term': 'Fair Value', 'jp': '公正価値', 'desc': '市場参加者間で秩序ある取引が行われた場合に成立する価格。', 'desc_en': 'The price that would be received to sell an asset in an orderly transaction between market participants.'},
+        {'term': 'Deferred Tax Asset', 'jp': '繰延税金資産', 'desc': '将来の税金を減らす効果がある一時差異。回収可能性の検討が必要。', 'desc_en': 'An asset representing future tax deductions arising from temporary differences.'},
+        {'term': 'Equity Method', 'jp': '持分法', 'desc': '投資会社の持分に応じて、被投資会社の損益等を反映させる会計処理。関連会社等に適用。', 'desc_en': 'An accounting method for investments where the investor recognizes their share of the investee profits/losses.'},
+        {'term': 'Goodwill', 'jp': 'のれん', 'desc': '企業買収等の際に支払った対価が、受け入れた純資産の時価を上回る超過収益力。', 'desc_en': 'An intangible asset arising from a business combination, representing the excess of purchase price over fair value of net assets.'},
+        {'term': 'Comprehensive Income', 'jp': '包括利益', 'desc': '純資産の変動額のうち、資本取引によらない部分。当期純利益＋その他の包括利益。', 'desc_en': 'The change in equity during a period from transactions and other events, excluding those with owners.'},
+        {'term': 'Provision', 'jp': '引当金', 'desc': '将来の特定の費用や損失に備えて、当期の費用として計上される金額。', 'desc_en': 'A liability of uncertain timing or amount.'},
+        {'term': 'Contingent Liability', 'jp': '偶発債務', 'desc': '将来の事象の発生・不発生によって債務が確定する潜在的な義務。', 'desc_en': 'A potential obligation that depends on the outcome of a future event.'}
     ],
     'Management': [
-        {'term': 'Opportunity Cost', 'jp': '機会原価', 'desc': 'ある代替案を選択したことによって犠牲となった（諦めた）最大の利益。'},
-        {'term': 'Sunk Cost', 'jp': '埋没原価', 'desc': '過去の意思決定によって既に発生し、回収不能なコスト。意思決定では無視すべき。'},
-        {'term': 'Break-even Point', 'jp': '損益分岐点', 'desc': '売上高と総費用が等しくなり、利益がゼロとなる点。'},
-        {'term': 'Safety Margin', 'jp': '安全余裕率', 'desc': '現在の売上高が損益分岐点をどれだけ上回っているかを示す指標。高いほど安全。'},
-        {'term': 'Cost Driver', 'jp': 'コスト・ドライバー', 'desc': '活動原価計算（ABC）において、コスト発生の原因となる活動量や要因。'},
-        {'term': 'Standard Costing', 'jp': '標準原価計算', 'desc': '科学的・統計的調査に基づいて設定された目標原価を用いて行う原価計算。'},
-        {'term': 'Variance Analysis', 'jp': '差異分析', 'desc': '標準原価と実際原価の差額（差異）を分析し、原因を特定して管理に役立てる手法。'},
-        {'term': 'Direct Costing', 'jp': '直接原価計算', 'desc': '原価を変動費と固定費に分解し、変動費のみを製品原価とする計算手法（CVP分析に有用）。'},
-        {'term': 'ROI (Return on Investment)', 'jp': '投下資本利益率', 'desc': '投資した資本に対してどれだけの利益を上げたかを示す収益性指標。'},
-        {'term': 'Balanced Scorecard', 'jp': 'バランスト・スコアカード', 'desc': '財務、顧客、業務プロセス、学習と成長の4つの視点から業績を評価する手法。'},
-        {'term': 'Just-In-Time (JIT)', 'jp': 'ジャスト・イン・タイム', 'desc': '必要なものを、必要な時に、必要な量だけ生産・供給する生産方式。'},
-        {'term': 'Kaizen Costing', 'jp': '改善原価計算', 'desc': '製造段階において、継続的な改善活動を通じて原価低減を図る手法。'}
+        {'term': 'Opportunity Cost', 'jp': '機会原価', 'desc': 'ある代替案を選択したことによって犠牲となった（諦めた）最大の利益。', 'desc_en': 'The potential benefit lost when one alternative is chosen over another.'},
+        {'term': 'Sunk Cost', 'jp': '埋没原価', 'desc': '過去の意思決定によって既に発生し、回収不能なコスト。意思決定では無視すべき。', 'desc_en': 'A cost that has already been incurred and cannot be recovered.'},
+        {'term': 'Break-even Point', 'jp': '損益分岐点', 'desc': '売上高と総費用が等しくなり、利益がゼロとなる点。', 'desc_en': 'The level of sales where total revenue equals total costs (zero profit).'},
+        {'term': 'Safety Margin', 'jp': '安全余裕率', 'desc': '現在の売上高が損益分岐点をどれだけ上回っているかを示す指標。高いほど安全。', 'desc_en': 'The difference between actual sales and break-even sales.'},
+        {'term': 'Cost Driver', 'jp': 'コスト・ドライバー', 'desc': '活動原価計算（ABC）において、コスト発生の原因となる活動量や要因。', 'desc_en': 'The factor that causes a change in the cost of an activity.'},
+        {'term': 'Standard Costing', 'jp': '標準原価計算', 'desc': '科学的・統計的調査に基づいて設定された目標原価を用いて行う原価計算。', 'desc_en': 'A system of using predetermined costs for products or services for planning and control.'},
+        {'term': 'Variance Analysis', 'jp': '差異分析', 'desc': '標準原価と実際原価の差額（差異）を分析し、原因を特定して管理に役立てる手法。', 'desc_en': 'The quantitative investigation of the difference between actual and standard behavior.'},
+        {'term': 'Direct Costing', 'jp': '直接原価計算', 'desc': '原価を変動費と固定費に分解し、変動費のみを製品原価とする計算手法（CVP分析に有用）。', 'desc_en': 'A costing method that only assigns variable costs to products (useful for CVP analysis).'},
+        {'term': 'ROI (Return on Investment)', 'jp': '投下資本利益率', 'desc': '投資した資本に対してどれだけの利益を上げたかを示す収益性指標。', 'desc_en': 'A performance measure used to evaluate the efficiency of an investment.'},
+        {'term': 'Balanced Scorecard', 'jp': 'バランスト・スコアカード', 'desc': '財務、顧客、業務プロセス、学習と成長の4つの視点から業績を評価する手法。', 'desc_en': 'A strategic management performance metric used to identify and improve internal business functions.'},
+        {'term': 'Just-In-Time (JIT)', 'jp': 'ジャスト・イン・タイム', 'desc': '必要なものを、必要な時に、必要な量だけ生産・供給する生産方式。', 'desc_en': 'An inventory strategy to increase efficiency by receiving goods only as they are needed.'},
+        {'term': 'Kaizen Costing', 'jp': '改善原価計算', 'desc': '製造段階において、継続的な改善活動を通じて原価低減を図る手法。', 'desc_en': 'A system of continuous improvement in cost reduction during the manufacturing phase.'}
     ],
     'Audit': [
-        {'term': 'Professional Skepticism', 'jp': '職業的懐疑心', 'desc': '常に疑念を持ち、監査証拠を批判的に評価する姿勢。'},
-        {'term': 'Audit Risk', 'jp': '監査リスク', 'desc': '財務諸表に重要な虚偽表示があるにもかかわらず、監査人が不適切な意見を表明するリスク。'},
-        {'term': 'Material Misstatement', 'jp': '重要な虚偽表示', 'desc': '財務諸表利用者の判断を誤らせる可能性のある誤りや不正。'},
-        {'term': 'Internal Control', 'jp': '内部統制', 'desc': '業務の有効性・効率性、財務報告の信頼性などを確保するために組織内に構築されるプロセス。'},
-        {'term': 'Substantive Procedures', 'jp': '実証手続', 'desc': '重要な虚偽表示を発見するために、取引や残高の詳細を直接検証する手続。'},
-        {'term': 'Significant Deficiency', 'jp': '重要な不備', 'desc': '内部統制の不備のうち、財務諸表の信頼性に重要な影響を及ぼす可能性が高いもの。'},
-        {'term': 'Key Audit Matters (KAM)', 'jp': '監査上の主要な検討事項', 'desc': '当年度の監査において、職業的専門家として特に重要であると判断した事項。'},
-        {'term': 'Audit Evidence', 'jp': '監査証拠', 'desc': '監査意見の基礎となる結論を導くために監査人が入手した情報。'},
-        {'term': 'Sampling Risk', 'jp': '試査リスク', 'desc': '監査人が母集団の一部（試査）に基づいて結論を出す際に、母集団全体を精査した場合と異なる結論になるリスク。'},
-        {'term': 'Management Representation Letter', 'jp': '経営者確認書', 'desc': '経営者が監査人に対して、財務諸表作成責任の履行や情報の完全性などを文書で確認するもの。'},
-        {'term': 'Subsequent Events', 'jp': '後発事象', 'desc': '決算日後に発生した事象で、次期以降の財政状態や経営成績に影響を及ぼすもの。'}
+        {'term': 'Professional Skepticism', 'jp': '職業的懐疑心', 'desc': '常に疑念を持ち、監査証拠を批判的に評価する姿勢。', 'desc_en': 'An attitude that includes a questioning mind and a critical assessment of audit evidence.'},
+        {'term': 'Audit Risk', 'jp': '監査リスク', 'desc': '財務諸表に重要な虚偽表示があるにもかかわらず、監査人が不適切な意見を表明するリスク。', 'desc_en': 'The risk that the auditor expresses an inappropriate audit opinion when the financial statements are materially misstated.'},
+        {'term': 'Material Misstatement', 'jp': '重要な虚偽表示', 'desc': '財務諸表利用者の判断を誤らせる可能性のある誤りや不正。', 'desc_en': 'An error or fraud in financial statements that is significant enough to impact user decisions.'},
+        {'term': 'Internal Control', 'jp': '内部統制', 'desc': '業務の有効性・効率性、財務報告の信頼性などを確保するために組織内に構築されるプロセス。', 'desc_en': 'A process designed to provide reasonable assurance regarding the achievement of objectives.'},
+        {'term': 'Substantive Procedures', 'jp': '実証手続', 'desc': '重要な虚偽表示を発見するために、取引や残高の詳細を直接検証する手続。', 'desc_en': 'Audit procedures designed to detect material misstatements at the assertion level.'},
+        {'term': 'Significant Deficiency', 'jp': '重要な不備', 'desc': '内部統制の不備のうち、財務諸表の信頼性に重要な影響を及ぼす可能性が高いもの。', 'desc_en': 'A deficiency in internal control that is less severe than a material weakness yet important enough to merit attention.'},
+        {'term': 'Key Audit Matters (KAM)', 'jp': '監査上の主要な検討事項', 'desc': '当年度の監査において、職業的専門家として特に重要であると判断した事項。', 'desc_en': 'Those matters that, in the auditor\'s professional judgment, were of most significance in the audit.'},
+        {'term': 'Audit Evidence', 'jp': '監査証拠', 'desc': '監査意見の基礎となる結論を導くために監査人が入手した情報。', 'desc_en': 'Information used by the auditor in arriving at the conclusions on which the auditor\'s opinion is based.'},
+        {'term': 'Sampling Risk', 'jp': '試査リスク', 'desc': '監査人が母集団の一部（試査）に基づいて結論を出す際に、母集団全体を精査した場合と異なる結論になるリスク。', 'desc_en': 'The risk that the auditor\'s conclusion based on a sample may be different from the conclusion if the entire population were subjected to the same audit procedure.'},
+        {'term': 'Management Representation Letter', 'jp': '経営者確認書', 'desc': '経営者が監査人に対して、財務諸表作成責任の履行や情報の完全性などを文書で確認するもの。', 'desc_en': 'A letter from management confirming certain representations made to the auditor.'},
+        {'term': 'Subsequent Events', 'jp': '後発事象', 'desc': '決算日後に発生した事象で、次期以降の財政状態や経営成績に影響を及ぼすもの。', 'desc_en': 'Events occurring between the date of the financial statements and the date of the auditor\'s report.'}
     ],
     'Company': [
-        {'term': 'Fiduciary Duty', 'jp': '受託者責任', 'desc': '取締役などが会社や株主のために忠実に職務を遂行する義務（善管注意義務・忠実義務）。'},
-        {'term': 'Shareholder Derivative Suit', 'jp': '株主代表訴訟', 'desc': '会社が取締役の責任を追及しない場合に、株主が会社に代わって提起する訴訟。'},
-        {'term': 'Business Judgment Rule', 'jp': '経営判断の原則', 'desc': '取締役の経営判断が合理的で誠実に行われた場合、結果的に損害が生じても責任を問われない原則。'},
-        {'term': 'Authorized Shares', 'jp': '発行可能株式総数', 'desc': '定款で定められた、会社が発行することができる株式の上限数。'},
-        {'term': 'Treasury Stock', 'jp': '自己株式', 'desc': '会社が保有する自社の株式。議決権や配当請求権はない。'},
-        {'term': 'Articles of Incorporation', 'jp': '定款', 'desc': '会社の目的、商号、本店所在地などの基本規則を定めた根本規則。'},
-        {'term': 'Board of Directors', 'jp': '取締役会', 'desc': '業務執行の決定や取締役の職務執行の監督を行う機関。'},
-        {'term': 'Statutory Auditor', 'jp': '監査役', 'desc': '取締役の職務執行や会計を監査する機関。'},
-        {'term': 'General Meeting of Shareholders', 'jp': '株主総会', 'desc': '株式会社の最高意思決定機関。株主で構成される。'},
-        {'term': 'Corporate Governance', 'jp': 'コーポレート・ガバナンス', 'desc': '企業経営を規律するための仕組み。企業統治。'},
-        {'term': 'Stock Option', 'jp': 'ストック・オプション', 'desc': '自社株をあらかじめ決められた価格で購入できる権利。役員や従業員へのインセンティブ。'},
-        {'term': 'Mergers and Acquisitions (M&A)', 'jp': 'M&A（合併・買収）', 'desc': '企業の合併や買収の総称。組織再編行為を含む。'}
+        {'term': 'Fiduciary Duty', 'jp': '受託者責任', 'desc': '取締役などが会社や株主のために忠実に職務を遂行する義務（善管注意義務・忠実義務）。', 'desc_en': 'The legal duty to act solely in another party\'s interests.'},
+        {'term': 'Shareholder Derivative Suit', 'jp': '株主代表訴訟', 'desc': '会社が取締役の責任を追及しない場合に、株主が会社に代わって提起する訴訟。', 'desc_en': 'A lawsuit brought by a shareholder on behalf of a corporation against a third party.'},
+        {'term': 'Business Judgment Rule', 'jp': '経営判断の原則', 'desc': '取締役の経営判断が合理的で誠実に行われた場合、結果的に損害が生じても責任を問われない原則。', 'desc_en': 'A presumption that directors\' decisions are based on informed and good faith judgment.'},
+        {'term': 'Authorized Shares', 'jp': '発行可能株式総数', 'desc': '定款で定められた、会社が発行することができる株式の上限数。', 'desc_en': 'The maximum number of shares that a corporation is legally permitted to issue.'},
+        {'term': 'Treasury Stock', 'jp': '自己株式', 'desc': '会社が保有する自社の株式。議決権や配当請求権はない。', 'desc_en': 'Stock which is bought back by the issuing company.'},
+        {'term': 'Articles of Incorporation', 'jp': '定款', 'desc': '会社の目的、商号、本店所在地などの基本規則を定めた根本規則。', 'desc_en': 'The primary rules governing the management of a corporation.'},
+        {'term': 'Board of Directors', 'jp': '取締役会', 'desc': '業務執行の決定や取締役の職務執行の監督を行う機関。', 'desc_en': 'An elected group of individuals that represent shareholders.'},
+        {'term': 'Statutory Auditor', 'jp': '監査役', 'desc': '取締役の職務執行や会計を監査する機関。', 'desc_en': 'An official responsible for checking the accuracy of business records.'},
+        {'term': 'General Meeting of Shareholders', 'jp': '株主総会', 'desc': '株式会社の最高意思決定機関。株主で構成される。', 'desc_en': 'The highest decision-making body of a company.'},
+        {'term': 'Corporate Governance', 'jp': 'コーポレート・ガバナンス', 'desc': '企業経営を規律するための仕組み。企業統治。', 'desc_en': 'The system of rules, practices, and processes by which a firm is directed and controlled.'},
+        {'term': 'Stock Option', 'jp': 'ストック・オプション', 'desc': '自社株をあらかじめ決められた価格で購入できる権利。役員や従業員へのインセンティブ。', 'desc_en': 'A privilege that gives the buyer the right to buy or sell stock at an agreed price.'},
+        {'term': 'Mergers and Acquisitions (M&A)', 'jp': 'M&A（合併・買収）', 'desc': '企業の合併や買収の総称。組織再編行為を含む。', 'desc_en': 'The consolidation of companies or assets through various financial transactions.'}
     ]
 }
 
@@ -1034,6 +1035,18 @@ elif page == "Drills":
         
         if selected_level == "vocab":
             st.info("💡 Hint: These are key English terms often found in global accounting standards (IFRS/US GAAP).")
+            
+            # Add Tangocyo List View
+            with st.expander("📖 View Vocabulary List (Tangocyo)"):
+                vocab_list_view = vocab_data.get(subject, [])
+                if vocab_list_view:
+                    for v in vocab_list_view:
+                        st.markdown(f"**{v['term']}** ({v['jp']})")
+                        st.markdown(f"- 🇯🇵 {v['desc']}")
+                        st.markdown(f"- 🇺🇸 {v.get('desc_en', '')}")
+                        st.divider()
+                else:
+                    st.warning("No vocabulary data available.")
     
         # Load generated questions if available and not already loaded
         if 'generated_questions' not in st.session_state:
@@ -1063,7 +1076,7 @@ elif page == "Drills":
                             'q': f"【重要語句】 「{v['term']}」 の意味として最も適切なものは？",
                             'options': [v['desc'], "（誤りの選択肢: 逆の意味）", "（誤りの選択肢: 無関係な定義）", "（誤りの選択肢: 類似用語の定義）"],
                             'correct': 0,
-                            'explanation': f"**{v['term']} ({v['jp']})**\n\n{v['desc']}",
+                            'explanation': f"**{v['term']} ({v['jp']})**\n\n**🇯🇵 日本語:** {v['desc']}\n\n**🇺🇸 English:** {v.get('desc_en', 'No English description available.')}",
                             'type': 'vocab'
                         })
                     # Shuffle options for each question
@@ -1905,101 +1918,242 @@ elif page == "Future 🚀":
     st.header("🚀 100-Year Life & Career Plan: The 'Founder' Trajectory")
     st.markdown("Your roadmap from **Master's Student** to **Tech CEO**. A comprehensive simulation of career, wealth, and life milestones.")
 
-    tab1, tab2, tab3, tab4 = st.tabs(["⏳ 100-Year Timeline", "💰 Wealth & Salary Sim", "🦄 Entrepreneurship Blueprint", "💍 Life & Family"])
+    # Top Status Board
+    st.subheader("📍 Current Status")
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("Current Age", "24", "Phase: Foundation")
+    c2.metric("Next Big Milestone", "CPA Exam Pass", "2027 (Age 25)")
+    c3.metric("Career Goal", "Audit Tech Founder", "Launch @ Age 35")
+    c4.metric("Financial Freedom", "Target: Age 45", "Asset Goal: 500M JPY")
+    
+    st.divider()
+
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(["⏳ 100-Year Timeline", "🧠 Skill Evolution", "💰 Wealth (Monte Carlo)", "🦄 Entrepreneurship Blueprint", "💍 Life & Family"])
 
     with tab1:
         st.subheader("The Century Plan (Age 24 - 100)")
         
         timeline_events = [
-            {"Age": 24, "Year": 2026, "Phase": "Foundation", "Event": "Master's (Germany/Japan) + CPA Study Start", "Status": "Current"},
-            {"Age": 25, "Year": 2027, "Phase": "Foundation", "Event": "Pass CPA Exam (May/Aug) 🏆", "Status": "Goal"},
-            {"Age": 26, "Year": 2028, "Phase": "Foundation", "Event": "Graduation & Join Big 4 (Digital Audit/FAS)", "Status": "Planned"},
-            {"Age": 29, "Year": 2031, "Phase": "Growth", "Event": "Promoted to Senior Associate. Lead ML Projects.", "Status": "Planned"},
-            {"Age": 30, "Year": 2032, "Phase": "Life", "Event": "Marriage 💍 (Target)", "Status": "Life"},
-            {"Age": 32, "Year": 2034, "Phase": "Growth", "Event": "Manager Promotion. Deep expertise in AI Governance.", "Status": "Planned"},
-            {"Age": 35, "Year": 2037, "Phase": "Launch", "Event": "🚀 FOUND YOUR COMPANY (AI Audit Firm). Disruption.", "Status": "Dream"},
-            {"Age": 40, "Year": 2042, "Phase": "Scale", "Event": "Global Expansion. AI-First Assurance.", "Status": "Dream"},
-            {"Age": 45, "Year": 2047, "Phase": "Exit", "Event": "IPO or Strategic Partnership. Financial Freedom.", "Status": "Dream"},
-            {"Age": 50, "Year": 2052, "Phase": "Invest", "Event": "Angel Investor for Deep Tech. University Lecturer.", "Status": "Vision"},
-            {"Age": 60, "Year": 2062, "Phase": "Legacy", "Event": "Establish Scholarship Foundation.", "Status": "Vision"},
-            {"Age": 80, "Year": 2082, "Phase": "Wisdom", "Event": "Write Memoirs. Mentor next gen.", "Status": "Vision"},
-            {"Age": 100, "Year": 2102, "Phase": "Complete", "Event": "Die Empty. No regrets.", "Status": "Final"}
+            {"Age": 24, "Year": 2026, "Phase": "Foundation", "Event": "Master's (Germany/Japan) + CPA Study Start", "Status": "Current", "Importance": 3},
+            {"Age": 25, "Year": 2027, "Phase": "Foundation", "Event": "Pass CPA Exam (May/Aug) 🏆", "Status": "Goal", "Importance": 5},
+            {"Age": 26, "Year": 2028, "Phase": "Foundation", "Event": "Graduation & Join Big 4 (Digital Audit/FAS)", "Status": "Planned", "Importance": 4},
+            {"Age": 29, "Year": 2031, "Phase": "Growth", "Event": "Promoted to Senior Associate. Lead ML Projects.", "Status": "Planned", "Importance": 3},
+            {"Age": 30, "Year": 2032, "Phase": "Life", "Event": "Marriage 💍 (Target)", "Status": "Life", "Importance": 5},
+            {"Age": 32, "Year": 2034, "Phase": "Growth", "Event": "Manager Promotion. Deep expertise in AI Governance.", "Status": "Planned", "Importance": 3},
+            {"Age": 35, "Year": 2037, "Phase": "Launch", "Event": "🚀 FOUND YOUR COMPANY (AI Audit Firm). Disruption.", "Status": "Dream", "Importance": 5},
+            {"Age": 40, "Year": 2042, "Phase": "Scale", "Event": "Global Expansion. AI-First Assurance.", "Status": "Dream", "Importance": 4},
+            {"Age": 45, "Year": 2047, "Phase": "Exit", "Event": "IPO or Strategic Partnership. Financial Freedom.", "Status": "Dream", "Importance": 5},
+            {"Age": 50, "Year": 2052, "Phase": "Invest", "Event": "Angel Investor for Deep Tech. University Lecturer.", "Status": "Vision", "Importance": 3},
+            {"Age": 60, "Year": 2062, "Phase": "Legacy", "Event": "Establish Scholarship Foundation.", "Status": "Vision", "Importance": 3},
+            {"Age": 80, "Year": 2082, "Phase": "Wisdom", "Event": "Write Memoirs. Mentor next gen.", "Status": "Vision", "Importance": 2},
+            {"Age": 100, "Year": 2102, "Phase": "Complete", "Event": "Die Empty. No regrets.", "Status": "Final", "Importance": 5}
         ]
         
         df_timeline = pd.DataFrame(timeline_events)
-        st.dataframe(df_timeline, use_container_width=True)
         
-        # Visual Timeline
-        fig_timeline = px.scatter(df_timeline, x="Year", y="Age", color="Phase", text="Event", title="Life Trajectory", size_max=60)
-        fig_timeline.update_traces(textposition='top center')
-        fig_timeline.update_layout(height=500)
+        # Visual Timeline - Improved
+        fig_timeline = px.scatter(
+            df_timeline, 
+            x="Year", 
+            y="Age", 
+            color="Phase", 
+            size="Importance",
+            hover_name="Event",
+            text="Event", 
+            title="Life Trajectory Map", 
+            size_max=40,
+            template="plotly_white"
+        )
+        fig_timeline.update_traces(textposition='top center', marker=dict(line=dict(width=2, color='DarkSlateGrey')))
+        fig_timeline.update_layout(
+            height=600,
+            xaxis=dict(showgrid=False),
+            yaxis=dict(showgrid=True, title="Age"),
+            showlegend=True
+        )
+        # Add connecting line
+        fig_timeline.add_trace(go.Scatter(
+            x=df_timeline["Year"], 
+            y=df_timeline["Age"], 
+            mode='lines', 
+            line=dict(color='lightgrey', width=1, dash='dot'),
+            showlegend=False,
+            hoverinfo='skip'
+        ))
+        
         st.plotly_chart(fig_timeline, use_container_width=True)
+        
+        with st.expander("Show Data Table"):
+            st.dataframe(df_timeline, use_container_width=True)
 
     with tab2:
-        st.subheader("💰 Financial Simulation: Salary & Asset Growth")
-        st.info("Simulating the 'J-Curve' effect of Entrepreneurship vs. Linear Corporate Growth.")
+        st.subheader("🧠 Skill Evolution: The 'T-Shaped' Professional")
+        st.markdown("Visualizing your growth from a CPA specialist to a Tech CEO.")
         
-        # Simulation Data
-        years = list(range(2026, 2060))
-        ages = list(range(24, 58))
+        categories = ['Accounting/Audit', 'Coding/AI', 'English/Global', 'Leadership', 'Risk Taking']
         
-        # Salary Logic
-        salary_corp = []
-        assets_corp = []
-        current_asset = 100  # Initial 1M JPY
+        fig_radar = go.Figure()
         
-        for age in ages:
-            if age < 26: sal = 0  # Student
-            elif age < 30: sal = 600  # Junior
-            elif age < 35: sal = 1000 # Manager
-            elif age < 40: sal = 1500 # Senior Manager
-            else: sal = 2000 # Partner level
-            salary_corp.append(sal)
-            current_asset += (sal * 0.3) # Save 30%
-            current_asset *= 1.04 # 4% Investment return
-            assets_corp.append(current_asset)
-
-        # Founder Logic
-        salary_founder = []
-        assets_founder = []
-        founder_asset = 100
+        fig_radar.add_trace(go.Scatterpolar(
+            r=[4, 2, 3, 2, 2],
+            theta=categories,
+            fill='toself',
+            name='Current (Age 24)'
+        ))
+        fig_radar.add_trace(go.Scatterpolar(
+            r=[5, 4, 4, 4, 3],
+            theta=categories,
+            fill='toself',
+            name='Manager (Age 32)'
+        ))
+        fig_radar.add_trace(go.Scatterpolar(
+            r=[5, 5, 5, 5, 5],
+            theta=categories,
+            fill='toself',
+            name='Founder/CEO (Age 40)'
+        ))
         
-        for age in ages:
-            if age < 35: # Same as corp until 35
-                sal = salary_corp[ages.index(age)]
-                founder_asset = assets_corp[ages.index(age)]
-            elif age == 35: # STARTUP LAUNCH
-                sal = 400 # Drop salary to survive
-                founder_asset -= 500 # Initial Investment
-            elif age < 40: # Early Stage
-                sal = 600
-                founder_asset += (sal * 0.1) # Low saving
-            elif age == 45: # EXIT EVENT
-                sal = 5000
-                founder_asset += 50000 # 500M JPY Exit
-            else: # Investor
-                sal = 0
-                founder_asset *= 1.05 # 5% return on massive capital
-            
-            salary_founder.append(sal)
-            assets_founder.append(founder_asset)
-
-        # Plot
-        df_sim = pd.DataFrame({
-            "Year": years,
-            "Age": ages,
-            "Corp Asset (Safe Path)": assets_corp,
-            "Founder Asset (Risk Path)": assets_founder
-        })
+        fig_radar.update_layout(
+            polar=dict(
+                radialaxis=dict(
+                visible=True,
+                range=[0, 5]
+                )),
+            showlegend=True,
+            title="Skill Radar Chart"
+        )
         
-        fig_sim = px.line(df_sim, x="Age", y=["Corp Asset (Safe Path)", "Founder Asset (Risk Path)"], 
-                          title="Asset Accumulation Simulation (Unit: 10k JPY)", markers=True)
-        st.plotly_chart(fig_sim, use_container_width=True)
-        
-        st.warning("⚠️ **The Founder Gap**: Notice the dip at age 35. That is the 'Valley of Death'. You need ~10M JPY liquidity before launching.")
+        col_r1, col_r2 = st.columns([2, 1])
+        with col_r1:
+            st.plotly_chart(fig_radar, use_container_width=True)
+        with col_r2:
+            st.info("💡 **Key Insight**")
+            st.markdown("""
+            *   **Accounting**: Must be perfect early on (CPA).
+            *   **Coding/AI**: Your differentiator. Grow this during your Associate years.
+            *   **Risk Taking**: The biggest shift required to become a Founder.
+            """)
 
     with tab3:
+        st.subheader("💰 Financial Simulation: Monte Carlo Analysis")
+        st.markdown("A Quant-style simulation of your future wealth. **Life is probabilistic, not deterministic.**")
+        
+        # --- Interactive Sliders ---
+        col_ctrl1, col_ctrl2 = st.columns(2)
+        with col_ctrl1:
+            st.markdown("**Income & Savings**")
+            initial_salary = st.slider("Starting Salary (Million JPY)", 4.0, 10.0, 6.0, 0.5)
+            savings_rate = st.slider("Savings Rate (%)", 10, 70, 30, 5) / 100.0
+            investment_return_mean = st.slider("Expected Return (%)", 1.0, 15.0, 5.0, 0.5) / 100.0
+            investment_volatility = st.slider("Volatility (Risk) (%)", 5.0, 30.0, 15.0, 1.0) / 100.0
+            
+        with col_ctrl2:
+            st.markdown("**Startup Variables**")
+            launch_age = st.slider("Launch Age", 28, 45, 35)
+            exit_age = st.slider("Exit Age", launch_age + 3, 60, 45)
+            exit_valuation = st.slider("Exit Valuation (Million JPY)", 100, 10000, 500, 100)
+            exit_prob = st.slider("Exit Success Probability (%)", 10, 90, 30, 5) / 100.0
+            
+        st.divider()
+
+        if st.button("Run Monte Carlo Simulation (100 Scenarios)"):
+            with st.spinner("Running 100 simulations..."):
+                # Simulation Data
+                years = list(range(2026, 2060))
+                ages = list(range(24, 58))
+                n_sims = 100
+                
+                # Store all paths
+                all_paths = []
+                
+                for i in range(n_sims):
+                    path = []
+                    current_asset = 1.0
+                    
+                    # Startup outcome for this simulation
+                    is_successful_exit = np.random.random() < exit_prob
+                    
+                    for age in ages:
+                        # Salary Logic
+                        if age < launch_age:
+                            # Corporate Phase
+                            if age < 26: sal = 0
+                            elif age < 30: sal = initial_salary
+                            elif age < 35: sal = initial_salary * 1.5
+                            elif age < 40: sal = initial_salary * 2.0
+                            else: sal = initial_salary * 2.5
+                            
+                            current_asset += (sal * savings_rate)
+                            
+                        elif age == launch_age:
+                            # Launch Cost
+                            current_asset -= 5.0
+                            if current_asset < 0: current_asset = 0
+                            
+                        elif age < exit_age:
+                            # Founder Phase (Lean)
+                            sal = 4.0
+                            current_asset += (sal * 0.1)
+                            
+                        elif age == exit_age:
+                            # Exit Event
+                            if is_successful_exit:
+                                current_asset += exit_valuation
+                            else:
+                                current_asset += 0 # Failed exit
+                                
+                        else:
+                            # Post-Exit / Investor
+                            pass
+
+                        # Investment Return (Stochastic)
+                        # Geometric Brownian Motion component: exp((mu - 0.5*sigma^2) + sigma*Z)
+                        # Simplified: return ~ N(mean, vol)
+                        r = np.random.normal(investment_return_mean, investment_volatility)
+                        current_asset *= (1 + r)
+                        
+                        path.append(current_asset)
+                    
+                    all_paths.append(path)
+                
+                # Calculate Percentiles
+                all_paths_np = np.array(all_paths) # shape (n_sims, n_years)
+                p10 = np.percentile(all_paths_np, 10, axis=0)
+                p50 = np.percentile(all_paths_np, 50, axis=0)
+                p90 = np.percentile(all_paths_np, 90, axis=0)
+                
+                # Plot
+                df_mc = pd.DataFrame({
+                    "Age": ages,
+                    "P10 (Pessimistic)": p10,
+                    "P50 (Median)": p50,
+                    "P90 (Optimistic)": p90
+                })
+                
+                fig_mc = go.Figure()
+                fig_mc.add_trace(go.Scatter(x=ages, y=p90, mode='lines', name='90th Percentile (Lucky)', line=dict(width=0), showlegend=False))
+                fig_mc.add_trace(go.Scatter(x=ages, y=p10, mode='lines', name='10th Percentile (Unlucky)', line=dict(width=0), fill='tonexty', fillcolor='rgba(0,100,80,0.2)', showlegend=False))
+                fig_mc.add_trace(go.Scatter(x=ages, y=p50, mode='lines', name='Median Outcome', line=dict(color='rgb(0,100,80)')))
+                
+                fig_mc.update_layout(title="Monte Carlo Wealth Projection (90% Confidence Interval)", yaxis_title="Net Assets (Million JPY)", hovermode="x")
+                st.plotly_chart(fig_mc, use_container_width=True)
+                
+                st.success(f"Simulation Complete. Median Asset at Age {ages[-1]}: **{p50[-1]:.1f}M JPY**")
+                if p90[-1] > 1000:
+                    st.balloons()
+        else:
+            st.info("Click the button above to run the Monte Carlo simulation.")
+
+    with tab4:
         st.subheader("🦄 Entrepreneurship Blueprint: 'Next-Gen AI Audit Firm'")
+        
+        # Business Stats
+        m1, m2, m3 = st.columns(3)
+        m1.metric("TAM (Total Addressable Market)", "¥500 Billion", "Audit Market in Japan")
+        m2.metric("Target Market", "¥50 Billion", "Mid-Cap Listed Companies")
+        m3.metric("Your Edge", "Tech + License", "Unbeatable Combo")
+        
+        st.markdown("---")
         
         st.info("💡 **Why AI Audit Firm > SaaS?**")
         st.markdown("""
@@ -2026,7 +2180,7 @@ elif page == "Future 🚀":
         *   **Value Prop**: "Faster audit, lower fees, deeper insights." Not just a software tool, but the *full service*.
         """)
 
-    with tab4:
+    with tab5:
         st.subheader("💍 Life, Family & Happiness")
         
         col1, col2 = st.columns(2)

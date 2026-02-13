@@ -549,7 +549,7 @@ st.sidebar.markdown("""
     """, unsafe_allow_html=True)
 
 st.sidebar.markdown("---")
-page = st.sidebar.radio("Navigation", ["Dashboard", "My Syllabus 📚", "Old Exams 📄", "Study Timer", "Mock Exams", "Scores", "Drills", "Survival Mode ⚡", "Roadmap", "Big 4 Job Hunting"])
+page = st.sidebar.radio("Navigation", ["Dashboard", "My Syllabus 📚", "Old Exams 📄", "Study Timer", "Mock Exams", "Scores", "Drills", "Survival Mode ⚡", "Roadmap", "Big 4 Job Hunting", "Future 🚀"])
 
 if page == "Dashboard":
     st.header("Dashboard")

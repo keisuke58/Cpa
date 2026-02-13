@@ -388,6 +388,64 @@ if os.path.exists(json_path):
     except Exception as e:
         st.error(f"Failed to load generated questions: {e}")
 
+# Load Study Materials (Syllabus)
+def load_study_materials():
+    # Looking for 'studying' folder in parent of 'platform'
+    # platform/app.py -> parent is CPA -> CPA/studying
+    materials_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'studying')
+    syllabus = {}
+    
+    if not os.path.exists(materials_dir):
+        return {}
+        
+    for filename in os.listdir(materials_dir):
+        if filename.endswith('.xlsx') and not filename.startswith('~$'): # Ignore temp files
+            try:
+                # Extract subject from filename (e.g., "1-財務会計論コース.xlsx" -> "財務会計論")
+                parts = filename.split('-')
+                if len(parts) > 1:
+                    subject_name = parts[1].replace('コース.xlsx', '')
+                else:
+                    subject_name = filename.replace('.xlsx', '')
+                
+                # Read Excel
+                file_path = os.path.join(materials_dir, filename)
+                df = pd.read_excel(file_path, header=1)
+                
+                # Fill merged cells (NaN) with previous value
+                if 'カテゴリ' in df.columns:
+                    df['カテゴリ'] = df['カテゴリ'].ffill()
+                if 'サブカテゴリ' in df.columns:
+                    df['サブカテゴリ'] = df['サブカテゴリ'].ffill()
+                
+                # Filter relevant columns
+                if '講座名' in df.columns:
+                    items = []
+                    for _, row in df.iterrows():
+                        if pd.notna(row['講座名']):
+                            items.append({
+                                'category': row.get('カテゴリ', ''),
+                                'subcategory': row.get('サブカテゴリ', ''),
+                                'title': row['講座名'],
+                                'duration': row.get('再生時間/標準時間', '')
+                            })
+                    
+                    # Find corresponding PDF
+                    pdf_path = os.path.join(materials_dir, filename.replace('.xlsx', '.pdf'))
+                    has_pdf = os.path.exists(pdf_path)
+                    
+                    syllabus[subject_name] = {
+                        'items': items,
+                        'pdf_path': pdf_path if has_pdf else None,
+                        'excel_path': file_path
+                    }
+            except Exception as e:
+                print(f"Error loading {filename}: {e}")
+                
+    return syllabus
+
+study_materials = load_study_materials()
+
 roadmap_md = """
 # CPA 1.5 Year Strategy Roadmap
 
@@ -426,7 +484,7 @@ with st.sidebar.container():
     st.caption(f"XP: {curr_xp} / {next_level_xp}")
 
 st.sidebar.markdown("---")
-page = st.sidebar.radio("Navigation", ["Dashboard", "Study Timer", "Mock Exams", "Scores", "Drills", "Survival Mode ⚡", "Roadmap", "Big 4 Job Hunting"])
+page = st.sidebar.radio("Navigation", ["Dashboard", "My Syllabus 📚", "Study Timer", "Mock Exams", "Scores", "Drills", "Survival Mode ⚡", "Roadmap", "Big 4 Job Hunting"])
 
 if page == "Dashboard":
     st.header("Dashboard")
@@ -507,6 +565,93 @@ if page == "Dashboard":
         * Goal: Complete basic lectures by Aug 2026
         * Next Milestone: Dec 2026 Short Exam
         """)
+
+elif page == "My Syllabus 📚":
+    st.header("My Study Syllabus 📚")
+    st.info("Based on your uploaded materials in 'studying' folder.")
+    
+    if not study_materials:
+        st.warning("No study materials found in 'studying' folder.")
+    else:
+        # Progress Tracking
+        if 'syllabus_progress' not in st.session_state.data:
+            st.session_state.data['syllabus_progress'] = []
+            
+        completed_items = set(st.session_state.data['syllabus_progress'])
+        
+        # Callback for checkbox
+        def toggle_syllabus(key):
+            if key in st.session_state.data['syllabus_progress']:
+                st.session_state.data['syllabus_progress'].remove(key)
+            else:
+                st.session_state.data['syllabus_progress'].append(key)
+                # Add XP for completing a lecture!
+                st.session_state.data['xp'] = st.session_state.data.get('xp', 0) + 50
+                st.toast("Lecture Completed! +50 XP", icon="🎓")
+            save_data(st.session_state.data)
+
+        # Tabs for subjects
+        subjects = list(study_materials.keys())
+        tabs = st.tabs(subjects)
+        
+        for i, subject in enumerate(subjects):
+            with tabs[i]:
+                data = study_materials[subject]
+                items = data['items']
+                pdf_path = data['pdf_path']
+                excel_path = data['excel_path']
+                
+                # Header Actions
+                c1, c2 = st.columns([3, 1])
+                with c1:
+                    st.subheader(f"{subject} ({len(items)} Lectures)")
+                with c2:
+                    if pdf_path:
+                        if st.button(f"📄 Open PDF", key=f"pdf_{subject}"):
+                            try:
+                                os.startfile(pdf_path)
+                                st.toast(f"Opening {subject} PDF...", icon="🚀")
+                            except Exception as e:
+                                st.error(f"Cannot open PDF: {e}")
+                    
+                    if st.button(f"📊 Open Excel", key=f"excel_{subject}"):
+                        try:
+                            os.startfile(excel_path)
+                            st.toast(f"Opening {subject} Excel...", icon="📊")
+                        except Exception as e:
+                            st.error(f"Cannot open Excel: {e}")
+
+                
+                # Progress Bar for Subject
+                subject_completed = [item['title'] for item in items if f"{subject}|{item['title']}" in completed_items]
+                prog = len(subject_completed) / len(items) if items else 0
+                st.progress(prog)
+                st.caption(f"Progress: {len(subject_completed)} / {len(items)} ({prog:.1%})")
+                
+                # Group by Category/Subcategory
+                df = pd.DataFrame(items)
+                if not df.empty and 'category' in df.columns:
+                    for cat, group in df.groupby('category'):
+                        with st.expander(f"📂 {cat}", expanded=True):
+                            for _, row in group.iterrows():
+                                title = row['title']
+                                unique_key = f"{subject}|{title}"
+                                is_done = unique_key in completed_items
+                                
+                                c_chk, c_txt, c_time = st.columns([0.5, 4, 1.5])
+                                with c_chk:
+                                    st.checkbox("", value=is_done, key=f"chk_{unique_key}", on_change=toggle_syllabus, kwargs={'key': unique_key})
+                                
+                                with c_txt:
+                                    if is_done:
+                                        st.markdown(f"~~{title}~~")
+                                    else:
+                                        st.markdown(f"**{title}**")
+                                        if row['subcategory']:
+                                            st.caption(f"└ {row['subcategory']}")
+                                            
+                                with c_time:
+                                    st.caption(f"⏱️ {row['duration']}")
 
 elif page == "Study Timer":
     st.header("Study Timer")

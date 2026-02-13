@@ -1218,8 +1218,18 @@ elif page == "Big 4 Job Hunting":
         """)
 
     with tab2:
-        st.subheader("📊 Big 4 Audit Firms Comparison")
+        st.subheader("📊 Big 4 Audit Firms vs. Tech Giants Comparison")
         
+        # Personalized Ranking Section
+        st.markdown("### 🏆 Personalized Ranking for You (ML/DS Master's Student)")
+        st.info("""
+        Based on your **CPA Goal** + **ML/Data Science Strength**, here is your recommended priority:
+        
+        1.  🥇 **PwC Aarata / EY ShinNihon**: Best balance of **Digital Audit** innovation and **CPA License** support. Both have dedicated "Digital" tracks for auditors.
+        2.  🥈 **Deloitte Tohmatsu**: Massive scale and data access. Great for "Audit Analytics" but slightly more traditional hierarchy.
+        3.  🥉 **Accenture / IBM**: **Top Tier for Tech**, but ⚠️ **WARNING**: You likely **cannot** complete the CPA practical experience (Jitsumu Hoshu) requirement here. Great for *after* getting your CPA, or if you pivot to Consulting.
+        """)
+
         # Radar Chart
         st.subheader("Visual Comparison (Illustrative)")
         categories = ['Tech/AI Focus', 'Global Network', 'Domestic Scale', 'IPO/Venture', 'Work-Life Balance']
@@ -1254,6 +1264,20 @@ elif page == "Big 4 Job Hunting":
             fill='toself',
             name='PwC Aarata'
         ))
+        # Accenture (Comparison)
+        fig.add_trace(go.Scatterpolar(
+            r=[5, 5, 5, 2, 2],
+            theta=categories,
+            fill='toself',
+            name='Accenture (Ref)'
+        ))
+        # IBM (Comparison)
+        fig.add_trace(go.Scatterpolar(
+            r=[5, 5, 4, 1, 4],
+            theta=categories,
+            fill='toself',
+            name='IBM (Ref)'
+        ))
 
         fig.update_layout(
             polar=dict(
@@ -1262,11 +1286,12 @@ elif page == "Big 4 Job Hunting":
                     range=[0, 5]
                 )),
             showlegend=True,
-            height=400,
+            height=500,
             margin=dict(l=40, r=40, t=20, b=20)
         )
         st.plotly_chart(fig, use_container_width=True)
         
+        st.subheader("🏢 Firm Details")
         firms_data = [
             {
                 "Firm Name (JP)": "有限責任監査法人トーマツ (Tohmatsu)",
@@ -1295,6 +1320,20 @@ elif page == "Big 4 Job Hunting":
                 "Key Strengths": "Global integration, strong advisory connection, newer organizational style.",
                 "Culture": "Global, Flat hierarchy, Innovative.",
                 "Link": "https://www.pwc.com/jp/ja/careers/audit.html"
+            },
+            {
+                "Firm Name (JP)": "アクセンチュア (Accenture)",
+                "Network": "Accenture",
+                "Key Strengths": "Absolute leader in DX/IT Consulting. High salary.",
+                "Culture": "Up or Out (Evolving), High performance, Tech-first.",
+                "Link": "https://www.accenture.com/jp-ja/careers"
+            },
+            {
+                "Firm Name (JP)": "日本IBM (IBM Japan)",
+                "Network": "IBM",
+                "Key Strengths": "Deep research (Watson), Hybrid Cloud, Legacy stability.",
+                "Culture": "Engineering-driven, Mature, Good work-life balance.",
+                "Link": "https://www.ibm.com/jp-ja/employment"
             }
         ]
         

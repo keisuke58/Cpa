@@ -47,9 +47,116 @@
             <button onclick="switchTab('timer')" class="flex-1 py-3 px-4 rounded-lg hover:bg-gray-50 focus:outline-none font-medium text-gray-500 transition" id="tab-timer"><i class="fas fa-stopwatch mr-2"></i>Study Timer</button>
             <button onclick="switchTab('schedule')" class="flex-1 py-3 px-4 rounded-lg hover:bg-gray-50 focus:outline-none font-medium text-gray-500 transition" id="tab-schedule"><i class="fas fa-calendar-alt mr-2"></i>Mock Exams</button>
             <button onclick="switchTab('scores')" class="flex-1 py-3 px-4 rounded-lg hover:bg-gray-50 focus:outline-none font-medium text-gray-500 transition" id="tab-scores"><i class="fas fa-chart-line mr-2"></i>Scores</button>
-            <button onclick="switchTab('drills')" class="flex-1 py-3 px-4 rounded-lg hover:bg-gray-50 focus:outline-none font-semibold text-blue-600 transition" id="tab-drills"><i class="fas fa-pencil-alt mr-2"></i>Drills <span class="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full ml-1">NEW</span></button>
+            <button onclick="switchTab('drills')" class="flex-1 py-3 px-4 rounded-lg hover:bg-gray-50 focus:outline-none font-semibold text-gray-500 transition" id="tab-drills"><i class="fas fa-pencil-alt mr-2"></i>Drills <span class="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full ml-1">NEW</span></button>
             <button onclick="switchTab('roadmap')" class="flex-1 py-3 px-4 rounded-lg hover:bg-gray-50 focus:outline-none font-medium text-gray-500 transition" id="tab-roadmap"><i class="fas fa-map mr-2"></i>Roadmap</button>
+            <button onclick="switchTab('jobhunting')" class="flex-1 py-3 px-4 rounded-lg hover:bg-gray-50 focus:outline-none font-medium text-gray-500 transition" id="tab-jobhunting"><i class="fas fa-briefcase mr-2"></i>Job Hunting</button>
         </nav>
+
+        <!-- Tab: Job Hunting -->
+        <div id="jobhunting" class="tab-content">
+            <div class="card">
+                <h2 class="text-2xl font-bold mb-6 text-gray-800 dark:text-white">🏢 Big 4 CPA Job Hunting Strategy</h2>
+                
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold mb-4 text-blue-600">📅 Strategy & Timeline</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
+                            <thead class="bg-gray-100 dark:bg-gray-700">
+                                <tr>
+                                    <th class="py-3 px-4 text-left font-semibold text-gray-600 dark:text-gray-200">Period</th>
+                                    <th class="py-3 px-4 text-left font-semibold text-gray-600 dark:text-gray-200">Activity</th>
+                                    <th class="py-3 px-4 text-left font-semibold text-gray-600 dark:text-gray-200">Details</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                                <tr>
+                                    <td class="py-3 px-4">August (Late)</td>
+                                    <td class="py-3 px-4 font-medium">Essay Exam Ends</td>
+                                    <td class="py-3 px-4 text-gray-500">Rest for a few days, then prepare for briefings.</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 px-4">September</td>
+                                    <td class="py-3 px-4 font-medium">Firm Briefings</td>
+                                    <td class="py-3 px-4 text-gray-500">Attend online/offline sessions. Key for networking.</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 px-4">October</td>
+                                    <td class="py-3 px-4 font-medium">Entry Sheet (ES)</td>
+                                    <td class="py-3 px-4 text-gray-500">Prepare resumes. Focus on 'Why this firm?'</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 px-4">November (Mid)</td>
+                                    <td class="py-3 px-4 font-medium">Results Announcement</td>
+                                    <td class="py-3 px-4 text-gray-500">Official passing results released.</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 px-4">November (Late)</td>
+                                    <td class="py-3 px-4 font-medium">Interviews & Offers</td>
+                                    <td class="py-3 px-4 text-gray-500">Intensive interview period. Offers issued quickly.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-xl font-bold mb-4 text-blue-600">📊 Big 4 Comparison</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Deloitte -->
+                        <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:shadow-lg transition">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h4 class="text-lg font-bold">Deloitte Tohmatsu</h4>
+                                    <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Deloitte</span>
+                                </div>
+                                <a href="https://www2.deloitte.com/jp/ja/pages/audit/topics/recruit-index.html" target="_blank" class="text-blue-500 hover:text-blue-700"><i class="fas fa-external-link-alt"></i></a>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-2"><strong>Strengths:</strong> Largest scale, aggressive growth, strong in IPOs.</p>
+                            <p class="text-sm text-gray-600"><strong>Culture:</strong> Meritocratic, Sports-oriented, High energy.</p>
+                        </div>
+                        
+                        <!-- KPMG -->
+                        <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:shadow-lg transition">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h4 class="text-lg font-bold">KPMG AZSA</h4>
+                                    <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">KPMG</span>
+                                </div>
+                                <a href="https://home.kpmg/jp/ja/home/careers.html" target="_blank" class="text-blue-500 hover:text-blue-700"><i class="fas fa-external-link-alt"></i></a>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-2"><strong>Strengths:</strong> Balanced portfolio, strong domestic manufacturing.</p>
+                            <p class="text-sm text-gray-600"><strong>Culture:</strong> Conservative, Collaborative, 'Gentlemanly'.</p>
+                        </div>
+
+                        <!-- EY -->
+                        <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:shadow-lg transition">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h4 class="text-lg font-bold">EY ShinNihon</h4>
+                                    <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">EY</span>
+                                </div>
+                                <a href="https://www.ey.com/ja_jp/careers/audit" target="_blank" class="text-blue-500 hover:text-blue-700"><i class="fas fa-external-link-alt"></i></a>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-2"><strong>Strengths:</strong> Long history, large client base, Digital Audit.</p>
+                            <p class="text-sm text-gray-600"><strong>Culture:</strong> Traditional yet transforming, Diversity focus.</p>
+                        </div>
+
+                        <!-- PwC -->
+                        <div class="border border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:shadow-lg transition">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h4 class="text-lg font-bold">PwC Aarata</h4>
+                                    <span class="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded">PwC</span>
+                                </div>
+                                <a href="https://www.pwc.com/jp/ja/careers/audit.html" target="_blank" class="text-blue-500 hover:text-blue-700"><i class="fas fa-external-link-alt"></i></a>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-2"><strong>Strengths:</strong> Global integration, Advisory connection.</p>
+                            <p class="text-sm text-gray-600"><strong>Culture:</strong> Global, Flat hierarchy, Innovative.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Tab: Drills -->
         <div id="drills" class="tab-content active">

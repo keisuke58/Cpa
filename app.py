@@ -359,7 +359,7 @@ roadmap_md = """
 
 # Navigation
 st.sidebar.title("CPA Platform 2027")
-page = st.sidebar.radio("Navigation", ["Dashboard", "Study Timer", "Mock Exams", "Scores", "Drills", "Roadmap"])
+page = st.sidebar.radio("Navigation", ["Dashboard", "Study Timer", "Mock Exams", "Scores", "Drills", "Roadmap", "Big 4 Job Hunting"])
 
 if page == "Dashboard":
     st.header("Dashboard")
@@ -636,3 +636,75 @@ elif page == "Drills":
 elif page == "Roadmap":
     st.header("Roadmap")
     st.markdown(roadmap_md)
+
+elif page == "Big 4 Job Hunting":
+    st.header("🏢 Big 4 CPA Job Hunting Strategy")
+    st.markdown("Strategy guide and comparison for the major audit firms in Japan.")
+
+    tab1, tab2 = st.tabs(["Strategy & Timeline", "Big 4 Comparison"])
+
+    with tab1:
+        st.subheader("📅 Job Hunting Timeline (Typical)")
+        st.info("The job hunting season for CPA candidates peaks immediately after the August Essay Exam.")
+        
+        timeline_data = [
+            {"Period": "August (Late)", "Activity": "Essay Exam Ends", "Details": "Rest for a few days, then prepare for briefings."},
+            {"Period": "September", "Activity": "Firm Briefings (Setsumeikai)", "Details": "Attend online/offline sessions. Key for networking."},
+            {"Period": "October", "Activity": "Entry Sheet (ES) Submission", "Details": "Prepare resumes. Focus on 'Why this firm?'"},
+            {"Period": "November (Mid)", "Activity": "Results Announcement", "Details": "Official passing results released."},
+            {"Period": "November (Late)", "Activity": "Interviews & Offers", "Details": "Intensive interview period (1-2 weeks). Offers issued quickly."}
+        ]
+        st.table(pd.DataFrame(timeline_data))
+
+        st.subheader("💡 Key Strategies")
+        st.markdown("""
+        *   **Start Early**: Don't wait for the results. Attend briefings in September.
+        *   **Differentiate**: All Big 4 do audit. Focus on culture, specific clients (e.g., Tech, Auto), or non-audit opportunities (IPO, Advisory).
+        *   **Networking**: Use alumni connections (OB/OG Visits) if possible.
+        """)
+
+    with tab2:
+        st.subheader("📊 Big 4 Audit Firms Comparison")
+        
+        firms_data = [
+            {
+                "Firm Name (JP)": "有限責任監査法人トーマツ (Tohmatsu)",
+                "Network": "Deloitte",
+                "Key Strengths": "Largest scale, aggressive growth, strong in IPOs and Venture support.",
+                "Culture": "Meritocratic, Sports-oriented, High energy.",
+                "Link": "https://www2.deloitte.com/jp/ja/pages/audit/topics/recruit-index.html"
+            },
+            {
+                "Firm Name (JP)": "有限責任 あずさ監査法人 (AZSA)",
+                "Network": "KPMG",
+                "Key Strengths": "Balanced portfolio, strong domestic manufacturing clients.",
+                "Culture": "Conservative, Collaborative, 'Gentlemanly'.",
+                "Link": "https://home.kpmg/jp/ja/home/careers.html"
+            },
+            {
+                "Firm Name (JP)": "EY新日本有限責任監査法人 (EY ShinNihon)",
+                "Network": "EY",
+                "Key Strengths": "Long history, large number of listed clients, strong Digital Audit focus.",
+                "Culture": "Traditional yet transforming, Diversity focus.",
+                "Link": "https://www.ey.com/ja_jp/careers/audit"
+            },
+            {
+                "Firm Name (JP)": "PwCあらた有限責任監査法人 (PwC Aarata)",
+                "Network": "PwC",
+                "Key Strengths": "Global integration, strong advisory connection, newer organizational style.",
+                "Culture": "Global, Flat hierarchy, Innovative.",
+                "Link": "https://www.pwc.com/jp/ja/careers/audit.html"
+            }
+        ]
+        
+        df_firms = pd.DataFrame(firms_data)
+        
+        # Display as a styled table or cards
+        for firm in firms_data:
+            with st.expander(f"{firm['Firm Name (JP)']} ({firm['Network']})", expanded=True):
+                col1, col2 = st.columns([3, 1])
+                with col1:
+                    st.markdown(f"**Strengths:** {firm['Key Strengths']}")
+                    st.markdown(f"**Culture:** {firm['Culture']}")
+                with col2:
+                    st.link_button("Recruit Page", firm['Link'])

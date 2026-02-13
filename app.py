@@ -452,6 +452,22 @@ def load_study_materials():
                     'path': os.path.join(pdf_dir, f)
                 })
                 
+    # Also load standalone PDFs in the root of 'studying' that are not paired with an Excel file
+    # Get list of PDF paths already associated with courses
+    paired_pdfs = set()
+    for subject_data in syllabus.values():
+        if subject_data['pdf_path']:
+            paired_pdfs.add(os.path.normpath(subject_data['pdf_path']))
+            
+    for filename in os.listdir(materials_dir):
+        if filename.lower().endswith('.pdf'):
+            full_path = os.path.join(materials_dir, filename)
+            if os.path.normpath(full_path) not in paired_pdfs:
+                extra_pdfs.append({
+                    'name': filename,
+                    'path': full_path
+                })
+                
     return syllabus, extra_pdfs
 
 study_materials, extra_pdfs = load_study_materials()

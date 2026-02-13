@@ -484,7 +484,14 @@ with st.sidebar.container():
     st.caption(f"XP: {curr_xp} / {next_level_xp}")
 
 st.sidebar.markdown("---")
-page = st.sidebar.radio("Navigation", ["Dashboard", "My Syllabus 📚", "Study Timer", "Mock Exams", "Scores", "Drills", "Survival Mode ⚡", "Roadmap", "Big 4 Job Hunting"])
+
+# Quick Links
+if st.sidebar.button("🔗 Studying.jp Login"):
+    import webbrowser
+    webbrowser.open_new_tab("https://member.studying.jp/top/")
+
+st.sidebar.markdown("---")
+page = st.sidebar.radio("Navigation", ["Dashboard", "My Syllabus 📚", "Old Exams 📄", "Study Timer", "Mock Exams", "Scores", "Drills", "Survival Mode ⚡", "Roadmap", "Big 4 Job Hunting"])
 
 if page == "Dashboard":
     st.header("Dashboard")
@@ -652,6 +659,39 @@ elif page == "My Syllabus 📚":
                                             
                                 with c_time:
                                     st.caption(f"⏱️ {row['duration']}")
+
+elif page == "Old Exams 📄":
+    st.header("Old Exam Papers 📄")
+    
+    # Path to EXAM folder
+    # platform/app.py -> CPA/platform -> CPA/EXAM
+    exam_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'EXAM')
+    
+    if not os.path.exists(exam_dir):
+        st.error(f"EXAM directory not found at: {exam_dir}")
+    else:
+        files = [f for f in os.listdir(exam_dir) if f.lower().endswith('.pdf')]
+        
+        if not files:
+            st.warning("No PDF exam papers found.")
+        else:
+            st.write(f"Found {len(files)} exam papers.")
+            
+            for f in sorted(files):
+                col1, col2 = st.columns([4, 1])
+                with col1:
+                    st.markdown(f"📄 **{f}**")
+                with col2:
+                    if st.button("Open", key=f"open_exam_{f}"):
+                        try:
+                            file_path = os.path.join(exam_dir, f)
+                            os.startfile(file_path)
+                            st.toast(f"Opening {f}...", icon="🚀")
+                        except Exception as e:
+                            st.error(f"Error opening file: {e}")
+            
+            st.markdown("---")
+            st.info("💡 Tip: Use these papers to practice time management.")
 
 elif page == "Study Timer":
     st.header("Study Timer")

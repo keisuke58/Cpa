@@ -1548,9 +1548,9 @@ elif page == "Future 🚀":
             {"Age": 29, "Year": 2031, "Phase": "Growth", "Event": "Promoted to Senior Associate. Lead ML Projects.", "Status": "Planned"},
             {"Age": 30, "Year": 2032, "Phase": "Life", "Event": "Marriage 💍 (Target)", "Status": "Life"},
             {"Age": 32, "Year": 2034, "Phase": "Growth", "Event": "Manager Promotion. Deep expertise in AI Governance.", "Status": "Planned"},
-            {"Age": 35, "Year": 2037, "Phase": "Launch", "Event": "🚀 FOUND YOUR COMPANY (AI Audit SaaS). Seed Round.", "Status": "Dream"},
-            {"Age": 40, "Year": 2042, "Phase": "Scale", "Event": "Series B Funding. Expansion to US/EU Markets.", "Status": "Dream"},
-            {"Age": 45, "Year": 2047, "Phase": "Exit", "Event": "IPO or Strategic Acquisition. Financial Freedom.", "Status": "Dream"},
+            {"Age": 35, "Year": 2037, "Phase": "Launch", "Event": "🚀 FOUND YOUR COMPANY (AI Audit Firm). Disruption.", "Status": "Dream"},
+            {"Age": 40, "Year": 2042, "Phase": "Scale", "Event": "Global Expansion. AI-First Assurance.", "Status": "Dream"},
+            {"Age": 45, "Year": 2047, "Phase": "Exit", "Event": "IPO or Strategic Partnership. Financial Freedom.", "Status": "Dream"},
             {"Age": 50, "Year": 2052, "Phase": "Invest", "Event": "Angel Investor for Deep Tech. University Lecturer.", "Status": "Vision"},
             {"Age": 60, "Year": 2062, "Phase": "Legacy", "Event": "Establish Scholarship Foundation.", "Status": "Vision"},
             {"Age": 80, "Year": 2082, "Phase": "Wisdom", "Event": "Write Memoirs. Mentor next gen.", "Status": "Vision"},
@@ -1630,22 +1630,31 @@ elif page == "Future 🚀":
         st.warning("⚠️ **The Founder Gap**: Notice the dip at age 35. That is the 'Valley of Death'. You need ~10M JPY liquidity before launching.")
 
     with tab3:
-        st.subheader("🦄 Entrepreneurship Blueprint: 'AuditTech'")
+        st.subheader("🦄 Entrepreneurship Blueprint: 'Next-Gen AI Audit Firm'")
+        
+        st.info("💡 **Why AI Audit Firm > SaaS?**")
         st.markdown("""
-        **Vision**: Automate the "boring" parts of audit using **LLMs & GNNs**, allowing CPAs to focus on high-level risk assessment.
+        *   **SaaS Weakness**: High churn, low barrier to entry, "race to the bottom" pricing. Anyone can build a tool.
+        *   **Audit Strength**: **Regulatory Moat**. Only licensed firms can sign off on financial statements. High switching costs.
+        *   **The Opportunity**: Build a **Tech-Enabled Audit Firm** (Service + Tech) that operates at 10x efficiency of Big 4, undercutting their fees while maintaining higher margins.
+        """)
+
+        st.markdown("""
+        **Vision**: Replace the "Army of Associates" with **Autonomous AI Agents**. Focus on high-level judgement and client relationships.
         
         **Phase 1: The "Insider" (Age 26-34)**
-        *   **Goal**: Become a domain expert. Understand *exactly* where the inefficiencies are in Big 4.
-        *   **Action**: Volunteer for "Digital Transformation" projects inside the firm. Network with Partners.
+        *   **Goal**: Become a domain expert (CPA License is the Key). Understand *exactly* where the inefficiencies are in Big 4.
+        *   **Action**: Lead "Digital Transformation" projects. Learn the *regulatory constraints* inside out.
         
         **Phase 2: The "Prototype" (Age 34-35)**
-        *   **Goal**: Build MVP (Minimum Viable Product).
-        *   **Tech**: Python, LangChain, Neo4j (Graph DB).
-        *   **Team**: Find a Co-founder (Business/Sales focus) since you are Tech/Product.
+        *   **Goal**: Build the "AI Auditor" (Internal Tool).
+        *   **Tech**: RAG (Retrieval Augmented Generation) for accounting standards, GNNs for transaction anomaly detection.
+        *   **Team**: You (CTO/CEO) + Experienced Audit Partner (for credibility/signing).
         
-        **Phase 3: The "Launch" (Age 35)**
-        *   **Target**: Mid-tier audit firms (who can't afford internal dev teams).
-        *   **Product**: "Auto-Vouching AI" or "Fraud Detection Copilot".
+        **Phase 3: The "Disruption" (Age 35+)**
+        *   **Target**: Mid-cap public companies (tired of high Big 4 fees).
+        *   **Product**: **"AI-First Statutory Audit"**. 
+        *   **Value Prop**: "Faster audit, lower fees, deeper insights." Not just a software tool, but the *full service*.
         """)
 
     with tab4:

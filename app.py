@@ -1189,8 +1189,89 @@ elif page == "Survival Mode ⚡":
                     st.rerun()
 
 elif page == "Roadmap":
-    st.header("Roadmap")
-    st.markdown(roadmap_md)
+    st.header("🗺️ CPA Exam Strategy Roadmap (2026-2027)")
+    
+    # 1. Countdown Section
+    today = date.today()
+    tanto_date = date(2027, 5, 23) # Estimated
+    ronbun_date = date(2027, 8, 20) # Estimated
+    
+    days_tanto = (tanto_date - today).days
+    days_ronbun = (ronbun_date - today).days
+    
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Days to May Short Exam", f"{days_tanto} Days", "Target: Pass")
+    col2.metric("Days to Aug Essay Exam", f"{days_ronbun} Days", "Final Goal")
+    col3.metric("Current Phase", "Foundation (2026)", "Build Habits")
+    
+    st.divider()
+
+    # 2. Tabs
+    tab1, tab2, tab3 = st.tabs(["📊 Visual Schedule (Gantt)", "🗓️ Monthly Strategy", "⏰ Daily Routine"])
+    
+    with tab1:
+        st.subheader("Strategic Timeline")
+        # Gantt Chart Data
+        df_gantt = pd.DataFrame([
+            dict(Task="Foundation (Fin/Mgmt)", Start='2026-02-01', Finish='2026-06-30', Phase='Phase 0: Foundation'),
+            dict(Task="Audit & Company Law", Start='2026-04-01', Finish='2026-09-30', Phase='Phase 0: Foundation'),
+            dict(Task="Tax Law & Electives", Start='2026-07-01', Finish='2026-12-31', Phase='Phase 0: Foundation'),
+            dict(Task="Dec Short (Practice)", Start='2026-10-01', Finish='2026-12-13', Phase='Phase 0: Foundation'),
+            dict(Task="Short Exam Mastery", Start='2027-01-01', Finish='2027-05-23', Phase='Phase 1: Short Exam'),
+            dict(Task="Essay Sprint", Start='2027-05-24', Finish='2027-08-20', Phase='Phase 2: Essay Sprint'),
+        ])
+        
+        # Create Gantt
+        fig = px.timeline(df_gantt, x_start="Start", x_end="Finish", y="Task", color="Phase", 
+                          title="CPA Exam 1.5 Year Plan",
+                          color_discrete_sequence=px.colors.qualitative.Prism)
+        fig.update_yaxes(autorange="reversed") # Task order top-to-bottom
+        fig.update_layout(height=400)
+        st.plotly_chart(fig, use_container_width=True)
+        
+        st.info("💡 **Golden Route**: Pass May Short -> Pass August Essay in one go.")
+
+    with tab2:
+        st.subheader("Detailed Monthly Strategy")
+        
+        with st.expander("Phase 0: Foundation (2026)", expanded=True):
+            st.markdown("""
+            *   **Feb - Mar**: Build study habits. Focus on Fin/Mgmt Accounting basics (Calculations).
+            *   **Apr - Jun**: Start Applied theory. Begin Audit & Company Law.
+            *   **Jul - Sep**: **CRITICAL** Start Tax Law & Electives (Management/Statistics).
+            *   **Oct - Dec**: **Dec Short Exam Challenge**. Aim for 60%+ even if you fail.
+            """)
+            
+        with st.expander("Phase 1: Short Exam Mastery (Jan - May 2027)"):
+            st.markdown("""
+            *   **Jan - Mar**: Solidify basics. Aim for 75%+ in drills. Focus on weak areas.
+            *   **Apr**: Mock Exams (TAC/Ohara). Analyze errors thoroughly.
+            *   **May**: Peak conditioning. Rote memorization of text (Audit/Company Law). **PASS EXAM**.
+            """)
+            
+        with st.expander("Phase 2: Essay Sprint (Jun - Aug 2027)"):
+            st.markdown("""
+            *   **Jun**: Revive Tax/Elective knowledge (often forgotten during Short prep).
+            *   **Jul**: Output training (Writing). Learn "Key Phrases" for theory questions.
+            *   **Aug**: Final adjustments. Health management is key. **PASS EXAM**.
+            """)
+
+    with tab3:
+        st.subheader("⏰ Ideal Daily Routine (Student/Full-time Study)")
+        
+        schedule_data = [
+            {"Time": "07:00 - 08:00", "Activity": "Wake up / Light Breakfast / Review Vocab"},
+            {"Time": "08:00 - 11:00", "Activity": "🧠 **Deep Work 1**: Financial Accounting (Calc) - 3h"},
+            {"Time": "11:00 - 12:00", "Activity": "Lunch / Nap (20m)"},
+            {"Time": "12:00 - 15:00", "Activity": "🧠 **Deep Work 2**: Management Accounting / Theory - 3h"},
+            {"Time": "15:00 - 16:00", "Activity": "Gym / Walk / Break"},
+            {"Time": "16:00 - 19:00", "Activity": "🧠 **Deep Work 3**: Corporate Law / Audit - 3h"},
+            {"Time": "19:00 - 20:00", "Activity": "Dinner / Relax"},
+            {"Time": "20:00 - 22:00", "Activity": "📖 **Review**: Weak areas / Next day planning - 2h"},
+            {"Time": "22:00 - 23:00", "Activity": "Wind down / Sleep"},
+        ]
+        st.table(pd.DataFrame(schedule_data))
+        st.success("Target: **10+ Hours/Day** of high-quality study.")
 
 elif page == "Big 4 Job Hunting":
     st.header("🏢 Big 4 CPA Job Hunting Strategy")

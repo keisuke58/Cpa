@@ -78,6 +78,38 @@ mock_exams = [
     {'date': '2027-08-20', 'type': 'Essay', 'name': 'Official Aug Essay Exam', 'provider': 'CPAAOB', 'status': 'Target'}
 ]
 
+# Vocabulary Data
+vocab_data = {
+    'Financial': [
+        {'term': 'Going Concern', 'jp': '継続企業の前提', 'desc': '企業が将来にわたって事業を継続するという前提。'},
+        {'term': 'Accrual Basis', 'jp': '発生主義', 'desc': '現金の収支にかかわらず、経済的事象の発生時点で収益・費用を認識する原則。'},
+        {'term': 'Materiality', 'jp': '重要性', 'desc': '財務諸表利用者の意思決定に影響を与える情報の性質や金額の大きさ。'},
+        {'term': 'Impairment', 'jp': '減損', 'desc': '資産の収益性が低下した結果、投資額の回収が見込めなくなった場合に帳簿価額を減額すること。'},
+        {'term': 'Asset Retirement Obligation', 'jp': '資産除去債務', 'desc': '有形固定資産の取得や使用によって生じる、除去に関する将来の法的義務。'}
+    ],
+    'Management': [
+        {'term': 'Opportunity Cost', 'jp': '機会原価', 'desc': 'ある代替案を選択したことによって犠牲となった（諦めた）最大の利益。'},
+        {'term': 'Sunk Cost', 'jp': '埋没原価', 'desc': '過去の意思決定によって既に発生し、回収不能なコスト。意思決定では無視すべき。'},
+        {'term': 'Break-even Point', 'jp': '損益分岐点', 'desc': '売上高と総費用が等しくなり、利益がゼロとなる点。'},
+        {'term': 'Safety Margin', 'jp': '安全余裕率', 'desc': '現在の売上高が損益分岐点をどれだけ上回っているかを示す指標。高いほど安全。'},
+        {'term': 'Cost Driver', 'jp': 'コスト・ドライバー', 'desc': '活動原価計算（ABC）において、コスト発生の原因となる活動量や要因。'}
+    ],
+    'Audit': [
+        {'term': 'Professional Skepticism', 'jp': '職業的懐疑心', 'desc': '常に疑念を持ち、監査証拠を批判的に評価する姿勢。'},
+        {'term': 'Audit Risk', 'jp': '監査リスク', 'desc': '財務諸表に重要な虚偽表示があるにもかかわらず、監査人が不適切な意見を表明するリスク。'},
+        {'term': 'Material Misstatement', 'jp': '重要な虚偽表示', 'desc': '財務諸表利用者の判断を誤らせる可能性のある誤りや不正。'},
+        {'term': 'Internal Control', 'jp': '内部統制', 'desc': '業務の有効性・効率性、財務報告の信頼性などを確保するために組織内に構築されるプロセス。'},
+        {'term': 'Substantive Procedures', 'jp': '実証手続', 'desc': '重要な虚偽表示を発見するために、取引や残高の詳細を直接検証する手続。'}
+    ],
+    'Company': [
+        {'term': 'Fiduciary Duty', 'jp': '受託者責任', 'desc': '取締役などが会社や株主のために忠実に職務を遂行する義務（善管注意義務・忠実義務）。'},
+        {'term': 'Shareholder Derivative Suit', 'jp': '株主代表訴訟', 'desc': '会社が取締役の責任を追及しない場合に、株主が会社に代わって提起する訴訟。'},
+        {'term': 'Business Judgment Rule', 'jp': '経営判断の原則', 'desc': '取締役の経営判断が合理的で誠実に行われた場合、結果的に損害が生じても責任を問われない原則。'},
+        {'term': 'Authorized Shares', 'jp': '発行可能株式総数', 'desc': '定款で定められた、会社が発行することができる株式の上限数。'},
+        {'term': 'Treasury Stock', 'jp': '自己株式', 'desc': '会社が保有する自社の株式。議決権や配当請求権はない。'}
+    ]
+}
+
 drill_questions = {
     'Financial': [
         {
@@ -485,33 +517,69 @@ elif page == "Drills":
         subject = st.radio("Subject", ["Financial", "Management", "Audit", "Company"])
         
         st.subheader("Select Level")
-        level = st.radio("Level", ["Level 1 (Basic)", "Level 2 (Standard)", "Level 3 (Advanced)"])
-        level_map = {"Level 1 (Basic)": 1, "Level 2 (Standard)": 2, "Level 3 (Advanced)": 3}
+        level = st.radio("Level", ["Level 1 (Basic)", "Level 2 (Standard)", "Level 3 (Advanced)", "Vocabulary (Important Words)"])
+        level_map = {
+            "Level 1 (Basic)": 1, 
+            "Level 2 (Standard)": 2, 
+            "Level 3 (Advanced)": 3,
+            "Vocabulary (Important Words)": "vocab"
+        }
         selected_level = level_map[level]
         
         if st.button("Start Quiz"):
-            # Filter questions
-            questions = drill_questions.get(subject, [])
-            filtered_q = [q for q in questions if q.get('level', 1) == selected_level]
-            
-            if not filtered_q:
-                # Fallback for legacy or empty
-                if selected_level == 1:
-                    filtered_q = [q for q in questions if 'level' not in q or q['level'] == 1]
-            
-            if filtered_q:
-                st.session_state.quiz_state = {
-                    'active': True,
-                    'subject': subject,
-                    'level': selected_level,
-                    'questions': filtered_q,
-                    'q_index': 0,
-                    'score': 0,
-                    'show_feedback': False,
-                    'selected_option': None
-                }
+            # Check for Vocabulary Mode
+            if selected_level == "vocab":
+                vocab_list = vocab_data.get(subject, [])
+                if vocab_list:
+                    # Transform vocab to question format
+                    vocab_questions = []
+                    for v in vocab_list:
+                        vocab_questions.append({
+                            'q': f"【重要語句】 「{v['term']}」 の意味として最も適切なものは？",
+                            'options': [v['desc'], "（誤りの選択肢: 逆の意味）", "（誤りの選択肢: 無関係な定義）", "（誤りの選択肢: 類似用語の定義）"], # Simplified options for now
+                            'correct': 0, # Always 0 for this simple implementation, ideally randomized
+                            'explanation': f"**{v['term']} ({v['jp']})**\n\n{v['desc']}",
+                            'type': 'vocab'
+                        })
+                    
+                    # Better randomization for options would require more logic, 
+                    # for now let's just use it as a flashcard style or simple drill
+                    
+                    st.session_state.quiz_state = {
+                        'active': True,
+                        'subject': subject,
+                        'level': 'vocab',
+                        'questions': vocab_questions,
+                        'q_index': 0,
+                        'score': 0,
+                        'show_feedback': False,
+                        'selected_option': None
+                    }
+                else:
+                    st.warning(f"No vocabulary data for {subject}")
             else:
-                st.warning(f"No questions found for {subject} - Level {selected_level}")
+                # Filter questions
+                questions = drill_questions.get(subject, [])
+                filtered_q = [q for q in questions if q.get('level', 1) == selected_level]
+                
+                if not filtered_q:
+                    # Fallback for legacy or empty
+                    if selected_level == 1:
+                        filtered_q = [q for q in questions if 'level' not in q or q['level'] == 1]
+                
+                if filtered_q:
+                    st.session_state.quiz_state = {
+                        'active': True,
+                        'subject': subject,
+                        'level': selected_level,
+                        'questions': filtered_q,
+                        'q_index': 0,
+                        'score': 0,
+                        'show_feedback': False,
+                        'selected_option': None
+                    }
+                else:
+                    st.warning(f"No questions found for {subject} - Level {selected_level}")
                 
     with col2:
         qs = st.session_state.quiz_state

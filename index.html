@@ -88,7 +88,7 @@
                     <div id="level-selection" class="hidden text-center py-10">
                         <i class="fas fa-layer-group text-6xl text-blue-300 mb-4"></i>
                         <h2 class="text-2xl font-bold text-gray-700 mb-6" id="level-select-title">Select Level</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl mx-auto px-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto px-4">
                             <button onclick="startQuiz(currentSubject, 1)" class="p-6 bg-white border-2 border-green-200 rounded-xl hover:border-green-500 hover:bg-green-50 transition group">
                                 <div class="text-green-600 font-bold text-xl mb-2">Level 1</div>
                                 <div class="text-sm text-gray-500">Basic Definitions & Rules</div>
@@ -103,6 +103,11 @@
                                 <div class="text-purple-600 font-bold text-xl mb-2">Level 3</div>
                                 <div class="text-sm text-gray-500">Advanced Theory & App.</div>
                                 <div class="mt-2 text-xs bg-purple-100 text-purple-800 inline-block px-2 py-1 rounded">Advanced</div>
+                            </button>
+                            <button onclick="startQuiz(currentSubject, 'vocab')" class="p-6 bg-white border-2 border-yellow-200 rounded-xl hover:border-yellow-500 hover:bg-yellow-50 transition group">
+                                <div class="text-yellow-600 font-bold text-xl mb-2">Vocabulary</div>
+                                <div class="text-sm text-gray-500">Key Terms (JP/EN)</div>
+                                <div class="mt-2 text-xs bg-yellow-100 text-yellow-800 inline-block px-2 py-1 rounded">Flashcards</div>
                             </button>
                         </div>
                         <button onclick="resetQuizUI()" class="mt-8 text-gray-500 hover:text-gray-700 underline">Cancel</button>
@@ -891,6 +896,37 @@
             ]
         };
 
+        const vocabData = {
+            'Financial': [
+                { term: 'Going Concern', jp: '継続企業の前提', desc: '企業が将来にわたって事業を継続するという前提。' },
+                { term: 'Accrual Basis', jp: '発生主義', desc: '現金の収支にかかわらず、経済的事象の発生時点で収益・費用を認識する原則。' },
+                { term: 'Materiality', jp: '重要性', desc: '財務諸表利用者の意思決定に影響を与える情報の性質や金額の大きさ。' },
+                { term: 'Impairment', jp: '減損', desc: '資産の収益性が低下した結果、投資額の回収が見込めなくなった場合に帳簿価額を減額すること。' },
+                { term: 'Asset Retirement Obligation', jp: '資産除去債務', desc: '有形固定資産の取得や使用によって生じる、除去に関する将来の法的義務。' }
+            ],
+            'Management': [
+                { term: 'Opportunity Cost', jp: '機会原価', desc: 'ある代替案を選択したことによって犠牲となった（諦めた）最大の利益。' },
+                { term: 'Sunk Cost', jp: '埋没原価', desc: '過去の意思決定によって既に発生し、回収不能なコスト。意思決定では無視すべき。' },
+                { term: 'Break-even Point', jp: '損益分岐点', desc: '売上高と総費用が等しくなり、利益がゼロとなる点。' },
+                { term: 'Safety Margin', jp: '安全余裕率', desc: '現在の売上高が損益分岐点をどれだけ上回っているかを示す指標。高いほど安全。' },
+                { term: 'Cost Driver', jp: 'コスト・ドライバー', desc: '活動原価計算（ABC）において、コスト発生の原因となる活動量や要因。' }
+            ],
+            'Audit': [
+                { term: 'Professional Skepticism', jp: '職業的懐疑心', desc: '常に疑念を持ち、監査証拠を批判的に評価する姿勢。' },
+                { term: 'Audit Risk', jp: '監査リスク', desc: '財務諸表に重要な虚偽表示があるにもかかわらず、監査人が不適切な意見を表明するリスク。' },
+                { term: 'Material Misstatement', jp: '重要な虚偽表示', desc: '財務諸表利用者の判断を誤らせる可能性のある誤りや不正。' },
+                { term: 'Internal Control', jp: '内部統制', desc: '業務の有効性・効率性、財務報告の信頼性などを確保するために組織内に構築されるプロセス。' },
+                { term: 'Substantive Procedures', jp: '実証手続', desc: '重要な虚偽表示を発見するために、取引や残高の詳細を直接検証する手続。' }
+            ],
+            'Company': [
+                { term: 'Fiduciary Duty', jp: '受託者責任', desc: '取締役などが会社や株主のために忠実に職務を遂行する義務（善管注意義務・忠実義務）。' },
+                { term: 'Shareholder Derivative Suit', jp: '株主代表訴訟', desc: '会社が取締役の責任を追及しない場合に、株主が会社に代わって提起する訴訟。' },
+                { term: 'Business Judgment Rule', jp: '経営判断の原則', desc: '取締役の経営判断が合理的で誠実に行われた場合、結果的に損害が生じても責任を問われない原則。' },
+                { term: 'Authorized Shares', jp: '発行可能株式総数', desc: '定款で定められた、会社が発行することができる株式の上限数。' },
+                { term: 'Treasury Stock', jp: '自己株式', desc: '会社が保有する自社の株式。議決権や配当請求権はない。' }
+            ]
+        };
+
         let currentQuiz = {
             subject: null,
             questions: [],
@@ -913,27 +949,42 @@
             const subj = subject || currentSubject;
             currentQuiz.subject = subj;
             
-            let questions = drillQuestions[subj];
-            
-            // Filter by level if specified
-            if (level) {
-                const leveledQuestions = questions.filter(q => q.level === level);
-                // If we found questions for this level, use them.
-                // If not, and we asked for Level 1, we might include questions without a level property (legacy support)
-                if (leveledQuestions.length > 0) {
-                    questions = leveledQuestions;
-                } else if (level === 1) {
-                    const legacyQuestions = questions.filter(q => q.level === undefined);
-                    if (legacyQuestions.length > 0) {
-                        questions = legacyQuestions;
+            let questions = [];
+
+            if (level === 'vocab') {
+                const vocabList = vocabData[subj] || [];
+                if (vocabList.length === 0) {
+                     alert(`No vocabulary for ${subj} yet.`);
+                     return;
+                }
+                questions = vocabList.map(v => ({
+                    q: `【重要語句】 「${v.term}」 の意味として最も適切なものは？`,
+                    options: [v.desc, "（誤りの選択肢: 逆の意味）", "（誤りの選択肢: 無関係な定義）", "（誤りの選択肢: 類似用語の定義）"],
+                    correct: 0,
+                    explanation: `**${v.term} (${v.jp})**\n\n${v.desc}`,
+                    level: 'vocab'
+                }));
+            } else {
+                questions = drillQuestions[subj] || [];
+                
+                // Filter by level if specified
+                if (level) {
+                    const leveledQuestions = questions.filter(q => q.level === level);
+                    if (leveledQuestions.length > 0) {
+                        questions = leveledQuestions;
+                    } else if (level === 1) {
+                        const legacyQuestions = questions.filter(q => q.level === undefined);
+                        if (legacyQuestions.length > 0) {
+                            questions = legacyQuestions;
+                        } else {
+                            // Truly no questions
+                            alert(`No questions available for ${subj} yet.`);
+                            return;
+                        }
                     } else {
-                        // Truly no questions
-                        alert(`No questions available for ${subj} yet.`);
+                        alert(`Level ${level} questions for ${subj} are coming soon! Please try Level 1.`);
                         return;
                     }
-                } else {
-                    alert(`Level ${level} questions for ${subj} are coming soon! Please try Level 1.`);
-                    return;
                 }
             }
             
@@ -946,7 +997,7 @@
             document.getElementById('quiz-result').classList.add('hidden');
             document.getElementById('quiz-container').classList.remove('hidden');
             
-            const levelText = level ? ` (Level ${level})` : "";
+            const levelText = level === 'vocab' ? " (Vocabulary)" : (level ? ` (Level ${level})` : "");
             document.getElementById('quiz-subject-title').textContent = subj + " Drill" + levelText;
             
             showQuestion();

@@ -1195,7 +1195,7 @@ elif page == "Big 4 Job Hunting":
     st.header("🏢 Big 4 CPA Job Hunting Strategy")
     st.markdown("Strategy guide and comparison for the major audit firms in Japan.")
 
-    tab1, tab2, tab3 = st.tabs(["Strategy & Timeline", "Big 4 Comparison", "Tech & Data Science Advantage 🤖"])
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(["Strategy & Timeline", "Big 4 Comparison", "Tech & Data Science Advantage 🤖", "Boston Career Forum 🇺🇸", "Interview & Case Prep 📝"])
 
     with tab1:
         st.subheader("📅 Job Hunting Timeline (Typical)")
@@ -1343,4 +1343,63 @@ elif page == "Big 4 Job Hunting":
             *   **PwC**: Strong on "Tech-enablement". "Digital Upskilling" for all staff is a key slogan.
             *   **Deloitte**: "Audit Analytics" is a core part of their massive scale.
             *   **KPMG**: "Digital Innovation" focus, often collaborative with their consulting arm.
+            """)
+
+    with tab4:
+        st.subheader("🇺🇸 Boston Career Forum (BCF)")
+        st.markdown("The world's largest job fair for Japanese-English bilinguals. **Crucial for Master's students.**")
+        
+        st.info("💡 **Why BCF for You?**\n*   **Speed**: Offers (Naitei) often given in 3 days (Fri-Sun).\n*   **Positions**: Big 4 hires for **Advisory/Consulting** heavily here, not just Audit.\n*   **Timing**: Held in November, aligning perfectly with post-essay exam period.")
+
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown("### 📅 Timeline")
+            st.markdown("""
+            *   **Aug-Sep**: Registration & Resume Upload.
+            *   **Sep-Oct**: Online Applications & Skype Interviews (Pre-event).
+            *   **Nov (Event)**: Walk-ins (Risky) vs. Scheduled Interviews (Safe).
+            """)
+        with col2:
+            st.markdown("### 🎯 Strategy")
+            st.markdown("""
+            *   **Pre-Event is King**: Secure interviews *before* flying to Boston.
+            *   **Target**: Big 4 (US & Japan offices), Consulting (MBB/Accenture), Tech.
+            *   **Dinner Invitations**: If you do well, you get invited to dinner. This is effectively the final interview.
+            """)
+        st.link_button("BCF Official Site", "https://careerforum.net/en/event/bos/")
+
+    with tab5:
+        st.subheader("📝 Interview & Case Prep")
+        
+        with st.expander("🧠 Case Interview (Advisory/Consulting Focus)", expanded=True):
+            st.markdown("""
+            **Relevance**: Essential for Advisory (FAS) and Consulting roles at BCF.
+            
+            **Common Types**:
+            1.  **Market Sizing (Fermi)**: "How many diapers are sold in Japan annually?"
+            2.  **Business Case**: "Should Starbucks open a store in this university?"
+            
+            **Frameworks**:
+            *   **3C**: Customer, Competitor, Company.
+            *   **4P**: Product, Price, Place, Promotion.
+            *   **Profit Tree**: Profit = Revenue - Cost = (Price x Vol) - (Fixed + Variable).
+            """)
+        
+        with st.expander("🗣️ Behavioral Interview Questions", expanded=True):
+            st.markdown("""
+            *   **Self-Intro**: "I am a Master's student in [Major], studying for CPA. My strength is ML/Data Science..."
+            *   **Why CPA?**: "I want to combine my tech skills with financial expertise to upgrade auditing."
+            *   **Why Big 4?**: "Because you have the largest data sets and global clients."
+            *   **Weakness**: "I tend to focus too much on technical details. I am learning to communicate high-level business impact."
+            """)
+            
+        with st.expander("📄 Entry Sheet (ES) Tips", expanded=True):
+            st.markdown("""
+            **The 'Gaku-chika' (Student Efforts)**:
+            *   **Structure (STAR)**:
+                *   **Situation**: "Researching ML models for..."
+                *   **Task**: "Accuracy was low (60%)..."
+                *   **Action**: "I implemented a new data augmentation technique..."
+                *   **Result**: "Improved to 90%, published a paper."
+            *   **Key**: Show *process* and *problem-solving*, not just results.
             """)

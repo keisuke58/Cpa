@@ -1350,7 +1350,12 @@ elif page == "Big 4 Job Hunting":
     with tab3:
         st.subheader("🤖 Leveraging Data Science & ML in CPA Job Hunting")
         st.markdown("""
-        **Profile:** Master's Student (24) | **Strengths:** Machine Learning, Data Science
+        **Profile:** Double Degree Master's Student (Keio 🇯🇵 & Leibniz Hannover 🇩🇪) | **Major:** Mechanical Engineering
+        
+        **Your Technical Arsenal:**
+        *   **Advanced ML:** Graph Neural Networks (GNNs), PyTorch, Bayesian Inference (MCMC/TMCMC).
+        *   **Engineering:** Finite Element Analysis (FEA), Structural Health Monitoring.
+        *   **Languages:** Python, MATLAB, TypeScript.
         
         Your background is a **massive differentiator** in the modern audit industry. All Big 4 firms are heavily investing in "Audit Transformation" and "Digital Audit".
         """)
@@ -1363,18 +1368,19 @@ elif page == "Big 4 Job Hunting":
             st.markdown("Work at the intersection of Audit and Tech. Use Python/SQL to analyze full population data instead of sampling.")
             
             st.success("**2. AI Governance / Algorithm Assurance**")
-            st.markdown("Audit AI models! With your ML background, you can audit the *algorithms* themselves, not just the financial numbers.")
+            st.markdown("Audit AI models! With your GNN/Bayesian background, you can audit complex *algorithms* themselves, not just the financial numbers.")
             
-            st.success("**3. Financial Advisory (FAS)**")
-            st.markdown("Valuation, M&A, and Fraud Investigation (Forensics) heavily rely on data analysis.")
+            st.success("**3. Financial Advisory (FAS) - Forensics**")
+            st.markdown("Your experience in 'Defect Localization' translates perfectly to **Fraud Detection** (finding anomalies in massive datasets).")
 
         with col2:
             st.markdown("### 💡 Strategic Actions")
             st.info("**Resume / Entry Sheet (ES)**")
-            st.markdown("*   Explicitly mention libraries: `pandas`, `scikit-learn`, `TensorFlow/PyTorch`.\n*   Highlight projects where you automated processes or analyzed large datasets.")
+            st.markdown("*   **Highlight Research**: Explicitly mention your GNN work for Aerospace/CFRP. It shows you can handle *complex, unstructured data*.")
+            st.markdown("*   **Keywords**: `PyTorch`, `Bayesian Inference`, `Uncertainty Quantification`, `End-to-End Pipelines`.")
             
             st.info("**Interview Questions to Ask**")
-            st.markdown("*   *\"How is your firm integrating LLMs into audit workflows?\"*\n*   *\"Does your Digital Audit team work separately or integrated with general audit teams?\"*")
+            st.markdown("*   *\"How can I apply Bayesian methods to audit risk assessment?\"*\n*   *\"Does your firm analyze unstructured data (like contracts/images) using GNNs or NLP?\"*")
             
             st.info("**Firm-Specific Tech Vibes**")
             st.markdown("""
@@ -1426,10 +1432,10 @@ elif page == "Big 4 Job Hunting":
         
         with st.expander("🗣️ Behavioral Interview Questions", expanded=True):
             st.markdown("""
-            *   **Self-Intro**: "I am a Master's student in [Major], studying for CPA. My strength is ML/Data Science..."
-            *   **Why CPA?**: "I want to combine my tech skills with financial expertise to upgrade auditing."
-            *   **Why Big 4?**: "Because you have the largest data sets and global clients."
-            *   **Weakness**: "I tend to focus too much on technical details. I am learning to communicate high-level business impact."
+            *   **Self-Intro**: "I am a Double Degree Master's student at **Keio University** and **Leibniz University Hannover**, specializing in **Mechanical Engineering**. My research focuses on **Defect Localization using Graph Neural Networks (GNNs)**..."
+            *   **Why CPA?**: "I want to apply my expertise in **Uncertainty Quantification (Bayesian Inference)** to financial risk assessment and audit quality."
+            *   **Why Big 4?**: "Because you handle the world's most complex data. I want to build the 'Digital Audit' tools of the future."
+            *   **Weakness**: "I tend to dive too deep into technical details (like MCMC parameters). I am training myself to explain concepts to non-experts."
             """)
             
         with st.expander("📄 Entry Sheet (ES) Tips", expanded=True):

@@ -512,9 +512,7 @@ with st.sidebar.container():
 st.sidebar.markdown("---")
 
 # Quick Links
-if st.sidebar.button("🔗 Studying.jp Login"):
-    import webbrowser
-    webbrowser.open_new_tab("https://member.studying.jp/top/")
+st.sidebar.link_button("🔗 Studying.jp Login", "https://member.studying.jp/top/")
 
 st.sidebar.markdown("---")
 page = st.sidebar.radio("Navigation", ["Dashboard", "My Syllabus 📚", "Old Exams 📄", "Study Timer", "Mock Exams", "Scores", "Drills", "Survival Mode ⚡", "Roadmap", "Big 4 Job Hunting"])

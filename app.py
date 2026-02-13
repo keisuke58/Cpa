@@ -108,7 +108,12 @@ vocab_data = {
         {'term': 'Revaluation Surplus', 'jp': '再評価剰余金', 'desc': '資産の再評価（時価評価）によって生じた純資産の増加額。', 'desc_en': 'An equity reserve created when an asset is revalued at a higher amount than its carrying value.'},
         {'term': 'Retained Earnings', 'jp': '利益剰余金', 'desc': '企業が過去に獲得した利益のうち、配当せずに内部留保したもの。', 'desc_en': 'The cumulative net income of a company less any dividends declared.'},
         {'term': 'Non-controlling Interest', 'jp': '非支配株主持分', 'desc': '子会社の資本のうち、親会社に帰属しない部分。', 'desc_en': 'The portion of equity ownership in a subsidiary not attributable to the parent company.'},
-        {'term': 'Cash Flow Statement', 'jp': 'キャッシュ・フロー計算書', 'desc': '一会計期間における現金の流入と流出を表す財務諸表。', 'desc_en': 'A financial statement that summarizes the amount of cash and cash equivalents entering and leaving a company.'}
+        {'term': 'Cash Flow Statement', 'jp': 'キャッシュ・フロー計算書', 'desc': '一会計期間における現金の流入と流出を表す財務諸表。', 'desc_en': 'A financial statement that summarizes the amount of cash and cash equivalents entering and leaving a company.'},
+        {'term': 'Inventory Valuation', 'jp': '棚卸資産評価', 'desc': '取得原価と正味売却価額のいずれか低い方で評価する（低価法）。', 'desc_en': 'Valuation at the lower of cost or net realizable value.'},
+        {'term': 'Revenue Recognition', 'jp': '収益認識', 'desc': '顧客への財・サービスの移転時に、その対価として権利を得ると見込まれる金額で収益を認識すること。', 'desc_en': 'Recognizing revenue when goods or services are transferred to customers.'},
+        {'term': 'Intangible Assets', 'jp': '無形資産', 'desc': '物理的実体を持たない識別可能な非貨幣性資産（特許権、商標権など）。', 'desc_en': 'Identifiable non-monetary assets without physical substance.'},
+        {'term': 'Financial Instruments', 'jp': '金融商品', 'desc': '一方の企業に金融資産を生じさせ、他方の企業に金融負債または資本性金融商品を生じさせる契約。', 'desc_en': 'Contracts that give rise to a financial asset of one entity and a financial liability or equity instrument of another entity.'},
+        {'term': 'Consolidated Financial Statements', 'jp': '連結財務諸表', 'desc': '親会社と子会社を単一の経済的実体とみなして作成される財務諸表。', 'desc_en': 'Financial statements of a group presented as those of a single economic entity.'}
     ],
     'Management': [
         {'term': 'Opportunity Cost', 'jp': '機会原価', 'desc': 'ある代替案を選択したことによって犠牲となった（諦めた）最大の利益。', 'desc_en': 'The potential benefit lost when one alternative is chosen over another.'},
@@ -127,7 +132,12 @@ vocab_data = {
         {'term': 'Target Costing', 'jp': '原価企画', 'desc': '製品の企画・開発段階で目標原価を設定し、その達成を目指して原価を作り込む活動。', 'desc_en': 'A system under which a company plans in advance for the price points, product costs, and margins.'},
         {'term': 'Bottleneck', 'jp': 'ボトルネック', 'desc': '生産工程全体の中で能力が最も低く、全体の生産能力を制約している工程。', 'desc_en': 'A point of congestion in a production system that slows down the overall process.'},
         {'term': 'Contribution Margin', 'jp': '貢献利益', 'desc': '売上高から変動費を差し引いた利益。固定費の回収と営業利益の創出に貢献する。', 'desc_en': 'Sales revenue less variable costs.'},
-        {'term': 'Variable Cost', 'jp': '変動費', 'desc': '操業度（生産量や売上高）の増減に比例して発生する原価。', 'desc_en': 'A corporate expense that changes in proportion to production output.'}
+        {'term': 'Variable Cost', 'jp': '変動費', 'desc': '操業度（生産量や売上高）の増減に比例して発生する原価。', 'desc_en': 'A corporate expense that changes in proportion to production output.'},
+        {'term': 'Product Life Cycle', 'jp': '製品ライフサイクル', 'desc': '製品が市場に投入されてから撤退するまでのプロセス（導入期、成長期、成熟期、衰退期）。', 'desc_en': 'The succession of stages a product goes through from introduction to withdrawal.'},
+        {'term': 'Transfer Pricing', 'jp': '振替価格', 'desc': '企業内の事業部門間で財・サービスを取引する際に設定される価格。', 'desc_en': 'The price at which goods and services are transferred between divisions of the same company.'},
+        {'term': 'Economic Value Added (EVA)', 'jp': '経済的付加価値', 'desc': '税引後営業利益から資本コストを差し引いた、企業が生み出した真の経済的価値。', 'desc_en': 'A measure of a company\'s financial performance based on the residual wealth calculated by deducting its cost of capital from its operating profit.'},
+        {'term': 'Learning Curve', 'jp': '学習曲線', 'desc': '累積生産量が増加するにつれて、単位当たりの労働時間やコストが一定の割合で減少する経験則。', 'desc_en': 'A graphical representation of the increase of learning (vertical axis) with experience (horizontal axis).'},
+        {'term': 'Benchmarking', 'jp': 'ベンチマーキング', 'desc': '自社の製品やプロセスを、業界最高水準の他社と比較・分析し、改善を図る手法。', 'desc_en': 'Comparing one\'s business processes and performance metrics to industry bests and best practices.'}
     ],
     'Audit': [
         {'term': 'Professional Skepticism', 'jp': '職業的懐疑心', 'desc': '常に疑念を持ち、監査証拠を批判的に評価する姿勢。', 'desc_en': 'An attitude that includes a questioning mind and a critical assessment of audit evidence.'},
@@ -145,7 +155,12 @@ vocab_data = {
         {'term': 'Emphasis of Matter Paragraph', 'jp': '強調事項区分', 'desc': '監査意見には影響しないが、財務諸表利用者の理解のために特に強調すべき事項を記載する区分。', 'desc_en': 'A paragraph included in the auditor\'s report that refers to a matter appropriately presented or disclosed in the financial statements.'},
         {'term': 'Independence', 'jp': '独立性', 'desc': '監査人が被監査会社から精神的・外観的に独立していること。公正不偏な態度の保持。', 'desc_en': 'The state of being objective and not influenced by personal or business relationships.'},
         {'term': 'Fraud Triangle', 'jp': '不正のトライアングル', 'desc': '不正発生の3要素（動機・プレッシャー、機会、正当化）を示すモデル。', 'desc_en': 'A framework designed to explain the reasoning behind a worker\'s decision to commit workplace fraud.'},
-        {'term': 'Analytical Procedures', 'jp': '分析的手続', 'desc': '財務データと非財務データの間の相関関係などを分析し、異常な変動を識別する手続。', 'desc_en': 'Evaluations of financial information through analysis of plausible relationships among both financial and non-financial data.'}
+        {'term': 'Analytical Procedures', 'jp': '分析的手続', 'desc': '財務データと非財務データの間の相関関係などを分析し、異常な変動を識別する手続。', 'desc_en': 'Evaluations of financial information through analysis of plausible relationships among both financial and non-financial data.'},
+        {'term': 'Audit Engagement Letter', 'jp': '監査契約書', 'desc': '監査人と被監査会社との間で交わされる、監査の目的や範囲、責任等を明確にした契約書。', 'desc_en': 'A written agreement between an auditor and a client defining the scope and terms of the audit engagement.'},
+        {'term': 'Significant Risk', 'jp': '特別な検討を必要とするリスク', 'desc': '監査人が、監査上の対応として特別な考慮が必要であると判断した、重要な虚偽表示リスク。', 'desc_en': 'An identified and assessed risk of material misstatement that, in the auditor\'s judgment, requires special audit consideration.'},
+        {'term': 'Performance Materiality', 'jp': '手続実施上の重要性', 'desc': '未発見の虚偽表示が財務諸表全体としての重要性を超えないようにするために設定される、重要性より低い金額。', 'desc_en': 'The amount set by the auditor at less than materiality for the financial statements as a whole to reduce to an appropriately low level the probability that the aggregate of uncorrected and undetected misstatements exceeds materiality.'},
+        {'term': 'Walkthrough', 'jp': 'ウォークスルー', 'desc': '取引の開始から記帳、報告に至るまでの一連のプロセスを追跡し、内部統制の整備状況を確かめる手続。', 'desc_en': 'Tracing a transaction step-by-step through the accounting system from its inception to the final disposition.'},
+        {'term': 'External Confirmation', 'jp': '確認', 'desc': '監査人が、取引先や銀行などの第三者から直接、書面による回答を入手する手続。', 'desc_en': 'Audit evidence obtained as a direct written response to the auditor from a third party.'}
     ],
     'Company': [
         {'term': 'Fiduciary Duty', 'jp': '受託者責任', 'desc': '取締役などが会社や株主のために忠実に職務を遂行する義務（善管注意義務・忠実義務）。', 'desc_en': 'The legal duty to act solely in another party\'s interests.'},
@@ -159,7 +174,12 @@ vocab_data = {
         {'term': 'General Meeting of Shareholders', 'jp': '株主総会', 'desc': '株式会社の最高意思決定機関。株主で構成される。', 'desc_en': 'The highest decision-making body of a company.'},
         {'term': 'Corporate Governance', 'jp': 'コーポレート・ガバナンス', 'desc': '企業経営を規律するための仕組み。企業統治。', 'desc_en': 'The system of rules, practices, and processes by which a firm is directed and controlled.'},
         {'term': 'Stock Option', 'jp': 'ストック・オプション', 'desc': '自社株をあらかじめ決められた価格で購入できる権利。役員や従業員へのインセンティブ。', 'desc_en': 'A privilege that gives the buyer the right to buy or sell stock at an agreed price.'},
-        {'term': 'Mergers and Acquisitions (M&A)', 'jp': 'M&A（合併・買収）', 'desc': '企業の合併や買収の総称。組織再編行為を含む。', 'desc_en': 'The consolidation of companies or assets through various financial transactions.'}
+        {'term': 'Mergers and Acquisitions (M&A)', 'jp': 'M&A（合併・買収）', 'desc': '企業の合併や買収の総称。組織再編行為を含む。', 'desc_en': 'The consolidation of companies or assets through various financial transactions.'},
+        {'term': 'Audit & Supervisory Committee', 'jp': '監査等委員会', 'desc': '取締役会の中に設置される委員会で、取締役の職務執行の監査等を担う（監査等委員会設置会社）。', 'desc_en': 'A committee consisting of directors that audits the execution of duties by directors.'},
+        {'term': 'Nomination Committee', 'jp': '指名委員会', 'desc': '株主総会に提出する取締役の選任・解任に関する議案の内容を決定する委員会（指名委員会等設置会社）。', 'desc_en': 'A committee that decides on the content of proposals regarding the election and dismissal of directors to be submitted to the shareholders meeting.'},
+        {'term': 'Conflict of Interest', 'jp': '利益相反', 'desc': '取締役自身の利益と会社の利益が対立する状況。このような取引には取締役会の承認が必要。', 'desc_en': 'A situation in which a person or organization is involved in multiple interests, financial or otherwise, and serving one interest could involve working against another.'},
+        {'term': 'Minority Shareholder Rights', 'jp': '少数株主権', 'desc': '一定の株式数や比率を持つ株主のみが行使できる権利（株主提案権、帳簿閲覧権など）。', 'desc_en': 'Rights held by shareholders who own a small percentage of the company\'s shares.'},
+        {'term': 'Public Notice', 'jp': '公告', 'desc': '会社が合併や減資などの重要な決定を行った際に、債権者や株主に対して広く知らせること。', 'desc_en': 'A notice given to the public regarding certain types of legal proceedings.'}
     ]
 }
 
@@ -833,6 +853,144 @@ elif page == "My Syllabus 📚":
                             st.toast(f"Opening {pdf['name']}...", icon="🚀")
                         except Exception as e:
                             st.error(f"Cannot open PDF: {e}")
+
+elif page == "Vocabulary 📖":
+    st.header("Vocabulary Mastery 📖")
+    st.info("Master the essential accounting terminology in Japanese and English.")
+
+    # Create Tabs
+    tab1, tab2 = st.tabs(["📚 Word List", "⚡ Tap & Study (Flashcards)"])
+
+    # --- TAB 1: Word List ---
+    with tab1:
+        st.subheader("Bilingual Terminology List")
+        
+        # Subject Selection
+        subjects = list(vocab_data.keys())
+        selected_subject = st.selectbox("Select Subject", subjects, key="vocab_list_subject")
+        
+        if selected_subject:
+            terms = vocab_data[selected_subject]
+            st.write(f"Found {len(terms)} terms for **{selected_subject}**.")
+            
+            for term in terms:
+                with st.expander(f"**{term['term']}** ({term['jp']})"):
+                    st.markdown(f"**🇯🇵 Definition:** {term['desc']}")
+                    st.markdown(f"**🇺🇸 Definition:** {term.get('desc_en', 'No English definition available.')}")
+
+    # --- TAB 2: Flashcards ---
+    with tab2:
+        st.subheader("⚡ Flashcard Mode")
+        st.markdown("Tap to flip the card, swipe (click next) to move to the next word.")
+        
+        # Initialize Session State for Flashcards
+        if 'flashcard_active' not in st.session_state:
+            st.session_state.flashcard_active = False
+            st.session_state.flashcard_subject = subjects[0]
+            st.session_state.flashcard_index = 0
+            st.session_state.flashcard_flipped = False
+
+        # Subject Selection for Flashcards
+        fc_subject = st.selectbox("Select Subject for Study", subjects, key="fc_subject_selector")
+        
+        # Start/Reset Button
+        if st.button("Start / Restart Session", type="primary"):
+            st.session_state.flashcard_active = True
+            st.session_state.flashcard_subject = fc_subject
+            st.session_state.flashcard_index = 0
+            st.session_state.flashcard_flipped = False
+            st.rerun()
+
+        if st.session_state.flashcard_active:
+            current_terms = vocab_data.get(st.session_state.flashcard_subject, [])
+            total_cards = len(current_terms)
+            
+            if total_cards == 0:
+                st.warning("No words available for this subject.")
+            else:
+                current_idx = st.session_state.flashcard_index
+                
+                # Check if session is finished
+                if current_idx >= total_cards:
+                    st.balloons()
+                    st.success(f"🎉 You've completed all {total_cards} words for {st.session_state.flashcard_subject}!")
+                    if st.button("Start Over"):
+                        st.session_state.flashcard_index = 0
+                        st.session_state.flashcard_flipped = False
+                        st.rerun()
+                else:
+                    word_data = current_terms[current_idx]
+                    
+                    # Progress Bar
+                    progress = (current_idx + 1) / total_cards
+                    st.progress(progress)
+                    st.caption(f"Card {current_idx + 1} of {total_cards}")
+
+                    # Card Container
+                    card_container = st.container()
+                    
+                    # Card Logic
+                    with card_container:
+                        # Styling
+                        st.markdown("""
+                        <style>
+                        .flashcard {
+                            border: 2px solid #e0e0e0;
+                            border-radius: 15px;
+                            padding: 40px;
+                            text-align: center;
+                            background-color: white;
+                            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                            min-height: 200px;
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: center;
+                            align-items: center;
+                            margin-bottom: 20px;
+                        }
+                        .flashcard-term { font-size: 28px; font-weight: bold; color: #1e88e5; }
+                        .flashcard-jp { font-size: 24px; font-weight: bold; color: #d32f2f; margin-top: 10px;}
+                        .flashcard-desc { font-size: 16px; color: #424242; margin-top: 15px; }
+                        </style>
+                        """, unsafe_allow_html=True)
+
+                        if not st.session_state.flashcard_flipped:
+                            # FRONT SIDE
+                            st.markdown(f"""
+                            <div class="flashcard">
+                                <div class="flashcard-term">{word_data['term']}</div>
+                                <div style="color: #9e9e9e; margin-top: 20px;">(Tap 'Flip' to see meaning)</div>
+                            </div>
+                            """, unsafe_allow_html=True)
+                            
+                            if st.button("🔄 Flip Card", use_container_width=True):
+                                st.session_state.flashcard_flipped = True
+                                st.rerun()
+                                
+                        else:
+                            # BACK SIDE
+                            st.markdown(f"""
+                            <div class="flashcard">
+                                <div class="flashcard-term">{word_data['term']}</div>
+                                <div class="flashcard-jp">{word_data['jp']}</div>
+                                <div class="flashcard-desc">🇯🇵 {word_data['desc']}</div>
+                                <div class="flashcard-desc">🇺🇸 {word_data.get('desc_en', '')}</div>
+                            </div>
+                            """, unsafe_allow_html=True)
+                            
+                            col_prev, col_next = st.columns(2)
+                            with col_prev:
+                                if st.button("⬅️ Previous", use_container_width=True):
+                                    if st.session_state.flashcard_index > 0:
+                                        st.session_state.flashcard_index -= 1
+                                        st.session_state.flashcard_flipped = False
+                                        st.rerun()
+                            
+                            with col_next:
+                                if st.button("Next ➡️", use_container_width=True):
+                                    st.session_state.flashcard_index += 1
+                                    st.session_state.flashcard_flipped = False
+                                    st.rerun()
 
 elif page == "Old Exams 📄":
     st.header("Old Exam Papers 📄")

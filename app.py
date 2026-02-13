@@ -517,14 +517,14 @@ st.sidebar.markdown("""
     .big-rocket-button {
         display: inline-block;
         width: 100%;
-        padding: 20px;
+        padding: 12px;
         background: linear-gradient(135deg, #FF4B4B 0%, #FF0000 100%);
         color: white !important;
         text-align: center;
-        font-size: 22px;
+        font-size: 18px;
         font-weight: 900;
-        border-radius: 15px;
-        text-decoration: none;
+        border-radius: 12px;
+        text-decoration: none !important;
         box-shadow: 0 4px 15px rgba(255, 0, 0, 0.4);
         transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         border: 2px solid rgba(255, 255, 255, 0.2);
@@ -533,8 +533,8 @@ st.sidebar.markdown("""
     }
     .big-rocket-button:hover {
         background: linear-gradient(135deg, #FF0000 0%, #D00000 100%);
-        transform: translateY(-3px) scale(1.02);
-        box-shadow: 0 8px 25px rgba(255, 0, 0, 0.6);
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 6px 20px rgba(255, 0, 0, 0.6);
         border-color: rgba(255, 255, 255, 0.5);
     }
     .big-rocket-button:active {
@@ -543,7 +543,7 @@ st.sidebar.markdown("""
     }
     </style>
     <a href="https://member.studying.jp/top/" target="_blank" class="big-rocket-button">
-        🚀 Studying.jp Login
+        🚀 STUDYING
     </a>
     """, unsafe_allow_html=True)
 

@@ -699,14 +699,15 @@ elif page == "My Syllabus 📚":
                     if not df.empty and 'category' in df.columns:
                         for cat, group in df.groupby('category'):
                             with st.expander(f"📂 {cat}", expanded=True):
-                                for _, row in group.iterrows():
+                                for idx, row in group.iterrows():
                                     title = row['title']
                                     unique_key = f"{subject}|{title}"
                                     is_done = unique_key in completed_items
                                     
                                     c_chk, c_txt, c_time = st.columns([0.5, 4, 1.5])
                                     with c_chk:
-                                        st.checkbox("", value=is_done, key=f"chk_{unique_key}", on_change=toggle_syllabus, kwargs={'key': unique_key})
+                                        # Use subject and index to ensure widget key uniqueness
+                                        st.checkbox("", value=is_done, key=f"chk_{subject}_{idx}", on_change=toggle_syllabus, kwargs={'key': unique_key})
                                     
                                     with c_txt:
                                         if is_done:
@@ -723,12 +724,12 @@ elif page == "My Syllabus 📚":
         if extra_pdfs:
             st.markdown("---")
             st.subheader("📚 Supplemental Resources")
-            for pdf in extra_pdfs:
+            for i, pdf in enumerate(extra_pdfs):
                 c1, c2 = st.columns([4, 1])
                 with c1:
                     st.markdown(f"📄 **{pdf['name']}**")
                 with c2:
-                    if st.button("Open", key=f"extra_pdf_{pdf['name']}"):
+                    if st.button("Open", key=f"extra_pdf_{i}_{pdf['name']}"):
                         try:
                             os.startfile(pdf['path'])
                             st.toast(f"Opening {pdf['name']}...", icon="🚀")

@@ -740,8 +740,8 @@ elif page == "Old Exams 📄":
     st.header("Old Exam Papers 📄")
     
     # Path to EXAM folder
-    # platform/app.py -> CPA/platform -> CPA/EXAM
-    exam_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'EXAM')
+    # platform/app.py -> platform/EXAM
+    exam_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'EXAM')
     
     if not os.path.exists(exam_dir):
         st.error(f"EXAM directory not found at: {exam_dir}")

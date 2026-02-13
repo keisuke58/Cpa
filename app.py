@@ -1195,7 +1195,7 @@ elif page == "Big 4 Job Hunting":
     st.header("🏢 Big 4 CPA Job Hunting Strategy")
     st.markdown("Strategy guide and comparison for the major audit firms in Japan.")
 
-    tab1, tab2 = st.tabs(["Strategy & Timeline", "Big 4 Comparison"])
+    tab1, tab2, tab3 = st.tabs(["Strategy & Timeline", "Big 4 Comparison", "Tech & Data Science Advantage 🤖"])
 
     with tab1:
         st.subheader("📅 Job Hunting Timeline (Typical)")
@@ -1219,6 +1219,53 @@ elif page == "Big 4 Job Hunting":
 
     with tab2:
         st.subheader("📊 Big 4 Audit Firms Comparison")
+        
+        # Radar Chart
+        st.subheader("Visual Comparison (Illustrative)")
+        categories = ['Tech/AI Focus', 'Global Network', 'Domestic Scale', 'IPO/Venture', 'Work-Life Balance']
+
+        fig = go.Figure()
+
+        # Tohmatsu (Deloitte)
+        fig.add_trace(go.Scatterpolar(
+            r=[4, 5, 5, 5, 3],
+            theta=categories,
+            fill='toself',
+            name='Tohmatsu (Deloitte)'
+        ))
+        # AZSA (KPMG)
+        fig.add_trace(go.Scatterpolar(
+            r=[3, 4, 5, 3, 4],
+            theta=categories,
+            fill='toself',
+            name='AZSA (KPMG)'
+        ))
+        # EY ShinNihon
+        fig.add_trace(go.Scatterpolar(
+            r=[5, 4, 4, 3, 3],
+            theta=categories,
+            fill='toself',
+            name='EY ShinNihon'
+        ))
+        # PwC Aarata
+        fig.add_trace(go.Scatterpolar(
+            r=[5, 5, 3, 2, 4],
+            theta=categories,
+            fill='toself',
+            name='PwC Aarata'
+        ))
+
+        fig.update_layout(
+            polar=dict(
+                radialaxis=dict(
+                    visible=True,
+                    range=[0, 5]
+                )),
+            showlegend=True,
+            height=400,
+            margin=dict(l=40, r=40, t=20, b=20)
+        )
+        st.plotly_chart(fig, use_container_width=True)
         
         firms_data = [
             {
@@ -1251,8 +1298,6 @@ elif page == "Big 4 Job Hunting":
             }
         ]
         
-        df_firms = pd.DataFrame(firms_data)
-        
         # Display as a styled table or cards
         for firm in firms_data:
             with st.expander(f"{firm['Firm Name (JP)']} ({firm['Network']})", expanded=True):
@@ -1262,3 +1307,40 @@ elif page == "Big 4 Job Hunting":
                     st.markdown(f"**Culture:** {firm['Culture']}")
                 with col2:
                     st.link_button("Recruit Page", firm['Link'])
+    
+    with tab3:
+        st.subheader("🤖 Leveraging Data Science & ML in CPA Job Hunting")
+        st.markdown("""
+        **Profile:** Master's Student (24) | **Strengths:** Machine Learning, Data Science
+        
+        Your background is a **massive differentiator** in the modern audit industry. All Big 4 firms are heavily investing in "Audit Transformation" and "Digital Audit".
+        """)
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("### 🎯 Target Roles")
+            st.success("**1. Digital Audit Specialist**")
+            st.markdown("Work at the intersection of Audit and Tech. Use Python/SQL to analyze full population data instead of sampling.")
+            
+            st.success("**2. AI Governance / Algorithm Assurance**")
+            st.markdown("Audit AI models! With your ML background, you can audit the *algorithms* themselves, not just the financial numbers.")
+            
+            st.success("**3. Financial Advisory (FAS)**")
+            st.markdown("Valuation, M&A, and Fraud Investigation (Forensics) heavily rely on data analysis.")
+
+        with col2:
+            st.markdown("### 💡 Strategic Actions")
+            st.info("**Resume / Entry Sheet (ES)**")
+            st.markdown("*   Explicitly mention libraries: `pandas`, `scikit-learn`, `TensorFlow/PyTorch`.\n*   Highlight projects where you automated processes or analyzed large datasets.")
+            
+            st.info("**Interview Questions to Ask**")
+            st.markdown("*   *\"How is your firm integrating LLMs into audit workflows?\"*\n*   *\"Does your Digital Audit team work separately or integrated with general audit teams?\"*")
+            
+            st.info("**Firm-Specific Tech Vibes**")
+            st.markdown("""
+            *   **EY**: Very strong brand in "Digital Audit". Has "EY Digital" specific recruiting tracks.
+            *   **PwC**: Strong on "Tech-enablement". "Digital Upskilling" for all staff is a key slogan.
+            *   **Deloitte**: "Audit Analytics" is a core part of their massive scale.
+            *   **KPMG**: "Digital Innovation" focus, often collaborative with their consulting arm.
+            """)

@@ -585,9 +585,9 @@ st.sidebar.markdown("""
     """, unsafe_allow_html=True)
 
 st.sidebar.markdown("---")
-page = st.sidebar.radio("Navigation", ["Dashboard", "My Syllabus 📚", "Vocabulary 📖", "Old Exams 📄", "Study Timer", "Mock Exams", "Scores", "Drills", "Survival Mode ⚡", "Roadmap", "Big 4 Job Hunting", "Company Directory 🏢", "Future 🚀"])
+page = st.sidebar.radio("Navigation", ["Dashboard 📊", "My Syllabus 📚", "Vocabulary 📖", "Old Exams 📄", "Study Timer ⏱️", "Mock Exams 📝", "Scores 📈", "Drills 🔧", "Survival Mode ⚡", "Roadmap 🗺️", "Big 4 Job Hunting 💼", "Company Directory 🏢", "Future 🚀"])
 
-if page == "Dashboard":
+if page == "Dashboard 📊":
     st.header("Dashboard 🚀")
     
     # --- Top Metrics Row ---
@@ -1105,7 +1105,7 @@ elif page == "Old Exams 📄":
             
             st.info("💡 Tip: Use these papers to practice time management.")
 
-elif page == "Study Timer":
+elif page == "Study Timer ⏱️":
     st.header("Study Timer")
     
     col1, col2 = st.columns(2)
@@ -1141,12 +1141,12 @@ elif page == "Study Timer":
         else:
             st.info("No logs yet.")
 
-elif page == "Mock Exams":
+elif page == "Mock Exams 📝":
     st.header("Mock Exam Schedule")
     df_exams = pd.DataFrame(mock_exams)
     st.table(df_exams)
 
-elif page == "Scores":
+elif page == "Scores 📈":
     st.header("Score Tracker")
     
     col1, col2 = st.columns([1, 2])
@@ -1187,7 +1187,7 @@ elif page == "Scores":
         else:
             st.info("No scores recorded yet.")
 
-elif page == "Drills":
+elif page == "Drills 🔧":
     st.header("Drills ✏️")
     
     col1, col2 = st.columns([1, 3])
@@ -1548,7 +1548,7 @@ elif page == "Survival Mode ⚡":
                     ss['feedback'] = False
                     st.rerun()
 
-elif page == "Roadmap":
+elif page == "Roadmap 🗺️":
     st.header("🗺️ CPA Exam Strategy Roadmap (2026-2027)")
     
     # 1. Countdown Section
@@ -1633,7 +1633,7 @@ elif page == "Roadmap":
         st.table(pd.DataFrame(schedule_data))
         st.success("Target: **10+ Hours/Day** of high-quality study.")
 
-elif page == "Big 4 Job Hunting":
+elif page == "Big 4 Job Hunting 💼":
     st.header("🏢 Big 4 CPA Job Hunting Strategy")
     st.markdown("Strategy guide and comparison for the major audit firms in Japan.")
 

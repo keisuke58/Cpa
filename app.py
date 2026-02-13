@@ -549,7 +549,7 @@ st.sidebar.markdown("""
     """, unsafe_allow_html=True)
 
 st.sidebar.markdown("---")
-page = st.sidebar.radio("Navigation", ["Dashboard", "My Syllabus 📚", "Old Exams 📄", "Study Timer", "Mock Exams", "Scores", "Drills", "Survival Mode ⚡", "Roadmap", "Big 4 Job Hunting", "Future 🚀"])
+page = st.sidebar.radio("Navigation", ["Dashboard", "My Syllabus 📚", "Old Exams 📄", "Study Timer", "Mock Exams", "Scores", "Drills", "Survival Mode ⚡", "Roadmap", "Big 4 Job Hunting", "Company Directory 🏢", "Future 🚀"])
 
 if page == "Dashboard":
     st.header("Dashboard")
@@ -1577,40 +1577,184 @@ elif page == "Big 4 Job Hunting":
         st.link_button("BCF Official Site", "https://careerforum.net/en/event/bos/")
 
     with tab5:
-        st.subheader("📝 Interview & Case Prep")
+        st.subheader("📝 Interview & Case Prep: The 'Master' Level")
         
-        with st.expander("🧠 Case Interview (Advisory/Consulting Focus)", expanded=True):
-            st.markdown("""
-            **Relevance**: Essential for Advisory (FAS) and Consulting roles at BCF.
-            
-            **Common Types**:
-            1.  **Market Sizing (Fermi)**: "How many diapers are sold in Japan annually?"
-            2.  **Business Case**: "Should Starbucks open a store in this university?"
-            
-            **Frameworks**:
-            *   **3C**: Customer, Competitor, Company.
-            *   **4P**: Product, Price, Place, Promotion.
-            *   **Profit Tree**: Profit = Revenue - Cost = (Price x Vol) - (Fixed + Variable).
-            """)
+        st.info("💡 **Goal**: Move beyond 'prepared answers'. Show **Intellectual Curiosity** and **Professional Maturity**.")
+
+        # --- Interactive Mock Interview ---
+        st.markdown("### 🤖 Mock Interview Simulator")
+        mock_mode = st.radio("Select Mode:", ["Behavioral (HR/Partner)", "Technical (Audit/Accounting)", "Case/Logic (Consulting)"], horizontal=True)
         
-        with st.expander("🗣️ Behavioral Interview Questions", expanded=True):
-            st.markdown("""
-            *   **Self-Intro**: "I am a Double Degree Master's student at **Keio University** and **Leibniz University Hannover**, specializing in **Mechanical Engineering**. My research focuses on **Defect Localization using Graph Neural Networks (GNNs)**..."
-            *   **Why CPA?**: "I want to apply my expertise in **Uncertainty Quantification (Bayesian Inference)** to financial risk assessment and audit quality."
-            *   **Why Big 4?**: "Because you handle the world's most complex data. I want to build the 'Digital Audit' tools of the future."
-            *   **Weakness**: "I tend to dive too deep into technical details (like MCMC parameters). I am training myself to explain concepts to non-experts."
-            """)
+        if st.button("🎲 Generate Question"):
+            import random
             
-        with st.expander("📄 Entry Sheet (ES) Tips", expanded=True):
-            st.markdown("""
-            **The 'Gaku-chika' (Student Efforts)**:
-            *   **Structure (STAR)**:
-                *   **Situation**: "Researching ML models for..."
-                *   **Task**: "Accuracy was low (60%)..."
-                *   **Action**: "I implemented a new data augmentation technique..."
-                *   **Result**: "Improved to 90%, published a paper."
-            *   **Key**: Show *process* and *problem-solving*, not just results.
-            """)
+            if "Behavioral" in mock_mode:
+                q_bank = [
+                    {"q": "Why do you want to be a CPA instead of an Engineer?", "hint": "Connect 'Reliability' in Engineering to 'Assurance' in Audit."},
+                    {"q": "Why our firm specifically? (Why not others?)", "hint": "Mention specific culture, clients (Tech/Auto), or digital initiatives."},
+                    {"q": "Tell me about a time you failed.", "hint": "Focus on the **Lesson Learned** and **Improvement**, not the failure itself."},
+                    {"q": "How do you handle disagreement with a team member?", "hint": "Emphasize **Listening**, **Data-driven discussion**, and **Shared Goals**."},
+                    {"q": "What is your career plan for the next 5-10 years?", "hint": "Be ambitious but realistic. 'Digital Audit Specialist' -> 'Project Manager'."},
+                    {"q": "Describe your research in simple terms to a 10-year-old.", "hint": "Tests communication skills. Avoid jargon. Use analogies."}
+                ]
+            elif "Technical" in mock_mode:
+                q_bank = [
+                    {"q": "What is the difference between 'Audit' and 'Advisory'?", "hint": "Audit = Assurance (Past/Present). Advisory = Consulting (Future/Improvement)."},
+                    {"q": "Explain 'Materiality' in Audit.", "hint": "The threshold above which a misstatement would influence decision making."},
+                    {"q": "How would you audit a company with massive data volumes?", "hint": "ITAC (IT Application Controls) + Data Analytics (Full population testing)."},
+                    {"q": "What are the risks of using AI in financial reporting?", "hint": "Black box logic, Bias, Hallucinations, Lack of audit trail."},
+                    {"q": "Explain the concept of 'Going Concern'.", "hint": "The assumption that a company will continue operating in the foreseeable future."}
+                ]
+            else: # Case
+                q_bank = [
+                    {"q": "Estimate the number of smartphones sold in Japan annually.", "hint": "Pop (125M) x Penetration (80%) / Replacement Cycle (3 years)."},
+                    {"q": "A client's profit is down 20%. How do you analyze it?", "hint": "Revenue vs Cost. Price x Vol. Fixed vs Variable. External vs Internal."},
+                    {"q": "Should a Japanese auto-maker enter the EV market in India?", "hint": "Market Size, Competition, Regulation, Infrastructure, Capabilities."},
+                    {"q": "How would you use AI to improve audit efficiency?", "hint": "Automated document review, Anomaly detection in journals, Chatbot for inquiries."}
+                ]
+            
+            selected = random.choice(q_bank)
+            st.session_state['mock_q'] = selected
+            st.session_state['show_hint'] = False
+        
+        if 'mock_q' in st.session_state:
+            st.markdown(f"#### ❓ Q: {st.session_state['mock_q']['q']}")
+            
+            if st.button("Show Hint / Direction"):
+                st.session_state['show_hint'] = not st.session_state.get('show_hint', False)
+                
+            if st.session_state.get('show_hint', False):
+                st.success(f"💡 **Direction**: {st.session_state['mock_q']['hint']}")
+        
+        st.divider()
+
+        # --- Detailed Guide ---
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("### 🗣️ Core Competency Questions (STAR Method)")
+            with st.expander("1. Self-Introduction & Why CPA?", expanded=True):
+                st.markdown("""
+                **The 'Engineer to Auditor' Narrative**:
+                *   "I research **Defect Localization** in aerospace structures using **AI**. My job is to find 'hidden cracks' before they cause failure."
+                *   "I realized **Audit** is the same concept but for **Business Structures**. I want to use my tech skills to find 'financial cracks' and ensure stability."
+                *   **Why**: "Engineering is precise. Accounting is the language of business. I want to combine **Precision + Business Logic**."
+                """)
+            
+            with st.expander("2. Handling Conflict / Teamwork"):
+                st.markdown("""
+                *   **Situation**: "In a joint research project with 3 others..."
+                *   **Task**: "We disagreed on the simulation method (Speed vs Accuracy)."
+                *   **Action**: "I didn't argue opinion. I proposed a **small-scale benchmark test** to compare data."
+                *   **Result**: "Data showed my method was 2x faster with 99% accuracy. Team agreed based on evidence."
+                *   **Key**: You are **Data-Driven** and **Collaborative**.
+                """)
+
+        with col2:
+            st.markdown("### 🙋‍♂️ Reverse Questions (Gyakushitsumon)")
+            st.info("Asking good questions is more important than giving good answers.")
+            
+            with st.expander("Level 1: The 'Safe' Questions"):
+                st.markdown("""
+                *   "What does a typical day look like for a first-year associate?"
+                *   "How is the team structure for a typical audit engagement?"
+                *   "What kind of training support is available for CPA exam (Jitsumu Hoshu)?"
+                """)
+                
+            with st.expander("Level 2: The 'Interest' Questions"):
+                st.markdown("""
+                *   "I am interested in the Digital Audit sector. How early can I get involved in data analytics projects?"
+                *   "What differentiates a 'High Performer' from an average one in your firm?"
+                *   "Can you tell me about the most challenging project you've worked on recently?"
+                """)
+                
+            with st.expander("Level 3: The 'Killer' Questions (Partner Level)"):
+                st.markdown("""
+                *   "With the rise of AI, how do you see the **business model of Audit** changing in 5 years? Will it shift from 'Time-Charge' to 'Value-Based'?"
+                *   "How is the firm preparing for the auditing of **Non-Financial Information** (ESG/Sustainability)? I believe my engineering background could be useful there."
+                *   "I want to be a bridge between the Tech team and the Audit team. Is there a career path for a 'Hybrid' professional?"
+                """)
+
+
+elif page == "Company Directory 🏢":
+    st.header("🏢 Company Directory for CPA Candidates")
+    st.markdown("A curated list of potential employers in Japan for CPA holders, ranging from Audit to Tech.")
+
+    tab1, tab2, tab3 = st.tabs(["Audit (Big 4 & Mid)", "Consulting & FAS", "Tech & Enterprise"])
+
+    with tab1:
+        st.subheader("Big 4 Audit Firms (The Standard Path)")
+        big4 = [
+            {"name": "Deloitte Touche Tohmatsu", "desc": "Largest scale, aggressive growth. Strong in IPO support.", "link": "https://www2.deloitte.com/jp/ja/pages/audit/topics/recruit-index.html"},
+            {"name": "KPMG AZSA", "desc": "Balanced portfolio, strong manufacturing clients. 'Gentleman' culture.", "link": "https://home.kpmg/jp/ja/home/careers.html"},
+            {"name": "EY ShinNihon", "desc": "Longest history, most listed clients. Strong Digital Audit focus.", "link": "https://www.ey.com/ja_jp/careers/audit"},
+            {"name": "PwC Aarata / Kyoto", "desc": "Global integration, innovative. PwC Kyoto is famous for high profitability.", "link": "https://www.pwc.com/jp/ja/careers/audit.html"}
+        ]
+        for c in big4:
+            with st.expander(f"🦁 {c['name']}"):
+                st.write(c['desc'])
+                st.link_button("Recruit Page", c['link'])
+
+        st.divider()
+        st.subheader("Mid-Tier Audit Firms (准大手)")
+        st.info("💡 **Why Mid-Tier?** Faster promotion, broader experience (you do everything), better work-life balance.")
+        mid_tier = [
+            {"name": "Grant Thornton Taiyo (太陽)", "desc": "Largest mid-tier. Very growing. Good alternative to Big 4.", "link": "https://www.grantthornton.jp/recruit/"},
+            {"name": "Crowe Toyo (東陽)", "desc": "Strong in domestic IPOs. Traditional but stable.", "link": "https://www.toyo-audit.or.jp/recruit/"},
+            {"name": "BDO Sanyu (三優)", "desc": "Friendly culture. Good international network via BDO.", "link": "https://www.bdo.or.jp/sanyu/recruit/"},
+            {"name": "RSM Seiwa (清和)", "desc": "Mid-sized, focus on healthcare and mid-cap clients.", "link": "https://www.seiwa-audit.or.jp/recruit/"}
+        ]
+        for c in mid_tier:
+            with st.expander(f"🐯 {c['name']}"):
+                st.write(c['desc'])
+                st.link_button("Recruit Page", c['link'])
+
+    with tab2:
+        st.subheader("FAS (Financial Advisory Services)")
+        st.info("💡 **High Expertise**: M&A, Valuation, Forensics. Often requires CPA + English/Tech.")
+        fas = [
+            {"name": "Deloitte Tohmatsu Financial Advisory (DTFA)", "link": "https://www2.deloitte.com/jp/ja/pages/about-deloitte/articles/dtfa/dtfa-recruit.html"},
+            {"name": "KPMG FAS", "link": "https://home.kpmg/jp/ja/home/careers/fas.html"},
+            {"name": "PwC Advisory", "link": "https://www.pwc.com/jp/ja/careers/advisory.html"},
+            {"name": "EY Strategy and Transactions", "link": "https://www.ey.com/ja_jp/careers/strategy-and-transactions"}
+        ]
+        for c in fas:
+            st.link_button(f"💼 {c['name']}", c['link'])
+
+        st.divider()
+        st.subheader("Consulting Firms")
+        st.markdown("Finance transformation, ERP implementation, Strategy.")
+        consulting = [
+            {"name": "Accenture (Strategy & Consulting)", "desc": "Top tier for DX/IT. High salary, hard work.", "link": "https://www.accenture.com/jp-ja/careers"},
+            {"name": "BayCurrent Consulting", "desc": "Rapidly growing Japanese firm. High salary.", "link": "https://www.baycurrent.co.jp/recruit/"},
+            {"name": "Nomura Research Institute (NRI)", "desc": "Stable, high salary, strong domestic presence.", "link": "https://www.nri.com/jp/career"},
+            {"name": "ABeam Consulting", "desc": "Strong in SAP/ERP. Good for CPAs liking systems.", "link": "https://www.abeam.com/jp/ja/careers"}
+        ]
+        for c in consulting:
+            with st.expander(f"🧠 {c['name']}"):
+                st.write(c['desc'])
+                st.link_button("Recruit Page", c['link'])
+
+    with tab3:
+        st.subheader("Tech & Enterprise (CFO Track)")
+        st.info("💡 **Business Side**: FP&A, Accounting Manager, IPO Prep.")
+        
+        tech = [
+            {"name": "Google / Amazon / MS (Japan)", "desc": "FP&A roles. Very high English requirement. Competitive.", "link": "https://careers.google.com/"},
+            {"name": "Rakuten Group", "desc": "English official language. Massive FinTech ecosystem.", "link": "https://corp.rakuten.co.jp/careers/"},
+            {"name": "Line Yahoo", "desc": "Major domestic tech player. Strong benefits.", "link": "https://www.lycorp.co.jp/ja/recruit/"},
+            {"name": "Mercari", "desc": "Modern tech culture. Good for ambitious finance pros.", "link": "https://careers.mercari.com/"}
+        ]
+        st.markdown("#### Tech / Global")
+        for c in tech:
+            st.markdown(f"**{c['name']}**: {c['desc']} [Link]({c['link']})")
+
+        st.divider()
+        st.markdown("#### Trading Companies (Sogo Shosha)")
+        shosha = ["Mitsubishi Corp", "Mitsui & Co", "Itochu", "Sumitomo Corp", "Marubeni"]
+        st.write(", ".join(shosha))
+        st.caption("Extremely competitive. High salary. Global rotations.")
+
 
 elif page == "Future 🚀":
     st.header("🚀 100-Year Life & Career Plan: The 'Founder' Trajectory")

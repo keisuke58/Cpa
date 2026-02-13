@@ -756,6 +756,54 @@ elif page == "Old Exams 📄":
     if not os.path.exists(exam_dir):
         st.error(f"EXAM directory not found at: {exam_dir}")
     else:
+        # --- Vocab Analysis Section ---
+        vocab_file = os.path.join(base_dir, 'exam_vocab.json')
+        if os.path.exists(vocab_file):
+            with st.expander("📊 Exam Vocabulary Analysis (Tangocho)", expanded=False):
+                st.info("Top frequent words extracted from actual exam papers. Master these!")
+                
+                try:
+                    with open(vocab_file, "r", encoding="utf-8") as f:
+                        exam_vocab = json.load(f)
+                    
+                    # Subject selector
+                    subjects = list(exam_vocab.keys())
+                    if subjects:
+                        selected_subject = st.selectbox("Select Subject for Vocabulary", subjects)
+                        
+                        if selected_subject:
+                            words = exam_vocab[selected_subject]
+                            
+                            # Display as a dataframe or cloud
+                            # Create a nice dataframe
+                            df_vocab = pd.DataFrame(words)
+                            df_vocab.columns = ["Word", "Frequency"]
+                            
+                            col1, col2 = st.columns([1, 2])
+                            
+                            with col1:
+                                st.dataframe(df_vocab, use_container_width=True, height=400)
+                                
+                            with col2:
+                                if not df_vocab.empty:
+                                    st.markdown("### Top Keywords")
+                                    # Create a bar chart
+                                    fig = px.bar(
+                                        df_vocab.head(20), 
+                                        x='Frequency', 
+                                        y='Word', 
+                                        orientation='h',
+                                        title=f"Top 20 Words in {selected_subject}",
+                                        color='Frequency',
+                                        color_continuous_scale='Viridis'
+                                    )
+                                    fig.update_layout(yaxis={'categoryorder':'total ascending'})
+                                    st.plotly_chart(fig, use_container_width=True)
+                except Exception as e:
+                    st.error(f"Error loading vocabulary: {e}")
+        
+        st.divider()
+
         files = [f for f in os.listdir(exam_dir) if f.lower().endswith('.pdf')]
         
         if not files:

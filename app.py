@@ -741,8 +741,18 @@ elif page == "Old Exams 📄":
     
     # Path to EXAM folder
     # platform/app.py -> platform/EXAM
-    exam_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'EXAM')
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    exam_dir = os.path.join(base_dir, 'EXAM')
+    metadata_file = os.path.join(base_dir, 'exam_metadata.json')
     
+    metadata = {}
+    if os.path.exists(metadata_file):
+        try:
+            with open(metadata_file, "r", encoding="utf-8") as f:
+                metadata = json.load(f)
+        except Exception as e:
+            st.error(f"Error loading metadata: {e}")
+
     if not os.path.exists(exam_dir):
         st.error(f"EXAM directory not found at: {exam_dir}")
     else:
@@ -753,20 +763,42 @@ elif page == "Old Exams 📄":
         else:
             st.write(f"Found {len(files)} exam papers.")
             
+            # Sort by filename to keep subjects grouped (01, 02, ...)
             for f in sorted(files):
-                col1, col2 = st.columns([4, 1])
-                with col1:
-                    st.markdown(f"📄 **{f}**")
-                with col2:
-                    if st.button("Open", key=f"open_exam_{f}"):
-                        try:
-                            file_path = os.path.join(exam_dir, f)
-                            os.startfile(file_path)
-                            st.toast(f"Opening {f}...", icon="🚀")
-                        except Exception as e:
-                            st.error(f"Error opening file: {e}")
+                info = metadata.get(f, {})
+                display_title = f"**{f}**"
+                sub_info = ""
+                
+                if info:
+                    # Construct nice title
+                    # e.g. R7 Short-Answer (Tanto) I - Corporate Law (企業法)
+                    year = info.get('year', '')
+                    exam_type = info.get('type', '')
+                    subject = info.get('subject', '')
+                    
+                    # Create a clean badge-like string
+                    display_title = f"**{subject}** - {year} {exam_type}"
+                    sub_info = f"Filename: {f}"
+                
+                with st.container():
+                    col1, col2 = st.columns([5, 1])
+                    with col1:
+                        st.markdown(f"📄 {display_title}")
+                        if sub_info:
+                            st.caption(sub_info)
+                    with col2:
+                        if st.button("Open", key=f"open_exam_{f}"):
+                            try:
+                                file_path = os.path.join(exam_dir, f)
+                                if os.name == 'nt':
+                                    os.startfile(file_path)
+                                    st.toast(f"Opening {f}...", icon="🚀")
+                                else:
+                                    st.warning("File opening is only supported on Windows locally.")
+                            except Exception as e:
+                                st.error(f"Error opening file: {e}")
+                    st.divider()
             
-            st.markdown("---")
             st.info("💡 Tip: Use these papers to practice time management.")
 
 elif page == "Study Timer":

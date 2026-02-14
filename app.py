@@ -6,6 +6,7 @@ import plotly.express as px
 from datetime import datetime, date, timedelta
 import json
 import os
+import random
 import base64
 import streamlit.components.v1 as components
 
@@ -140,6 +141,48 @@ def render_pdf(path: str, height: int = 800):
         components.html(html, height=height, scrolling=True)
     except Exception as e:
         st.error(f"PDF表示に失敗: {e}")
+
+def ielts_reading_band(module: str, raw_correct: int) -> float:
+    m = (module or "Academic").lower()
+    r = max(0, min(40, int(raw_correct)))
+    if m.startswith("acad"):
+        if r >= 39: return 9.0
+        if r >= 37: return 8.5
+        if r >= 35: return 8.0
+        if r >= 32: return 7.5
+        if r >= 30: return 7.0
+        if r >= 27: return 6.5
+        if r >= 23: return 6.0
+        if r >= 19: return 5.5
+        if r >= 15: return 5.0
+        if r >= 13: return 4.5
+        if r >= 10: return 4.0
+        if r >= 8: return 3.5
+        if r >= 6: return 3.0
+        if r >= 4: return 2.5
+        if r >= 3: return 2.0
+        if r >= 2: return 1.5
+        if r >= 1: return 1.0
+        return 0.0
+    else:
+        if r >= 40: return 9.0
+        if r >= 39: return 8.5
+        if r >= 37: return 8.0
+        if r >= 36: return 7.5
+        if r >= 34: return 7.0
+        if r >= 32: return 6.5
+        if r >= 30: return 6.0
+        if r >= 27: return 5.5
+        if r >= 23: return 5.0
+        if r >= 19: return 4.5
+        if r >= 15: return 4.0
+        if r >= 12: return 3.5
+        if r >= 9: return 3.0
+        if r >= 6: return 2.5
+        if r >= 4: return 2.0
+        if r >= 2: return 1.5
+        if r >= 1: return 1.0
+        return 0.0
 
 # Initialize Session State
 if 'data' not in st.session_state:
@@ -2399,6 +2442,49 @@ elif page == "English Prep 🌐":
             except Exception:
                 pass
             st.download_button("Download CSV", data=df.to_csv(index=False).encode("utf-8"), file_name="ielts_logs.csv", mime="text/csv")
+        st.subheader("Tools")
+        mod = st.selectbox("Module", ["Academic", "General Training"], key="ielts_module")
+        with st.expander("Reading: Raw→Band Converter"):
+            raw = st.number_input("Correct out of 40", min_value=0, max_value=40, value=30, step=1, key="ielts_reading_raw")
+            band = ielts_reading_band(mod, raw)
+            st.metric("Estimated Band", f"{band:.1f}")
+        with st.expander("Writing Planner (Task 1/Task 2)"):
+            tsel = st.radio("Task", ["Task 1 (Report)", "Task 2 (Essay)"], horizontal=True, key="ielts_wtask")
+            if tsel.startswith("Task 1"):
+                intro = st.text_area("Intro/Overview", value="The chart illustrates ... Overall, ...")
+                k1 = st.text_area("Key Feature 1", value="Category A increased from ... to ...")
+                k2 = st.text_area("Key Feature 2", value="Category B declined slightly ...")
+                k3 = st.text_area("Key Feature 3 (optional)", value="")
+                if st.button("Generate Outline (Task 1)"):
+                    outline = f"{intro}\n\nParagraph 1: {k1}\nParagraph 2: {k2}\nParagraph 3: {k3}".strip()
+                    st.code(outline, language="markdown")
+            else:
+                qtype = st.selectbox("Question Type", ["Agree/Disagree", "Discuss Both", "Advantages/Disadvantages", "Problem/Solution", "Two-part"])
+                pos = st.text_input("Position", value="I agree that ...")
+                arg_for = st.text_area("Argument A", value="Reason 1 with example ...")
+                arg_against = st.text_area("Argument B", value="Counterpoint with example ...")
+                ex = st.text_area("Real-world Example", value="For instance, ...")
+                if st.button("Generate Outline (Task 2)"):
+                    outline = f"Introduction: {pos}\n\nBody 1: {arg_for}\n\nBody 2: {arg_against}\n\nExample: {ex}\n\nConclusion: Restate position"
+                    st.code(outline, language="markdown")
+        with st.expander("Speaking: Random Topic Generator"):
+            part = st.radio("Part", ["Part 1", "Part 2 (Cue Card)", "Part 3"], horizontal=True, key="ielts_spart")
+            if st.button("Random Topic"):
+                topics1 = ["Hometown", "Work/Study", "Hobbies", "Food", "Travel"]
+                topics2 = [
+                    "Describe a book you recently read",
+                    "Describe a place you would like to visit",
+                    "Describe a person who inspired you",
+                    "Describe an important invention",
+                    "Describe a difficult decision you made"
+                ]
+                topics3 = ["Education and technology", "Environmental policies", "Globalization effects", "Public transport", "Work-life balance"]
+                if part == "Part 1":
+                    st.write(random.choice(topics1))
+                elif part.startswith("Part 2"):
+                    st.write(random.choice(topics2))
+                else:
+                    st.write(random.choice(topics3))
         st.subheader("Resources")
         new_r = st.text_input("Add Resource URL", key="ielts_res_url")
         if st.button("Add Resource (IELTS)"):

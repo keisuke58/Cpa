@@ -102,6 +102,18 @@ def load_vocab_data():
 
 vocab_data = load_vocab_data()
 
+def load_formulas_data():
+    p = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "formulas.json")
+    if os.path.exists(p):
+        try:
+            with open(p, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except:
+            return []
+    return []
+
+formulas_data = load_formulas_data()
+
 drill_questions = {
     'Financial': [
         {
@@ -504,7 +516,7 @@ st.sidebar.markdown("""
     """, unsafe_allow_html=True)
 
 st.sidebar.markdown("---")
-page = st.sidebar.radio("Navigation", ["Dashboard 📊", "My Syllabus 📚", "Vocabulary 📖", "Old Exams 📄", "Study Timer ⏱️", "Mock Exams 📝", "Scores 📈", "Drills 🔧", "Survival Mode ⚡", "Roadmap 🗺️", "Big 4 Job Hunting 💼", "Company Directory 🏢", "Future 🚀"])
+page = st.sidebar.radio("Navigation", ["Dashboard 📊", "My Syllabus 📚", "Vocabulary 📖", "Formulas 📐", "Old Exams 📄", "Study Timer ⏱️", "Mock Exams 📝", "Scores 📈", "Drills 🔧", "Survival Mode ⚡", "Roadmap 🗺️", "Big 4 Job Hunting 💼", "Company Directory 🏢", "Future 🚀"])
 
 if page == "Dashboard 📊":
     st.header("Dashboard 🚀")
@@ -911,6 +923,42 @@ elif page == "Vocabulary 📖":
                                     st.session_state.flashcard_flipped = False
                                     st.rerun()
 
+elif page == "Formulas 📐":
+    st.header("Formulas 📐")
+    if not formulas_data:
+        st.warning("No formulas found.")
+    else:
+        cats = sorted({str(f.get("category", "General")) for f in formulas_data})
+        cat_sel = st.multiselect("Category", options=cats, default=[])
+        q = st.text_input("Search")
+        df_f = pd.DataFrame(formulas_data)
+        if not df_f.empty:
+            if cat_sel:
+                df_f = df_f[df_f["category"].isin(cat_sel)]
+            if q:
+                ql = q.lower()
+                def _has(r):
+                    return (ql in str(r.get("name", "")).lower() or
+                            ql in str(r.get("formula", "")).lower() or
+                            ql in str(r.get("explanation", "")).lower() or
+                            ql in str(r.get("variables", "")).lower())
+                df_f = df_f[df_f.apply(_has, axis=1)]
+        st.write(f"Found {len(df_f)} formulas.")
+        for _, row in df_f.iterrows():
+            title = row.get("name", "")
+            cat = row.get("category", "")
+            if cat:
+                title = f"{title} [{cat}]"
+            with st.expander(title):
+                ftxt = row.get("formula", "")
+                if ftxt:
+                    st.markdown(f"**Formula:** {ftxt}")
+                vtxt = row.get("variables", "")
+                if vtxt:
+                    st.markdown(f"**Variables:** {vtxt}")
+                etxt = row.get("explanation", "")
+                if etxt:
+                    st.markdown(etxt)
 elif page == "Old Exams 📄":
     st.header("Old Exam Papers 📄")
     
@@ -927,6 +975,192 @@ elif page == "Old Exams 📄":
                 metadata = json.load(f)
         except Exception as e:
             st.error(f"Error loading metadata: {e}")
+
+    with st.expander("📝 Exam Info（合格ボーダー R4〜R6）", expanded=True):
+        st.markdown("""
+        ### 短答式（相対評価）
+        - 合格基準: 総点数の70％を基準として、審査会が相当と認めた得点比率
+        - 足切り: 1科目でも満点の40％未満がある場合、不合格の可能性あり
+        
+        参考：近年のボーダー（予備校・メディア集計）
+        
+        | 実施年 | 第I回（12月） | 第II回（5月） | 備考 |
+        |---|---:|---:|---|
+        | 令和6年 (2024) | 68.0% | 78.0% | 易化で高水準 |
+        | 令和5年 (2023) | 71.0% | 70.2% | 70%前後 |
+        | 令和4年 (2022) | 68.0% | 73.0% | 変動大 |
+        
+        - 出典（参考値・解説記事）:
+          - マイナビ会計士「第Ⅱ回短答式試験 結果速報」: https://cpa.mynavi.jp/column_mt/2024/06/967.html
+          - 短答式の合格基準（公式）: https://www.fsa.go.jp/cpaaob/kouninkaikeishi-shiken/kijuntou/05.html
+        
+        ---
+        ### 論文式（偏差値方式）
+        - 合格基準: 総点数の60％を基準として、審査会が相当と認めた得点比率
+        - 足切り: 1科目でも得点比率（偏差値）が40％未満のものがある場合は不合格
+        - 得点比率（偏差値）の一般式: 50 + 10 × (個人の得点 − 平均点) / 標準偏差
+        
+        近年の合格点（公表資料/報道ベース）
+        - 令和6年 (2024): 約52.0前後（毎年微調整）
+        - 令和5年 (2023): 約51.8前後（微調整）
+        - 令和4年 (2022): 約52.0前後（基準に近い）
+        
+        - 出典（公式）:
+          - 合格基準について（短答式/論文式の公式基準）: https://www.fsa.go.jp/cpaaob/kouninkaikeishi-shiken/kijuntou/05.html
+          - 令和7年 論文式 合格点の公表例（PDF、偏差値法の説明含む）: https://www.fsa.go.jp/cpaaob/kouninkaikeishi-shiken/r7shiken/ronbungoukaku_r07/02.pdf
+        """)
+        # R4-R6 short-answer border mini chart
+        try:
+            df_borders = pd.DataFrame([
+                {"Year": "R4 (2022)", "Session": "I (Dec)", "Border": 68.0},
+                {"Year": "R4 (2022)", "Session": "II (May)", "Border": 73.0},
+                {"Year": "R5 (2023)", "Session": "I (Dec)", "Border": 71.0},
+                {"Year": "R5 (2023)", "Session": "II (May)", "Border": 70.2},
+                {"Year": "R6 (2024)", "Session": "I (Dec)", "Border": 68.0},
+                {"Year": "R6 (2024)", "Session": "II (May)", "Border": 78.0},
+            ])
+            fig_border = px.bar(
+                df_borders, x="Year", y="Border", color="Session", barmode="group",
+                title="短答式 合格ボーダー（参考値）R4〜R6", range_y=[60, 80],
+                color_discrete_sequence=px.colors.qualitative.Set2
+            )
+            fig_border.update_layout(legend_title_text="Session", yaxis_title="Border (%)")
+            st.plotly_chart(fig_border, use_container_width=True)
+            st.caption("注: 参考値（予備校・メディア集計ベース）。公式の相対基準はリンク参照。")
+        except Exception:
+            pass
+    
+    with st.expander("🎯 短答 必要得点計算機", expanded=False):
+        # Target presets
+        p1, p2, p3 = st.columns(3)
+        with p1:
+            if st.button("Target 70%"):
+                st.session_state["tanto_target_pct"] = 70
+                st.rerun()
+        with p2:
+            if st.button("Target 72%"):
+                st.session_state["tanto_target_pct"] = 72
+                st.rerun()
+        with p3:
+            if st.button("Target 78%"):
+                st.session_state["tanto_target_pct"] = 78
+                st.rerun()
+
+        # Target slider
+        col_t1, col_t2 = st.columns(2)
+        with col_t1:
+            default_target = st.session_state.get("tanto_target_pct", 72)
+            target_pct = st.slider("目標得点率(%)", min_value=60, max_value=85, value=default_target, step=1, key="tanto_target_slider")
+            target_points = int(500 * target_pct / 100)
+            st.metric("必要合計点(500点満点)", f"{target_points} 点", f"{target_pct}%")
+        with col_t2:
+            st.caption("配点: 企業法100・管理100・監査100・財務200")
+        
+        # Preset buttons for subject shares
+        b1, b2, b3 = st.columns(3)
+        with b1:
+            if st.button("Preset: Balanced 70/70/70/70"):
+                st.session_state["tanto_corp_pct"] = 70
+                st.session_state["tanto_mgmt_pct"] = 70
+                st.session_state["tanto_audit_pct"] = 70
+                st.session_state["tanto_fin_pct"] = 70
+                st.rerun()
+        with b2:
+            if st.button("Preset: Fin-Heavy 65/65/65/78"):
+                st.session_state["tanto_corp_pct"] = 65
+                st.session_state["tanto_mgmt_pct"] = 65
+                st.session_state["tanto_audit_pct"] = 65
+                st.session_state["tanto_fin_pct"] = 78
+                st.rerun()
+        with b3:
+            if st.button("Preset: Safety 75/70/70/75"):
+                st.session_state["tanto_corp_pct"] = 75
+                st.session_state["tanto_mgmt_pct"] = 70
+                st.session_state["tanto_audit_pct"] = 70
+                st.session_state["tanto_fin_pct"] = 75
+                st.rerun()
+
+        # Inputs with keys to allow presets
+        if "tanto_corp_pct" not in st.session_state:
+            st.session_state["tanto_corp_pct"] = 70
+        if "tanto_mgmt_pct" not in st.session_state:
+            st.session_state["tanto_mgmt_pct"] = 70
+        if "tanto_audit_pct" not in st.session_state:
+            st.session_state["tanto_audit_pct"] = 70
+        if "tanto_fin_pct" not in st.session_state:
+            st.session_state["tanto_fin_pct"] = 70
+
+        c1, c2 = st.columns(2)
+        with c1:
+            corp_pct = st.number_input("企業法(%)", min_value=0, max_value=100, value=st.session_state["tanto_corp_pct"], step=1, key="tanto_corp_pct")
+            mgmt_pct = st.number_input("管理会計論(%)", min_value=0, max_value=100, value=st.session_state["tanto_mgmt_pct"], step=1, key="tanto_mgmt_pct")
+        with c2:
+            audit_pct = st.number_input("監査論(%)", min_value=0, max_value=100, value=st.session_state["tanto_audit_pct"], step=1, key="tanto_audit_pct")
+            fin_pct = st.number_input("財務会計論(%)", min_value=0, max_value=100, value=st.session_state["tanto_fin_pct"], step=1, key="tanto_fin_pct")
+        total_points = int(corp_pct/100*100 + mgmt_pct/100*100 + audit_pct/100*100 + fin_pct/100*200)
+        total_pct = round(total_points / 500 * 100, 1)
+        col_r1, col_r2, col_r3 = st.columns(3)
+        with col_r1:
+            st.metric("合計得点率", f"{total_pct}%")
+        with col_r2:
+            st.metric("合計点", f"{total_points} 点")
+        with col_r3:
+            ok = (corp_pct >= 40) and (mgmt_pct >= 40) and (audit_pct >= 40) and (fin_pct >= 40)
+            status = "OK" if (total_pct >= target_pct and ok) else "要改善"
+            st.metric("達成状況", status)
+        if not ok:
+            st.warning("足切り注意: いずれかの科目が40%未満です。")
+        elif total_pct < target_pct:
+            st.info("合計が目標に届いていません。強化科目を見直してください。")
+        else:
+            st.success("目標達成ラインです。")
+    
+    with st.expander("🧮 論文 偏差値計算機", expanded=False):
+        col_e1, col_e2, col_e3 = st.columns(3)
+        with col_e1:
+            personal = st.number_input("個人の得点", min_value=0.0, value=60.0, step=0.1)
+        with col_e2:
+            mean = st.number_input("平均点", min_value=0.0, value=55.0, step=0.1)
+        with col_e3:
+            std = st.number_input("標準偏差", min_value=0.1, value=7.0, step=0.1)
+        deviation = round(50 + 10 * (personal - mean) / std, 2)
+        st.metric("得点比率（偏差値）", f"{deviation}")
+        if deviation < 40:
+            st.warning("足切りラインに注意（40未満）。")
+        elif deviation < 52:
+            st.info("基準目安 52 に未達。学習強化が必要です。")
+        else:
+            st.success("合格基準目安を超えています。")
+    
+    with st.expander("📐 基本式 / Basic Formulas", expanded=False):
+        st.markdown("""
+        - 短答 合計点: 合計点 = 100×企業法% + 100×管理% + 100×監査% + 200×財務%
+        - 短答 合計得点率: 合計得点率(%) = 合計点 ÷ 500 × 100
+        - 短答 合格条件(目安): 全科目40%以上 かつ 合計得点率 ≥ 目標%
+        - 逆算（必要な財務%）: 財務% = { (目標%×500/100) − [100×(企業法%+管理%+監査%)] } ÷ 200 × 100
+        - 論文 偏差値: D = 50 + 10 × (x − μ)/σ
+        - 論文 必要得点: x = μ + σ × (D − 50)/10
+        """)
+        col_rev1, col_rev2 = st.columns(2)
+        with col_rev1:
+            st.subheader("短答 逆算（必要財務%）")
+            t_pct = st.number_input("目標得点率(%)", min_value=60, max_value=85, value=72, step=1, key="rev_target")
+            rc = st.number_input("企業法(%)", min_value=0, max_value=100, value=70, step=1, key="rev_corp")
+            rm = st.number_input("管理会計論(%)", min_value=0, max_value=100, value=70, step=1, key="rev_mgmt")
+            ra = st.number_input("監査論(%)", min_value=0, max_value=100, value=70, step=1, key="rev_audit")
+            need_fin = ((t_pct/100*500) - (100*(rc+rm+ra))) / 200 * 100
+            need_fin_disp = round(need_fin, 1)
+            feas = 0 <= need_fin <= 100
+            st.metric("必要 財務会計論(%)", f"{need_fin_disp}%")
+            if not feas:
+                st.warning("この条件では達成不可能です（0〜100%の範囲外）。")
+        with col_rev2:
+            st.subheader("論文 必要得点（逆算）")
+            d_target = st.number_input("目標偏差値 D", min_value=35.0, max_value=70.0, value=52.0, step=0.1, key="rev_d")
+            mu = st.number_input("平均点 μ", min_value=0.0, value=55.0, step=0.1, key="rev_mu")
+            sigma = st.number_input("標準偏差 σ", min_value=0.1, value=7.0, step=0.1, key="rev_sigma")
+            need_x = mu + sigma * (d_target - 50) / 10
+            st.metric("必要得点 x", f"{round(need_x, 2)}")
 
     if not os.path.exists(exam_dir):
         st.error(f"EXAM directory not found at: {exam_dir}")

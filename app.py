@@ -571,7 +571,15 @@ def seed_latex_formulas():
         "capm": r"k_e = R_f + \\beta\\,(R_m - R_f)",
         "effective annual rate": r"EAR = (1 + i/m)^{m} - 1",
         "future value of annuity (ordinary)": r"FVA = P\\times\\dfrac{(1+r)^{n}-1}{r}",
-        "future value (annuity)": r"FVA = P\\times\\dfrac{(1+r)^{n}-1}{r}"
+        "future value (annuity)": r"FVA = P\\times\\dfrac{(1+r)^{n}-1}{r}",
+        "black–scholes d1": r"d_1 = \\dfrac{\\ln(S/K) + (r + \\tfrac{\\sigma^2}{2})T}{\\sigma\\sqrt{T}}",
+        "black–scholes d2": r"d_2 = d_1 - \\sigma\\sqrt{T}",
+        "black–scholes call price": r"C = S\\,N(d_1) - K e^{-rT} N(d_2)",
+        "black–scholes put price": r"P = K e^{-rT} N(-d_2) - S\\,N(-d_1)",
+        "call delta (bsm)": r"\\Delta_{call} = N(d_1)",
+        "vega (bsm)": r"\\text{Vega} = S\\,\\phi(d_1)\\sqrt{T}",
+        "receivables turnover": r"\\dfrac{\\text{Sales}}{\\overline{AR}}",
+        "payables turnover": r"\\dfrac{COGS}{\\overline{AP}}"
     }
     changed = False
     for i, item in enumerate(formulas_data):
@@ -3171,6 +3179,48 @@ elif page == "Company Directory 🏢":
         shosha = ["Mitsubishi Corp", "Mitsui & Co", "Itochu", "Sumitomo Corp", "Marubeni"]
         st.write(", ".join(shosha))
         st.caption("Extremely competitive. High salary. Global rotations.")
+
+        st.divider()
+        st.markdown("#### Makers (Tier 1)")
+        makers = [
+            {"name": "Toyota", "desc": "Global auto leader. Robust finance org; strong FP&A/treasury.", "link": "https://global.toyota/en/company/"},
+            {"name": "Keyence", "desc": "High-margin factory automation. Lean org, high productivity.", "link": "https://www.keyence.co.jp/jobs/"},
+            {"name": "Fujifilm", "desc": "Diversified: healthcare, imaging, materials. Global operations.", "link": "https://recruit.fujifilm.com/"},
+            {"name": "Sony", "desc": "Entertainment + Electronics. Complex consolidation; great for CPAs.", "link": "https://www.sony.com/en/SonyInfo/Careers/"},
+            {"name": "Panasonic", "desc": "Devices to solutions. Large-scale finance transformation roles.", "link": "https://holdings.panasonic/jp/corporate/jobs/"},
+            {"name": "Hitachi", "desc": "OT×IT leader. Project accounting, global IFRS exposure.", "link": "https://www.hitachi.co.jp/recruit/"}
+        ]
+        for c in makers:
+            st.markdown(f"**{c['name']}**: {c['desc']} [Link]({c['link']})")
+
+        st.divider()
+        st.markdown("#### Utilities & Energy")
+        utilities = [
+            {"name": "Tokyo Gas", "desc": "Stable utility. Long-term planning, project finance, IFRS.", "link": "https://www.tokyo-gas-recruit.com/"},
+            {"name": "TEPCO", "desc": "Large-scale regulated utility. Risk management heavy.", "link": "https://www.tepco.co.jp/recruit/index-j.html"}
+        ]
+        for c in utilities:
+            st.markdown(f"**{c['name']}**: {c['desc']} [Link]({c['link']})")
+
+        st.divider()
+        st.markdown("#### Megabanks")
+        megabanks = [
+            {"name": "MUFG", "desc": "Japan’s largest financial group. Treasury, ALM, IFRS9/CECL skills.", "link": "https://www.mufg.jp/csr/recruit/"},
+            {"name": "SMBC", "desc": "Corporate banking powerhouse. Debt/FX exposure for CFO track.", "link": "https://www.smbc.co.jp/recruit/"},
+            {"name": "Mizuho", "desc": "Universal bank. Group finance/controls; transformation programs.", "link": "https://www.mizuho-fg.co.jp/recruit/"}
+        ]
+        for c in megabanks:
+            st.markdown(f"**{c['name']}**: {c['desc']} [Link]({c['link']})")
+
+        st.divider()
+        st.markdown("#### Strategy Consulting (MBB)")
+        mbb = [
+            {"name": "McKinsey & Company", "desc": "Top strategy firm. CFO transformation, value creation.", "link": "https://www.mckinsey.com/careers"},
+            {"name": "Boston Consulting Group", "desc": "Deep corporate finance practice.", "link": "https://careers.bcg.com/"},
+            {"name": "Bain & Company", "desc": "Private equity, performance improvement.", "link": "https://www.bain.com/careers/"}
+        ]
+        for c in mbb:
+            st.markdown(f"**{c['name']}**: {c['desc']} [Link]({c['link']})")
 
 
 elif page == "Future 🚀":

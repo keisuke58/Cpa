@@ -1666,15 +1666,18 @@ elif page == "Old Exams 📄":
         
         | 実施年 | 第I回（12月） | 第II回（5月） | 備考 |
         |---|---:|---:|---|
+        | 令和8年 (2026) | 72.0% | ― | 最新（第I回、結果1月公表） |
+        | 令和7年 (2025) | 70.4% | 74.0% | 標準化の動き |
         | 令和6年 (2024) | 68.0% | 78.0% | 易化で高水準 |
         | 令和5年 (2023) | 71.0% | 70.2% | 70%前後 |
         | 令和4年 (2022) | 68.0% | 73.0% | 変動大 |
-        | 令和7年 (2025) | ― | ― | 公表待ち |
-        | 令和8年 (2026) | ― | ― | 公表待ち |
         
         - 出典（参考値・解説記事）:
           - マイナビ会計士「第Ⅱ回短答式試験 結果速報」: https://cpa.mynavi.jp/column_mt/2024/06/967.html
           - 短答式の合格基準（公式）: https://www.fsa.go.jp/cpaaob/kouninkaikeishi-shiken/kijuntou/05.html
+        
+        ---
+        例: 500点 × 0.72 = 360点
         
         ---
         ### 論文式（偏差値方式）
@@ -1693,7 +1696,7 @@ elif page == "Old Exams 📄":
           - 合格基準について（短答式/論文式の公式基準）: https://www.fsa.go.jp/cpaaob/kouninkaikeishi-shiken/kijuntou/05.html
           - 令和7年 論文式 合格点の公表例（PDF、偏差値法の説明含む）: https://www.fsa.go.jp/cpaaob/kouninkaikeishi-shiken/r7shiken/ronbungoukaku_r07/02.pdf
         """)
-        # R4-R6 short-answer border mini chart
+        # R4-R8 short-answer border mini chart
         try:
             df_borders = pd.DataFrame([
                 {"Year": "R4 (2022)", "Session": "I (Dec)", "Border": 68.0},
@@ -1702,10 +1705,13 @@ elif page == "Old Exams 📄":
                 {"Year": "R5 (2023)", "Session": "II (May)", "Border": 70.2},
                 {"Year": "R6 (2024)", "Session": "I (Dec)", "Border": 68.0},
                 {"Year": "R6 (2024)", "Session": "II (May)", "Border": 78.0},
+                {"Year": "R7 (2025)", "Session": "I (Dec)", "Border": 70.4},
+                {"Year": "R7 (2025)", "Session": "II (May)", "Border": 74.0},
+                {"Year": "R8 (2026)", "Session": "I (Dec)", "Border": 72.0},
             ])
             fig_border = px.bar(
                 df_borders, x="Year", y="Border", color="Session", barmode="group",
-                title="短答式 合格ボーダー（参考値）R4〜R6", range_y=[60, 80],
+                title="短答式 合格ボーダー（参考値）R4〜R8", range_y=[60, 80],
                 color_discrete_sequence=px.colors.qualitative.Set2
             )
             fig_border.update_layout(legend_title_text="Session", yaxis_title="Border (%)")

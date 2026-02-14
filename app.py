@@ -126,6 +126,7 @@ def load_formulas_data():
     return []
 
 formulas_data = load_formulas_data()
+seed_top10_examples()
 
 def save_formulas_data(data):
     p = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "formulas.json")
@@ -135,6 +136,100 @@ def save_formulas_data(data):
         return True
     except Exception:
         return False
+
+def seed_top10_examples():
+    top10 = {
+        "Future Value (Single Sum)": {
+            "example_ja": "例: PV=1,000、r=5%、n=3年 ⇒ FV = 1,000×(1.05)^3 ≈ 1,157.63",
+            "example_en": "Example: PV=1,000, r=5%, n=3 ⇒ FV = 1,000×(1.05)^3 ≈ 1,157.63",
+            "problem_ja": "問題: PV=200、r=8%、n=4年 の将来価値FVは？",
+            "problem_en": "Problem: Find FV for PV=200, r=8%, n=4.",
+            "solution_ja": "解答: FV = 200×(1.08)^4 ≈ 272.1",
+            "solution_en": "Solution: FV = 200×(1.08)^4 ≈ 272.1"
+        },
+        "Present Value (Single Sum)": {
+            "example_ja": "例: FV=1,000、r=6%、n=2年 ⇒ PV = 1,000 ÷ (1.06)^2 ≈ 890.0",
+            "example_en": "Example: FV=1,000, r=6%, n=2 ⇒ PV = 1,000/(1.06)^2 ≈ 890.0",
+            "problem_ja": "問題: FV=500、r=10%、n=3年 の現在価値PVは？",
+            "problem_en": "Problem: Find PV for FV=500, r=10%, n=3.",
+            "solution_ja": "解答: PV ≈ 500 ÷ 1.331 ≈ 375.7",
+            "solution_en": "Solution: PV ≈ 500/1.331 ≈ 375.7"
+        },
+        "Present Value of Annuity": {
+            "example_ja": "例: P=100、r=5%、n=4 ⇒ PVA = 100×[1 − (1.05)^(−4)] ÷ 0.05 ≈ 354.6",
+            "example_en": "Example: P=100, r=5%, n=4 ⇒ PVA ≈ 354.6",
+            "problem_ja": "問題: P=50、r=6%、n=3 の年金現在価値PVAは？",
+            "problem_en": "Problem: Find PVA for P=50, r=6%, n=3.",
+            "solution_ja": "解答: PVA ≈ 50×[1 − (1.06)^(−3)] ÷ 0.06 ≈ 133.7",
+            "solution_en": "Solution: PVA ≈ 50×[1 − 1.06^(−3)]/0.06 ≈ 133.7"
+        },
+        "Contribution Margin": {
+            "example_ja": "例: 売上1,000、変動費600 ⇒ 限界利益CM = 400",
+            "example_en": "Example: Sales=1,000, Variable=600 ⇒ CM=400",
+            "problem_ja": "問題: 単価20、変動費/単位12、数量200 ⇒ 限界利益は？",
+            "problem_en": "Problem: Price=20, Var/unit=12, Units=200 ⇒ CM?",
+            "solution_ja": "解答: 単位CM=8、合計CM=8×200=1,600",
+            "solution_en": "Solution: Unit CM=8; Total CM=8×200=1,600"
+        },
+        "Break-even Units": {
+            "example_ja": "例: 固定費1,200、単価20、変動費12 ⇒ BEQ=1,200÷(20−12)=150単位",
+            "example_en": "Example: Fixed=1,200, Price=20, Var=12 ⇒ BEQ=150 units",
+            "problem_ja": "問題: 固定費5,000、単価50、変動費30 ⇒ BEQは？",
+            "problem_en": "Problem: Fixed=5,000, Price=50, Var=30 ⇒ BEQ?",
+            "solution_ja": "解答: BEQ=5,000 ÷ (50−30)=250単位",
+            "solution_en": "Solution: BEQ=5,000/(50−30)=250 units"
+        },
+        "Net Present Value": {
+            "example_ja": "例: CF0=-1,000、CF1-3=400、r=8% ⇒ NPV ≈ 30.8（正、採用）",
+            "example_en": "Example: CF0=-1,000, CF1-3=400, r=8% ⇒ NPV ≈ 30.8",
+            "problem_ja": "問題: CF0=-2,000、CF1-4=600、r=10% ⇒ NPVは？",
+            "problem_en": "Problem: CF0=-2,000, CF1-4=600, r=10% ⇒ NPV?",
+            "solution_ja": "解答: 600×[(1−1.1^(−4))/0.1]−2,000 ≈ -98.1",
+            "solution_en": "Solution: 600×[(1−1.1^(−4))/0.1]−2,000 ≈ -98.1"
+        },
+        "WACC": {
+            "example_ja": "例: w_e=0.6, w_d=0.4, k_e=10%, k_d=5%, T=30% ⇒ WACC=7.4%",
+            "example_en": "Example: we=0.6, wd=0.4, ke=10%, kd=5%, T=30% ⇒ WACC=7.4%",
+            "problem_ja": "問題: w_e=0.7, w_d=0.3, k_e=12%, k_d=4%, T=25% ⇒ WACCは？",
+            "problem_en": "Problem: we=0.7, wd=0.3, ke=12%, kd=4%, T=25% ⇒ WACC?",
+            "solution_ja": "解答: 0.7×0.12 + 0.3×0.04×(1−0.25)=9.3%",
+            "solution_en": "Solution: 0.7×0.12 + 0.3×0.04×(1−0.25)=9.3%"
+        },
+        "CAPM Cost of Equity": {
+            "example_ja": "例: Rf=2%、β=1.2、(Rm−Rf)=5% ⇒ k_e=8%",
+            "example_en": "Example: Rf=2%, β=1.2, (Rm−Rf)=5% ⇒ ke=8%",
+            "problem_ja": "問題: Rf=1%、β=0.8、Rm=6% ⇒ k_eは？",
+            "problem_en": "Problem: Rf=1%, β=0.8, Rm=6% ⇒ ke?",
+            "solution_ja": "解答: MRP=5%、k_e=1%+0.8×5%=5%",
+            "solution_en": "Solution: MRP=5%, ke=1%+0.8×5%=5%"
+        },
+        "ROE": {
+            "example_ja": "例: 当期純利益120、平均自己資本1,000 ⇒ ROE=12%",
+            "example_en": "Example: NI=120, Avg Equity=1,000 ⇒ ROE=12%",
+            "problem_ja": "問題: 当期純利益80、平均自己資本400 ⇒ ROEは？",
+            "problem_en": "Problem: NI=80, Avg Equity=400 ⇒ ROE?",
+            "solution_ja": "解答: 80 ÷ 400 = 20%",
+            "solution_en": "Solution: 80/400 = 20%"
+        },
+        "DuPont ROE": {
+            "example_ja": "例: NPM=10%、TAT=1.5、EM=2 ⇒ ROE=30%",
+            "example_en": "Example: NPM=10%, TAT=1.5, EM=2 ⇒ ROE=30%",
+            "problem_ja": "問題: NPM=8%、TAT=1.2、EM=1.8 ⇒ ROEは？",
+            "problem_en": "Problem: NPM=8%, TAT=1.2, EM=1.8 ⇒ ROE?",
+            "solution_ja": "解答: 0.08×1.2×1.8=0.1728 ⇒ 17.28%",
+            "solution_en": "Solution: 0.08×1.2×1.8=0.1728 ⇒ 17.28%"
+        }
+    }
+    changed = False
+    for i, item in enumerate(formulas_data):
+        name = item.get("name", "")
+        if name in top10:
+            for k, v in top10[name].items():
+                if formulas_data[i].get(k) in (None, "", []):
+                    formulas_data[i][k] = v
+                    changed = True
+    if changed:
+        save_formulas_data(formulas_data)
 
 drill_questions = {
     'Financial': [

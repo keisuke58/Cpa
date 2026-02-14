@@ -23,6 +23,34 @@ def load_data():
         "badges": [],
         "wrong_answers": [],
         "retry": [],
+        "english_prep": {
+            "ielts": {
+                "target_band": 7.0,
+                "exam_date": "",
+                "logs": [],
+                "checklist": [
+                    {"item": "アカデミック語彙 3000 語", "done": False},
+                    {"item": "リスニング 10 模試", "done": False},
+                    {"item": "リーディング 10 模試", "done": False},
+                    {"item": "ライティング Task1/Task2 20本", "done": False},
+                    {"item": "スピーキング 20 セッション", "done": False}
+                ],
+                "resources": []
+            },
+            "toefl": {
+                "target_score": 100,
+                "exam_date": "",
+                "logs": [],
+                "checklist": [
+                    {"item": "Academic Vocabulary 2000", "done": False},
+                    {"item": "Reading 10 模試", "done": False},
+                    {"item": "Listening 10 模試", "done": False},
+                    {"item": "Speaking 20 セッション", "done": False},
+                    {"item": "Writing 20 本", "done": False}
+                ],
+                "resources": []
+            }
+        },
         "official_checklist": [
             {"item": "受験資格・身分証の要件確認", "done": False, "notes": ""},
             {"item": "受験申込期間・受験料の確認", "done": False, "notes": ""},
@@ -1094,21 +1122,16 @@ st.sidebar.markdown("""
         🚀 STUDYING
     </a>
     """, unsafe_allow_html=True)
-st.link_button("Google Drive", "https://drive.google.com/drive/u/")
 st.markdown("""
-<style>
-.nb-lm-btn {
-  display:inline-block;
-  background:#000;
-  color:#fff !important;
-  padding:10px 16px;
-  border-radius:8px;
-  text-decoration:none;
-  font-weight:600;
-}
-.nb-lm-btn:hover { opacity:.9; }
-</style>
-<p><a class="nb-lm-btn" href="https://notebooklm.google.com/notebook/" target="_blank">notebooklm</a></p>
+<div style="display:flex;gap:8px;align-items:center;margin-top:6px;">
+  <a href="https://drive.google.com/drive/u/" target="_blank" style="display:inline-flex;align-items:center;background:#e8f0fe;color:#1a73e8 !important;padding:10px 16px;border-radius:8px;font-weight:600;text-decoration:none;border:1px solid #1a73e8;">
+    <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#1a73e8;margin-right:8px;"></span>
+    Google Drive
+  </a>
+  <a href="https://notebooklm.google.com/notebook/" target="_blank" style="display:inline-flex;align-items:center;background:#000;color:#fff !important;padding:10px 16px;border-radius:8px;font-weight:600;text-decoration:none;">
+    notebooklm
+  </a>
+</div>
 """, unsafe_allow_html=True)
 
 st.sidebar.markdown("---")
@@ -1131,7 +1154,7 @@ with st.sidebar.expander("📅 Official Schedule (Edit)"):
         save_data(st.session_state.data)
         st.toast("Official schedule saved", icon="✅")
         official_schedule = edit_rows
-page = st.sidebar.radio("Navigation", ["Dashboard 📊", "My Syllabus 📚", "Official Checklist ✅", "Revisions 🧭", "Vocabulary 📖", "Formulas 📐", "Old Exams 📄", "Study Timer ⏱️", "Mock Exams 📝", "Scores 📈", "Wrong Answers 📕", "Drills 🔧", "Exam Mode ⏲️", "Survival Mode ⚡", "Analytics 📊", "Roadmap 🗺️", "Big 4 Job Hunting 💼", "Company Directory 🏢", "Future 🚀"])
+page = st.sidebar.radio("Navigation", ["Dashboard 📊", "My Syllabus 📚", "Official Checklist ✅", "Revisions 🧭", "Vocabulary 📖", "Formulas 📐", "English Prep 🌐", "Old Exams 📄", "Study Timer ⏱️", "Mock Exams 📝", "Scores 📈", "Wrong Answers 📕", "Drills 🔧", "Exam Mode ⏲️", "Survival Mode ⚡", "Analytics 📊", "Roadmap 🗺️", "Big 4 Job Hunting 💼", "Company Directory 🏢", "Future 🚀"])
 
 if page == "Dashboard 📊":
     st.header("Dashboard 🚀")
@@ -2262,6 +2285,111 @@ elif page == "Old Exams 📄":
                     st.divider()
             
             st.info("💡 Tip: Use these papers to practice time management.")
+
+elif page == "English Prep 🌐":
+    st.header("English Exam Prep")
+    ep = st.session_state.data.get("english_prep", {})
+    tabs = st.tabs(["IELTS", "TOEFL"])
+    with tabs[0]:
+        i = ep.get("ielts", {})
+        c1, c2 = st.columns(2)
+        with c1:
+            tb = st.number_input("Target Band", min_value=0.0, max_value=9.0, value=float(i.get("target_band", 7.0)), step=0.5, key="ielts_tb")
+        with c2:
+            ed = st.date_input("Exam Date", value=pd.to_datetime(i.get("exam_date") or date.today().strftime("%Y-%m-%d")).date(), key="ielts_ed")
+        if st.button("Save Target (IELTS)"):
+            ep["ielts"]["target_band"] = tb
+            ep["ielts"]["exam_date"] = ed.strftime("%Y-%m-%d")
+            st.session_state.data["english_prep"] = ep
+            save_data(st.session_state.data)
+            st.success("Saved")
+        st.subheader("Checklist")
+        if "checklist" in i:
+            for idx, it in enumerate(i["checklist"]):
+                k = f"ielts_chk_{idx}"
+                val = st.checkbox(it["item"], value=it.get("done", False), key=k)
+                i["checklist"][idx]["done"] = val
+        st.subheader("Practice Logs")
+        with st.form("ielts_log_form"):
+            ld = st.date_input("Date", value=date.today(), key="ielts_log_date")
+            typ = st.selectbox("Type", ["Mock", "Official"], key="ielts_log_type")
+            score = st.number_input("Overall Band", min_value=0.0, max_value=9.0, value=6.5, step=0.5, key="ielts_log_score")
+            submit = st.form_submit_button("Add Log")
+            if submit:
+                ep["ielts"]["logs"].append({"date": ld.strftime("%Y-%m-%d"), "type": typ, "score": score})
+                st.session_state.data["english_prep"] = ep
+                save_data(st.session_state.data)
+                st.success("Added")
+        df = pd.DataFrame(i.get("logs", []))
+        if not df.empty:
+            st.dataframe(df.sort_values("date", ascending=False), use_container_width=True)
+            b = df["score"].max()
+            a = df["score"].mean()
+            m1, m2 = st.columns(2)
+            m1.metric("Best", f"{b}")
+            m2.metric("Average", f"{a:.2f}")
+            st.download_button("Download CSV", data=df.to_csv(index=False).encode("utf-8"), file_name="ielts_logs.csv", mime="text/csv")
+        st.subheader("Resources")
+        new_r = st.text_input("Add Resource URL", key="ielts_res_url")
+        if st.button("Add Resource (IELTS)"):
+            if new_r:
+                ep["ielts"]["resources"].append(new_r)
+                st.session_state.data["english_prep"] = ep
+                save_data(st.session_state.data)
+                st.success("Added")
+        if i.get("resources"):
+            for u in i["resources"]:
+                st.markdown(f"- [{u}]({u})")
+    with tabs[1]:
+        t = ep.get("toefl", {})
+        c1, c2 = st.columns(2)
+        with c1:
+            ts = st.number_input("Target Score", min_value=0, max_value=120, value=int(t.get("target_score", 100)), step=1, key="toefl_ts")
+        with c2:
+            ed = st.date_input("Exam Date", value=pd.to_datetime(t.get("exam_date") or date.today().strftime("%Y-%m-%d")).date(), key="toefl_ed")
+        if st.button("Save Target (TOEFL)"):
+            ep["toefl"]["target_score"] = ts
+            ep["toefl"]["exam_date"] = ed.strftime("%Y-%m-%d")
+            st.session_state.data["english_prep"] = ep
+            save_data(st.session_state.data)
+            st.success("Saved")
+        st.subheader("Checklist")
+        if "checklist" in t:
+            for idx, it in enumerate(t["checklist"]):
+                k = f"toefl_chk_{idx}"
+                val = st.checkbox(it["item"], value=it.get("done", False), key=k)
+                t["checklist"][idx]["done"] = val
+        st.subheader("Practice Logs")
+        with st.form("toefl_log_form"):
+            ld = st.date_input("Date", value=date.today(), key="toefl_log_date")
+            typ = st.selectbox("Type", ["Mock", "Official"], key="toefl_log_type")
+            score = st.number_input("Total Score", min_value=0, max_value=120, value=90, step=1, key="toefl_log_score")
+            submit = st.form_submit_button("Add Log")
+            if submit:
+                ep["toefl"]["logs"].append({"date": ld.strftime("%Y-%m-%d"), "type": typ, "score": int(score)})
+                st.session_state.data["english_prep"] = ep
+                save_data(st.session_state.data)
+                st.success("Added")
+        df = pd.DataFrame(t.get("logs", []))
+        if not df.empty:
+            st.dataframe(df.sort_values("date", ascending=False), use_container_width=True)
+            b = df["score"].max()
+            a = df["score"].mean()
+            m1, m2 = st.columns(2)
+            m1.metric("Best", f"{b}")
+            m2.metric("Average", f"{a:.2f}")
+            st.download_button("Download CSV", data=df.to_csv(index=False).encode("utf-8"), file_name="toefl_logs.csv", mime="text/csv")
+        st.subheader("Resources")
+        new_r = st.text_input("Add Resource URL", key="toefl_res_url")
+        if st.button("Add Resource (TOEFL)"):
+            if new_r:
+                ep["toefl"]["resources"].append(new_r)
+                st.session_state.data["english_prep"] = ep
+                save_data(st.session_state.data)
+                st.success("Added")
+        if t.get("resources"):
+            for u in t["resources"]:
+                st.markdown(f"- [{u}]({u})")
 
 elif page == "Study Timer ⏱️":
     st.header("Study Timer")

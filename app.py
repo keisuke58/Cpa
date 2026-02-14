@@ -1371,10 +1371,11 @@ elif page == "Formulas 📐":
         st.warning("No formulas found.")
     else:
         df_all_formulas = pd.DataFrame(formulas_data)
-        st.subheader("Top 10 Formulas")
-        show_top = st.checkbox("Show Top 10", value=True)
-        if show_top:
+        st.subheader("Top Picks")
+        show_picks = st.checkbox("Show Top Picks", value=True)
+        if show_picks:
             cats_all = sorted({str(f.get("category", "General")) for f in formulas_data})
+            size = st.radio("Size", [10, 30], horizontal=True)
             top10_names = [
                 "Future Value (Single Sum)",
                 "Present Value (Single Sum)",
@@ -1387,21 +1388,76 @@ elif page == "Formulas 📐":
                 "ROE",
                 "DuPont ROE"
             ]
-            order_map = {name: i for i, name in enumerate(top10_names)}
-            top_df = df_all_formulas[df_all_formulas["name"].isin(top10_names)].copy()
+            top30_names = top10_names + [
+                "IRR",
+                "Profitability Index",
+                "Payback Period",
+                "Present Value of Perpetuity",
+                "Gordon Growth (DDM)",
+                "Current Ratio",
+                "Quick Ratio",
+                "Debt-to-Equity",
+                "Times Interest Earned",
+                "Inventory Turnover",
+                "Days Sales Outstanding",
+                "Days Inventory Outstanding",
+                "Cash Conversion Cycle",
+                "Gross Profit Margin",
+                "Operating Margin",
+                "Net Profit Margin",
+                "Economic Order Quantity (EOQ)",
+                "Reorder Point",
+                "Safety Stock",
+                "Annuity Due PV",
+                "Annuity Due FV",
+                "Present Value (Annuity Due)",
+                "Future Value (Annuity Due)"
+            ]
+            pick_names = top10_names if size == 10 else top30_names
+            top_df = df_all_formulas[df_all_formulas["name"].isin(pick_names)].copy()
+            if top_df.empty and not df_all_formulas.empty:
+                top_df = df_all_formulas.head(size).copy()
+                pick_names = list(top_df["name"])
+            if len(top_df) < size and not df_all_formulas.empty:
+                missing = size - len(top_df)
+                fallback = df_all_formulas[~df_all_formulas["name"].isin(pick_names)].head(missing)
+                top_df = pd.concat([top_df, fallback], ignore_index=True)
+                pick_names = list(top_df["name"])
+            order_map = {name: i for i, name in enumerate(pick_names)}
+            top_cat = st.selectbox("Category Focus", ["All"] + cats_all)
+            if top_cat != "All":
+                top_df = top_df[top_df["category"] == top_cat]
             if not top_df.empty:
-                top_cat = st.selectbox("Top 10: Category Focus", ["All"] + cats_all)
-                if top_cat != "All":
-                    top_df = top_df[top_df["category"] == top_cat]
-                if not top_df.empty:
-                    top_df["rank"] = top_df["name"].map(order_map)
-                    top_df = top_df.sort_values("rank")
+                top_df["rank"] = top_df["name"].map(order_map)
+                top_df = top_df.sort_values("rank")
+                tab1, tab2, tab3 = st.tabs(["Cards", "Table", "Category Chart"])
+                with tab1:
+                    cols = st.columns(2)
+                    for idx, (_, r) in enumerate(top_df.iterrows()):
+                        with cols[idx % 2]:
+                            st.markdown(f"**{r.get('name','')}**")
+                            st.caption(str(r.get('category', '')))
+                            if r.get("latex", ""):
+                                st.latex(r.get("latex", ""))
+                            elif r.get("formula", ""):
+                                st.code(str(r.get("formula", "")))
+                with tab2:
                     st.table(top_df[["name", "category", "formula"]].rename(columns={"name": "Name", "category": "Category", "formula": "Formula"}))
-                else:
-                    st.info("No Top 10 formulas in selected category.")
+                with tab3:
+                    try:
+                        import plotly.express as px
+                        dfc = top_df.groupby("category").size().reset_index(name="count")
+                        if not dfc.empty:
+                            fig = px.bar(dfc, x="category", y="count", title=f"Top {size} by Category", color="category")
+                            fig.update_layout(showlegend=False, xaxis_title="", yaxis_title="Count")
+                            st.plotly_chart(fig, use_container_width=True)
+                        else:
+                            st.info("No data to chart for the selected filter.")
+                    except Exception as e:
+                        st.info("Plotly is unavailable for charting.")
             else:
-                st.info("Top 10 list not found in current dataset.")
-        st.markdown("---")
+                st.info("No formulas matched the current top selection.")
+        st.divider()
         cats = sorted({str(f.get("category", "General")) for f in formulas_data})
         cat_sel = st.multiselect("Category", options=cats, default=[])
         q = st.text_input("Search")

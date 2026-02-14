@@ -1095,6 +1095,21 @@ st.sidebar.markdown("""
     </a>
     """, unsafe_allow_html=True)
 st.link_button("Google Drive", "https://drive.google.com/drive/u/")
+st.markdown("""
+<style>
+.nb-lm-btn {
+  display:inline-block;
+  background:#000;
+  color:#fff !important;
+  padding:10px 16px;
+  border-radius:8px;
+  text-decoration:none;
+  font-weight:600;
+}
+.nb-lm-btn:hover { opacity:.9; }
+</style>
+<p><a class="nb-lm-btn" href="https://notebooklm.google.com/notebook/" target="_blank">notebooklm</a></p>
+""", unsafe_allow_html=True)
 
 st.sidebar.markdown("---")
 with st.sidebar.expander("📅 Official Schedule (Edit)"):

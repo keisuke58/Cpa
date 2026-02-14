@@ -1656,19 +1656,21 @@ elif page == "Old Exams 📄":
         except Exception as e:
             st.error(f"Error loading metadata: {e}")
 
-    with st.expander("📝 Exam Info（合格ボーダー R4〜R6）", expanded=True):
+    with st.expander("📝 Exam Info（合格ボーダー R4〜R8）", expanded=True):
         st.markdown("""
         ### 短答式（相対評価）
         - 合格基準: 総点数の70％を基準として、審査会が相当と認めた得点比率
         - 足切り: 1科目でも満点の40％未満がある場合、不合格の可能性あり
         
-        参考：近年のボーダー（予備校・メディア集計）
+        参考：近年のボーダー（予備校・メディア集計／一部参考値）
         
         | 実施年 | 第I回（12月） | 第II回（5月） | 備考 |
         |---|---:|---:|---|
         | 令和6年 (2024) | 68.0% | 78.0% | 易化で高水準 |
         | 令和5年 (2023) | 71.0% | 70.2% | 70%前後 |
         | 令和4年 (2022) | 68.0% | 73.0% | 変動大 |
+        | 令和7年 (2025) | ― | ― | 公表待ち |
+        | 令和8年 (2026) | ― | ― | 公表待ち |
         
         - 出典（参考値・解説記事）:
           - マイナビ会計士「第Ⅱ回短答式試験 結果速報」: https://cpa.mynavi.jp/column_mt/2024/06/967.html
@@ -1684,6 +1686,8 @@ elif page == "Old Exams 📄":
         - 令和6年 (2024): 約52.0前後（毎年微調整）
         - 令和5年 (2023): 約51.8前後（微調整）
         - 令和4年 (2022): 約52.0前後（基準に近い）
+        - 令和7年 (2025): 公表ページ参照（偏差値法の説明あり）
+        - 令和8年 (2026): 公表予定
         
         - 出典（公式）:
           - 合格基準について（短答式/論文式の公式基準）: https://www.fsa.go.jp/cpaaob/kouninkaikeishi-shiken/kijuntou/05.html
@@ -1709,6 +1713,18 @@ elif page == "Old Exams 📄":
             st.caption("注: 参考値（予備校・メディア集計ベース）。公式の相対基準はリンク参照。")
         except Exception:
             pass
+    
+    with st.expander("🆕 令和7・令和8 情報（リンク/予定）", expanded=True):
+        st.markdown("""
+        - 令和7年 (2025)  
+          - 短答式: 公式日程・合格基準は CPAAOB 公表ページを参照  
+          - 論文式: 上記リンク（偏差値方式の説明付き）参照
+        - 令和8年 (2026)  
+          - 短答式/論文式: 順次公表予定（例年どおり）
+        
+        公式ポータル  
+        - 公認会計士・監査審査会（CPAAOB）試験情報: https://www.fsa.go.jp/cpaaob/kouninkaikeishi-shiken/index.html
+        """)
     
     with st.expander("🎯 短答 必要得点計算機", expanded=False):
         # Target presets
@@ -3248,6 +3264,22 @@ elif page == "Company Directory 🏢":
         shosha = ["Mitsubishi Corp", "Mitsui & Co", "Itochu", "Sumitomo Corp", "Marubeni"]
         st.write(", ".join(shosha))
         st.caption("Extremely competitive. High salary. Global rotations.")
+
+        st.divider()
+        st.markdown("#### Top-Tier Holdings / Conglomerates")
+        holdings = [
+            {"name": "SoftBank Group", "desc": "Investment conglomerate. Complex consolidations and valuation analytics.", "link": "https://group.softbank/en/corp/recruit", "locs": ["Tokyo"], "attrs": {"CPA": "Medium", "DS": True, "Global": True}},
+            {"name": "Recruit Holdings", "desc": "HR Tech conglomerate. Data-driven culture; FP&A and IR strong.", "link": "https://recruit-holdings.com/careers/", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": True, "Global": True}},
+            {"name": "Fast Retailing (UNIQLO)", "desc": "Globally integrated retail. Inventory/FX/IFRS exposure.", "link": "https://www.fastretailing.com/employment/ja/", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Medium", "Global": True}},
+            {"name": "Takeda Pharmaceutical", "desc": "Global pharma. R&D capitalization, global IFRS, treasury.", "link": "https://www.takeda.com/jp/ja-us/careers/", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Low", "Global": True}}
+        ]
+        for c in holdings:
+            sc = _score_company(c.get("attrs", {}), c.get("locs", []))
+            if sc < min_score:
+                continue
+            st.markdown(f"**{c['name']}** — Score: {sc}/100  \n{c['desc']} [Link]({c['link']})")
+            st.progress(sc)
+            st.caption(f"Locations: {', '.join(c.get('locs', []))}")
 
         st.divider()
         st.markdown("#### Makers (Tier 1)")

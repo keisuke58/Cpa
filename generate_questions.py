@@ -1,5 +1,29 @@
 import json
 import random
+import hashlib
+import os
+
+def _sig(q):
+    return hashlib.md5((q.get('q','') + '|' + '|'.join(q.get('options', [])) + '|' + str(q.get('correct'))).encode('utf-8')).hexdigest()
+
+def _tag_for_text(txt, default_tag):
+    if "監査リスク" in txt:
+        return ["監査リスク"]
+    if "内部統制" in txt:
+        return ["内部統制"]
+    if "KAM" in txt or "主要な検討事項" in txt:
+        return ["KAM"]
+    if "継続企業" in txt or "ゴーイング" in txt:
+        return ["GC"]
+    if "棚卸" in txt:
+        return ["棚卸"]
+    if "取締役" in txt:
+        return ["取締役"]
+    if "株主総会" in txt:
+        return ["株主総会"]
+    if "合併" in txt or "株式交換" in txt:
+        return ["組織再編"]
+    return [default_tag]
 
 def generate_intro_questions(count_per_subject=50):
     """
@@ -161,7 +185,8 @@ def generate_intro_questions(count_per_subject=50):
 
 def generate_financial_questions(count):
     questions = []
-    for _ in range(count):
+    seen = set()
+    while len(questions) < count:
         # Type 1: Depreciation (Straight-line)
         cost = random.randint(100, 1000) * 1000
         years = random.choice([3, 4, 5, 8, 10])
@@ -181,7 +206,11 @@ def generate_financial_questions(count):
             "explanation": f"定額法: (取得原価 - 残存価額) ÷ 耐用年数 = ({cost:,} - {salvage_value:,}) ÷ {years} = {depreciation:,}円",
             "level": 2
         }
-        questions.append(q1)
+        s1 = _sig(q1)
+        if s1 not in seen:
+            q1['tags'] = ["減価償却"]
+            seen.add(s1)
+            questions.append(q1)
 
         # Type 2: Cash Flow (Direct Method)
         sales = random.randint(500, 2000) * 1000
@@ -201,7 +230,11 @@ def generate_financial_questions(count):
             "explanation": f"顧客からの収入 = 売上高 + 期首売掛金 - 期末売掛金 = {sales:,} + {ar_start:,} - {ar_end:,} = {cash_in:,}円",
             "level": 3
         }
-        questions.append(q2)
+        s2 = _sig(q2)
+        if s2 not in seen:
+            q2['tags'] = ["キャッシュフロー"]
+            seen.add(s2)
+            questions.append(q2)
         
         # Type 3: Inventory Valuation (Moving Average)
         # Added new type for variety
@@ -225,7 +258,11 @@ def generate_financial_questions(count):
             "explanation": f"移動平均単価 = (在庫金額合計) ÷ (在庫数量合計) = ({qty1*price1} + {qty2*price2}) ÷ {total_qty} = {avg_price:.2f} ≒ {avg_price_int}円",
             "level": 2
         }
-        questions.append(q3)
+        s3 = _sig(q3)
+        if s3 not in seen:
+            q3['tags'] = ["在庫評価"]
+            seen.add(s3)
+            questions.append(q3)
 
         # Type 4: Consolidation (Goodwill) - Level 3
         parent_invest = random.randint(500, 2000) * 1000
@@ -250,13 +287,18 @@ def generate_financial_questions(count):
             "explanation": f"のれん = 投資額 - (子会社純資産 × 持分比率) = {parent_invest:,} - ({sub_net_assets:,} × {ownership_rate}) = {int(goodwill):,}円",
             "level": 3
         }
-        questions.append(q4)
+        s4 = _sig(q4)
+        if s4 not in seen:
+            q4['tags'] = ["連結・のれん"]
+            seen.add(s4)
+            questions.append(q4)
 
     return questions
 
 def generate_management_questions(count):
     questions = []
-    for _ in range(count):
+    seen = set()
+    while len(questions) < count:
         # Type 1: CVP Analysis (Break-even Point)
         bep_units = random.randint(100, 1000)
         price = random.randint(10, 50) * 100
@@ -276,7 +318,11 @@ def generate_management_questions(count):
             "explanation": f"損益分岐点販売数量 = 固定費 ÷ (単価 - 単位当たり変動費) = {fixed_cost:,} ÷ ({price:,} - {variable_cost:,}) = {bep_units:,}個",
             "level": 2
         }
-        questions.append(q1)
+        s1 = _sig(q1)
+        if s1 not in seen:
+            q1['tags'] = ["CVP・BEP"]
+            seen.add(s1)
+            questions.append(q1)
         
         # Type 2: Variance Analysis (Direct Material)
         standard_price = random.randint(100, 500)
@@ -300,7 +346,11 @@ def generate_management_questions(count):
             "explanation": f"価格差異 = (実際価格 - 標準価格) × 実際消費量 = ({actual_price:,} - {standard_price:,}) × {actual_qty:,} = {price_variance:,}円",
             "level": 3
         }
-        questions.append(q2)
+        s2 = _sig(q2)
+        if s2 not in seen:
+            q2['tags'] = ["原価差異・材料"]
+            seen.add(s2)
+            questions.append(q2)
         
         # Type 3: ROI Calculation
         invested_capital = random.randint(100, 500) * 1000000
@@ -319,7 +369,11 @@ def generate_management_questions(count):
             "explanation": f"ROI = 利益 ÷ 投資資本 × 100 = {profit} ÷ {invested_capital} × 100 = {roi:.1f}%",
             "level": 2
         }
-        questions.append(q3)
+        s3 = _sig(q3)
+        if s3 not in seen:
+            q3['tags'] = ["ROI"]
+            seen.add(s3)
+            questions.append(q3)
 
     return questions
 
@@ -328,7 +382,7 @@ def generate_audit_questions(count):
     # Expanded templates for Audit Theory
     templates = [
         {
-            "q": "監査リスク・モデルにおいて、監査リスク(AR)は、重大な虚偽表示リスク(RMM)と{item}の積として表される。",
+            "q": "監査リスク・モデルにおいて、監査リスク(AR)は、重大な虚偽表示リスク(RMM)と何の積として表されるか？",
             "options": ["発見リスク(DR)", "統制リスク(CR)", "固有リスク(IR)", "ビジネスリスク(BR)"],
             "correct": 0,
             "explanation": "監査リスク・モデル: AR = RMM × DR (発見リスク)。",
@@ -399,14 +453,19 @@ def generate_audit_questions(count):
         }
     ]
     
-    for _ in range(count):
+    seen = set()
+    while len(questions) < count:
         base = random.choice(templates)
         q = base.copy()
         q['options'] = base['options'].copy()
         correct_option = q['options'][q['correct']]
         random.shuffle(q['options'])
         q['correct'] = q['options'].index(correct_option)
-        questions.append(q)
+        q['tags'] = _tag_for_text(q['q'], "監査")
+        s = _sig(q)
+        if s not in seen:
+            seen.add(s)
+            questions.append(q)
         
     return questions
 
@@ -415,7 +474,7 @@ def generate_company_law_questions(count):
     # Expanded templates for Company Law
     templates = [
         {
-            "q": "株式会社の設立に際して、発起人が割り当てを受ける設立時発行株式の総数は、発行可能株式総数の{item}を下回ってはならない。",
+            "q": "株式会社の設立に際して、発起人が割り当てを受ける設立時発行株式の総数の下限に関する規定として適切なものはどれか？",
             "options": ["制限はない", "4分の1", "2分の1", "3分の1"],
             "correct": 0,
             "explanation": "公開会社でない場合や設立時は、発行可能株式総数の引受割合に法定の制限はない（公開会社の定款変更時とは異なる）。",
@@ -436,7 +495,7 @@ def generate_company_law_questions(count):
             "level": 3
         },
         {
-            "q": "取締役会設置会社において、取締役の任期は原則として選任後{item}年以内に終了する事業年度のうち最終のものに関する定時株主総会の終結の時までである。",
+            "q": "取締役会設置会社における取締役の任期の原則は何年か？",
             "options": ["2", "1", "4", "10"],
             "correct": 0,
             "explanation": "会社法332条1項。原則は2年。定款や株主総会決議で短縮可能。非公開会社は10年まで伸長可能。",
@@ -450,7 +509,7 @@ def generate_company_law_questions(count):
             "level": 2
         },
         {
-            "q": "株主総会の普通決議の定足数は、原則として議決権を行使することができる株主の議決権の{item}を有する株主の出席が必要である。",
+            "q": "株主総会の普通決議の定足数の原則として適切なものはどれか？",
             "options": ["過半数", "3分の1以上", "3分の2以上", "4分の1以上"],
             "correct": 0,
             "explanation": "普通決議の定足数は原則として過半数であるが、定款で排除・軽減が可能（取締役選任などを除く）。",
@@ -500,19 +559,36 @@ def generate_company_law_questions(count):
         }
     ]
     
-    for _ in range(count):
+    seen = set()
+    while len(questions) < count:
         base = random.choice(templates)
         q = base.copy()
         q['options'] = base['options'].copy()
         correct_option = q['options'][q['correct']]
         random.shuffle(q['options'])
         q['correct'] = q['options'].index(correct_option)
-        questions.append(q)
+        q['tags'] = _tag_for_text(q['q'], "会社法")
+        s = _sig(q)
+        if s not in seen:
+            seen.add(s)
+            questions.append(q)
     return questions
 
-import os
+def _assign_metadata(all_data, seed):
+    for subject, items in all_data.items():
+        for idx, q in enumerate(items):
+            base = q.get('q', '') + '|' + '|'.join(q.get('options', [])) + '|' + str(q.get('correct'))
+            q['id'] = hashlib.md5((str(seed) + '|' + subject + '|' + base).encode('utf-8')).hexdigest()
+            q['subject'] = subject
+            if 'tags' not in q:
+                q['tags'] = _tag_for_text(q.get('q',''), subject)
 
-def main():
+def main(seed=None):
+    if seed is not None:
+        try:
+            random.seed(int(seed))
+        except Exception:
+            random.seed(seed)
     # Generate Intro/Basic Questions (Level 0)
     intro_data = generate_intro_questions(50)
 
@@ -539,6 +615,7 @@ def main():
         "Audit": audit,
         "Company": company
     }
+    _assign_metadata(all_data, seed)
     
     # Determine output directory (same as script directory)
     output_dir = os.path.dirname(os.path.abspath(__file__))
@@ -558,4 +635,5 @@ def main():
     print(f"Saved to {output_dir}")
 
 if __name__ == "__main__":
-    main()
+    env_seed = os.environ.get("CPA_Q_SEED")
+    main(seed=env_seed)

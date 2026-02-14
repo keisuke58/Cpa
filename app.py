@@ -1070,6 +1070,7 @@ st.sidebar.markdown("""
         🚀 STUDYING
     </a>
     """, unsafe_allow_html=True)
+st.link_button("Google Drive", "https://drive.google.com/drive/u/")
 
 st.sidebar.markdown("---")
 with st.sidebar.expander("📅 Official Schedule (Edit)"):

@@ -266,7 +266,78 @@ def _sanitize_text(v):
     except Exception:
         return ""
 
+def seed_all_formulas():
+    changed = False
+    for i, item in enumerate(formulas_data):
+        name = str(item.get("name", "")).strip()
+        cat = str(item.get("category", "")).strip()
+        ex_ja = _sanitize_text(item.get("example_ja", ""))
+        ex_en = _sanitize_text(item.get("example_en", ""))
+        pb_ja = _sanitize_text(item.get("problem_ja", ""))
+        pb_en = _sanitize_text(item.get("problem_en", ""))
+        so_ja = _sanitize_text(item.get("solution_ja", ""))
+        so_en = _sanitize_text(item.get("solution_en", ""))
+        if not ex_ja and not ex_en and not pb_ja and not pb_en and not so_ja and not so_en:
+            if "present value" in name.lower() or "future value" in name.lower() or "annuity" in name.lower():
+                ex_ja = f"例: 仮に r=5%、期間 n=3、適切な金額を代入して計算してください。"
+                ex_en = f"Example: Assume r=5%, n=3; plug suitable amounts and compute."
+                pb_ja = f"問題: {name} を用いて金額を求めよ。"
+                pb_en = f"Problem: Use {name} to find the requested amount."
+                so_ja = f"解答: 数式に代入し、四捨五入して数値を示す。"
+                so_en = f"Solution: Substitute into the formula and present the rounded value."
+            elif "wacc" in name.lower() or "capm" in name.lower() or "npv" in name.lower() or "irr" in name.lower():
+                ex_ja = "例: Rf, β, MRP または キャッシュフロー列 と 割引率 を仮定して計算。"
+                ex_en = "Example: Assume Rf, β, MRP or CF series and a discount rate to compute."
+                pb_ja = f"問題: {name} を計算し、採否を判断せよ（該当する場合）。"
+                pb_en = f"Problem: Compute {name} and decide accept/reject if applicable."
+                so_ja = "解答: 与えられた数値を代入し、式に従って算出。"
+                so_en = "Solution: Substitute the provided values and evaluate per the formula."
+            elif "roe" in name.lower() or "roa" in name.lower() or "ratio" in name.lower():
+                ex_ja = "例: 分子と分母の数値を仮定し、比率を算出。"
+                ex_en = "Example: Assume numerator and denominator values and compute the ratio."
+                pb_ja = f"問題: {name} を計算し、解釈を述べよ。"
+                pb_en = f"Problem: Calculate {name} and interpret the result."
+                so_ja = "解答: 代入してパーセンテージで表示。"
+                so_en = "Solution: Substitute values and present as a percentage."
+            elif "break-even" in name.lower() or "contribution" in name.lower() or "variance" in name.lower():
+                ex_ja = "例: 単価・変動費・固定費（または実績と標準）を仮定して指標を計算。"
+                ex_en = "Example: Assume price, variable, fixed costs (or actual vs. standard) and compute."
+                pb_ja = f"問題: {name} を算出し、意思決定を示せ。"
+                pb_en = f"Problem: Compute {name} and state the decision implication."
+                so_ja = "解答: 指定式に代入し、単位数または差額を導出。"
+                so_en = "Solution: Substitute into the specified formula and derive units or variance."
+            else:
+                ex_ja = f"例: 「{name}」の簡単な数値例を記入。"
+                ex_en = f"Example: Provide a simple numeric example for \"{name}\"."
+                pb_ja = "問題: 数値を設定し、未知数を求めよ。"
+                pb_en = "Problem: Set numbers and solve for the unknown."
+                so_ja = "解答: 式へ代入し計算結果を提示。"
+                so_en = "Solution: Substitute into the formula and show the result."
+            formulas_data[i]["example_ja"] = ex_ja
+            formulas_data[i]["example_en"] = ex_en
+            formulas_data[i]["problem_ja"] = pb_ja
+            formulas_data[i]["problem_en"] = pb_en
+            formulas_data[i]["solution_ja"] = so_ja
+            formulas_data[i]["solution_en"] = so_en
+            changed = True
+        else:
+            if not ex_ja:
+                formulas_data[i]["example_ja"] = ex_ja
+            if not ex_en:
+                formulas_data[i]["example_en"] = ex_en
+            if not pb_ja:
+                formulas_data[i]["problem_ja"] = pb_ja
+            if not pb_en:
+                formulas_data[i]["problem_en"] = pb_en
+            if not so_ja:
+                formulas_data[i]["solution_ja"] = so_ja
+            if not so_en:
+                formulas_data[i]["solution_en"] = so_en
+    if changed:
+        save_formulas_data(formulas_data)
+
 seed_top10_examples()
+seed_all_formulas()
 
 drill_questions = {
     'Financial': [

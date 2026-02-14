@@ -951,7 +951,10 @@ elif page == "Formulas 📐":
                 title = f"{title} [{cat}]"
             with st.expander(title):
                 ftxt = row.get("formula", "")
-                if ftxt:
+                ltx = row.get("latex", "")
+                if ltx:
+                    st.latex(ltx)
+                elif ftxt:
                     st.markdown(f"**Formula:** {ftxt}")
                 vtxt = row.get("variables", "")
                 if vtxt:

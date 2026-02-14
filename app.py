@@ -3282,6 +3282,20 @@ elif page == "Company Directory 🏢":
             st.caption(f"Locations: {', '.join(c.get('locs', []))}")
 
         st.divider()
+        st.markdown("#### Securities (証券)")
+        securities = [
+            {"name": "Nomura Securities (野村證券)", "desc": "Top-tier securities. IB, Markets, Corporate planning/Finance roles.", "link": "https://www.nomura.com/jpn/careers/", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Medium", "Global": True}},
+            {"name": "Daiwa Securities (大和証券)", "desc": "Major securities group. IB/markets, group finance & IR.", "link": "https://www.daiwa-grp.jp/recruit/", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Low", "Global": True}}
+        ]
+        for c in securities:
+            sc = _score_company(c.get("attrs", {}), c.get("locs", []))
+            if sc < min_score:
+                continue
+            st.markdown(f"**{c['name']}** — Score: {sc}/100  \n{c['desc']} [Link]({c['link']})")
+            st.progress(sc)
+            st.caption(f"Locations: {', '.join(c.get('locs', []))}")
+
+        st.divider()
         st.markdown("#### Makers (Tier 1)")
         makers = [
             {"name": "Toyota", "desc": "Global auto leader. Robust finance org; strong FP&A/treasury.", "link": "https://global.toyota/en/company/", "locs": ["Tokyo", "Aichi"], "attrs": {"CPA": True, "DS": "Medium", "Global": True}},

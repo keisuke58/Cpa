@@ -505,8 +505,75 @@ def seed_all_formulas():
     if changed:
         save_formulas_data(formulas_data)
 
+def _is_missing_text(v):
+    try:
+        if v is None:
+            return True
+        try:
+            import pandas as _pd
+            if _pd.isna(v):
+                return True
+        except Exception:
+            pass
+        if isinstance(v, str) and v.strip().lower() == "nan":
+            return True
+        if isinstance(v, str) and v.strip() == "":
+            return True
+        return False
+    except Exception:
+        return True
+
+def seed_latex_formulas():
+    mapping = {
+        "future value (single sum)": r"FV = PV\\times(1+r)^{n}",
+        "present value (single sum)": r"PV = \\dfrac{FV}{(1+r)^{n}}",
+        "present value of annuity": r"PVA = P\\times\\dfrac{1-(1+r)^{-n}}{r}",
+        "present value (annuity due)": r"PVA_{\\text{due}} = P\\times\\dfrac{1-(1+r)^{-n}}{r}\\times(1+r)",
+        "future value (annuity due)": r"FVA_{\\text{due}} = P\\times\\dfrac{(1+r)^{n}-1}{r}\\times(1+r)",
+        "annuity due pv": r"PVA_{\\text{due}} = P\\times\\dfrac{1-(1+r)^{-n}}{r}\\times(1+r)",
+        "annuity due fv": r"FVA_{\\text{due}} = P\\times\\dfrac{(1+r)^{n}-1}{r}\\times(1+r)",
+        "contribution margin": r"CM = \\text{Sales} - \\text{Variable Costs}",
+        "break-even units": r"Q_{BE} = \\dfrac{\\text{Fixed Costs}}{\\text{Price} - \\text{Variable Cost per Unit}}",
+        "net present value": r"NPV = \\sum_{t=0}^{n} \\dfrac{CF_{t}}{(1+r)^{t}}",
+        "wacc": r"WACC = w_e k_e + w_d k_d (1-T) + w_p k_p",
+        "capm cost of equity": r"k_e = R_f + \\beta\\,(R_m - R_f)",
+        "roe": r"ROE = \\dfrac{\\text{Net Income}}{\\text{Average Equity}}",
+        "dupont roe": r"ROE = \\text{NPM}\\times\\text{TAT}\\times\\text{EM}",
+        "irr": r"0 = \\sum_{t=0}^{n} \\dfrac{CF_{t}}{(1+IRR)^{t}}",
+        "profitability index": r"PI = \\dfrac{\\text{PV of Inflows}}{\\text{Initial Investment}}",
+        "payback period": r"\\text{Payback} = \\dfrac{\\text{Initial Investment}}{\\text{Annual Cash Flow}}",
+        "present value of perpetuity": r"PV = \\dfrac{C}{r}",
+        "gordon growth (ddm)": r"P_0 = \\dfrac{D_1}{k-g}",
+        "current ratio": r"CR = \\dfrac{CA}{CL}",
+        "quick ratio": r"QR = \\dfrac{\\text{Quick Assets}}{CL}",
+        "debt-to-equity": r"\\dfrac{\\text{Debt}}{\\text{Equity}}",
+        "times interest earned": r"TIE = \\dfrac{EBIT}{\\text{Interest}}",
+        "inventory turnover": r"\\text{Turnover} = \\dfrac{COGS}{\\text{Average Inventory}}",
+        "days sales outstanding": r"DSO = \\dfrac{365}{\\text{Receivables Turnover}}",
+        "days inventory outstanding": r"DIO = \\dfrac{365}{\\text{Inventory Turnover}}",
+        "cash conversion cycle": r"CCC = DIO + DSO - DPO",
+        "gross profit margin": r"GPM = \\dfrac{\\text{Gross Profit}}{\\text{Sales}}",
+        "operating margin": r"OM = \\dfrac{\\text{Operating Income}}{\\text{Sales}}",
+        "net profit margin": r"NPM = \\dfrac{\\text{Net Income}}{\\text{Sales}}",
+        "economic order quantity (eoq)": r"EOQ = \\sqrt{\\dfrac{2DS}{H}}",
+        "reorder point": r"ROP = d\\times L + SS",
+        "safety stock": r"SS = Z\\times\\sigma_{L}",
+        "capm": r"k_e = R_f + \\beta\\,(R_m - R_f)"
+    }
+    changed = False
+    for i, item in enumerate(formulas_data):
+        nm = str(item.get("name", "")).strip().lower()
+        if nm in mapping:
+            cur = item.get("latex", "")
+            if _is_missing_text(cur):
+                formulas_data[i]["latex"] = mapping[nm]
+                changed = True
+    if changed:
+        save_formulas_data(formulas_data)
+
 seed_top10_examples()
 seed_all_formulas()
+seed_latex_formulas()
 
 drill_questions = {
     'Financial': [

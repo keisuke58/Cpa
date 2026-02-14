@@ -127,6 +127,15 @@ def load_formulas_data():
 
 formulas_data = load_formulas_data()
 
+def save_formulas_data(data):
+    p = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "formulas.json")
+    try:
+        with open(p, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+        return True
+    except Exception:
+        return False
+
 drill_questions = {
     'Financial': [
         {
@@ -989,6 +998,38 @@ elif page == "Formulas 📐":
     if not formulas_data:
         st.warning("No formulas found.")
     else:
+        df_all_formulas = pd.DataFrame(formulas_data)
+        st.subheader("Top 10 Formulas")
+        show_top = st.checkbox("Show Top 10", value=True)
+        if show_top:
+            cats_all = sorted({str(f.get("category", "General")) for f in formulas_data})
+            top10_names = [
+                "Future Value (Single Sum)",
+                "Present Value (Single Sum)",
+                "Present Value of Annuity",
+                "Contribution Margin",
+                "Break-even Units",
+                "Net Present Value",
+                "WACC",
+                "CAPM Cost of Equity",
+                "ROE",
+                "DuPont ROE"
+            ]
+            order_map = {name: i for i, name in enumerate(top10_names)}
+            top_df = df_all_formulas[df_all_formulas["name"].isin(top10_names)].copy()
+            if not top_df.empty:
+                top_cat = st.selectbox("Top 10: Category Focus", ["All"] + cats_all)
+                if top_cat != "All":
+                    top_df = top_df[top_df["category"] == top_cat]
+                if not top_df.empty:
+                    top_df["rank"] = top_df["name"].map(order_map)
+                    top_df = top_df.sort_values("rank")
+                    st.table(top_df[["name", "category", "formula"]].rename(columns={"name": "Name", "category": "Category", "formula": "Formula"}))
+                else:
+                    st.info("No Top 10 formulas in selected category.")
+            else:
+                st.info("Top 10 list not found in current dataset.")
+        st.markdown("---")
         cats = sorted({str(f.get("category", "General")) for f in formulas_data})
         cat_sel = st.multiselect("Category", options=cats, default=[])
         q = st.text_input("Search")
@@ -1023,6 +1064,57 @@ elif page == "Formulas 📐":
                 etxt = row.get("explanation", "")
                 if etxt:
                     st.markdown(etxt)
+                ex_ja = row.get("example_ja", "")
+                ex_en = row.get("example_en", "")
+                if ex_ja or ex_en:
+                    st.markdown("**Examples**")
+                    if ex_ja:
+                        st.markdown(f"🇯🇵 {ex_ja}")
+                    if ex_en:
+                        st.markdown(f"🇺🇸 {ex_en}")
+                prob_ja = row.get("problem_ja", "")
+                prob_en = row.get("problem_en", "")
+                sol_ja = row.get("solution_ja", "")
+                sol_en = row.get("solution_en", "")
+                if prob_ja or prob_en:
+                    st.markdown("**Practice Problem**")
+                    if prob_ja:
+                        st.markdown(f"🇯🇵 {prob_ja}")
+                    if prob_en:
+                        st.markdown(f"🇺🇸 {prob_en}")
+                    if sol_ja or sol_en:
+                        with st.expander("Show Solution"):
+                            if sol_ja:
+                                st.markdown(f"🇯🇵 {sol_ja}")
+                            if sol_en:
+                                st.markdown(f"🇺🇸 {sol_en}")
+                with st.expander("Edit Examples / Problem"):
+                    with st.form(f"form_edit_{row.get('name','')}"):
+                        i_ex_ja = st.text_area("Example (JP)", value=ex_ja, height=100)
+                        i_ex_en = st.text_area("Example (EN)", value=ex_en, height=100)
+                        i_pb_ja = st.text_area("Problem (JP)", value=prob_ja, height=120)
+                        i_pb_en = st.text_area("Problem (EN)", value=prob_en, height=120)
+                        i_sol_ja = st.text_area("Solution (JP)", value=sol_ja, height=120)
+                        i_sol_en = st.text_area("Solution (EN)", value=sol_en, height=120)
+                        submitted = st.form_submit_button("Save")
+                        if submitted:
+                            key_name = row.get("name", "")
+                            updated = False
+                            for idx, item in enumerate(formulas_data):
+                                if item.get("name", "") == key_name:
+                                    formulas_data[idx]["example_ja"] = i_ex_ja
+                                    formulas_data[idx]["example_en"] = i_ex_en
+                                    formulas_data[idx]["problem_ja"] = i_pb_ja
+                                    formulas_data[idx]["problem_en"] = i_pb_en
+                                    formulas_data[idx]["solution_ja"] = i_sol_ja
+                                    formulas_data[idx]["solution_en"] = i_sol_en
+                                    updated = True
+                                    break
+                            if updated and save_formulas_data(formulas_data):
+                                st.toast("Saved examples and problem.", icon="✅")
+                                st.rerun()
+                            else:
+                                st.error("Failed to save. Please try again.")
 elif page == "Old Exams 📄":
     st.header("Old Exam Papers 📄")
     

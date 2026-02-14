@@ -3103,6 +3103,78 @@ elif page == "Big 4 Job Hunting 💼":
                 k = st.number_input("Discount k (%)", min_value=1.0, max_value=20.0, value=8.0, step=0.5, key="case_dcf_k")
                 pv = (cf1 * (1 + g/100)) / ((k/100) - (g/100)) if k > g else None
                 st.metric("PV (Gordon)", f"{pv:.1f}" if pv else "N/A")
+        with st.expander("Issue Tree Builder（MECE）", expanded=False):
+            case_type = st.selectbox("Case Type", ["Profitability", "Market Entry", "Growth"], key="issue_type")
+            seed = {
+                "Profitability": ["Revenue", "Costs"],
+                "Market Entry": ["Market", "Competition", "Capabilities", "Regulation"],
+                "Growth": ["New Customers", "ARPU", "Retention", "Geographies", "Products"]
+            }[case_type]
+            st.write(", ".join(seed))
+            note = st.text_area("Add branches (one per line)", value="")
+            if st.button("Export Outline", key="issue_export"):
+                txt = f"{case_type} Case\n" + "\n".join([f"- {x}" for x in seed]) + ("\n" + "\n".join([f"- {x}" for x in note.splitlines() if x.strip()]) if note else "")
+                st.code(txt, language="markdown")
+        with st.expander("Market Sizing Generator", expanded=False):
+            if st.button("Generate Scenario", key="ms_gen"):
+                import random
+                pop = random.choice([50, 80, 100, 125])
+                pen = random.choice([40, 60, 75, 80])
+                freq = random.choice([1, 2, 4, 12])
+                price = random.choice([1000, 2000, 5000])
+                st.session_state['ms_scn'] = {"pop": pop, "pen": pen, "freq": freq, "price": price}
+            scn = st.session_state.get('ms_scn')
+            if scn:
+                st.markdown(f"Population={scn['pop']}M, Penetration={scn['pen']}%, Frequency={scn['freq']}/yr, Price=¥{scn['price']}")
+                ans_units = scn['pop']*1e6 * (scn['pen']/100) * scn['freq']
+                ans_revenue = ans_units * scn['price']
+                guess = st.number_input("Your revenue estimate (JPY)", min_value=0.0, value=0.0, step=1000.0)
+                if st.button("Check", key="ms_check"):
+                    tol = 0.1
+                    low = ans_revenue*(1-tol)
+                    high = ans_revenue*(1+tol)
+                    correct = (guess >= low and guess <= high)
+                    if correct:
+                        st.success("Close enough. Good job.")
+                    else:
+                        st.error("Outside tolerance.")
+                    st.caption(f"Answer≈ ¥{int(ans_revenue):,}")
+        with st.expander("Math Speed Drills", expanded=False):
+            if st.button("New Set", key="math_new"):
+                import random
+                qs = []
+                for _ in range(5):
+                    a = random.randint(50, 500)
+                    b = random.randint(5, 50)
+                    qs.append({"q": f"{a} × {b}", "a": a*b})
+                st.session_state['math_set'] = qs
+            ms = st.session_state.get('math_set', [])
+            if ms:
+                answers = []
+                for i, item in enumerate(ms):
+                    u = st.number_input(item["q"], min_value=0.0, step=1.0, key=f"math_{i}")
+                    answers.append(u)
+                if st.button("Grade", key="math_grade"):
+                    correct = 0
+                    for i, item in enumerate(ms):
+                        if int(answers[i]) == item["a"]:
+                            correct += 1
+                    st.metric("Score", f"{correct}/5")
+        with st.expander("Chart Reading Drill", expanded=False):
+            import pandas as _pd
+            import plotly.express as _px
+            dfc = _pd.DataFrame({"Cat": ["A","B","C","D"], "Y1": [100, 140, 90, 110], "Y2": [120, 130, 150, 100]})
+            figc = _px.bar(dfc, x="Cat", y=["Y1","Y2"], barmode="group", title="Category Values")
+            st.plotly_chart(figc, use_container_width=True)
+            st.caption("Q: Which category has the largest increase from Y1 to Y2?")
+            inp = st.selectbox("Your answer", ["A","B","C","D"], key="chart_ans")
+            inc = (dfc["Y2"]-dfc["Y1"]).tolist()
+            idx = inc.index(max(inc))
+            if st.button("Check", key="chart_check"):
+                if inp == dfc.iloc[idx]["Cat"]:
+                    st.success("Correct.")
+                else:
+                    st.error(f"Incorrect. Answer: {dfc.iloc[idx]['Cat']}")
 
         st.divider()
 
@@ -3152,6 +3224,73 @@ elif page == "Big 4 Job Hunting 💼":
                 *   "How is the firm preparing for the auditing of **Non-Financial Information** (ESG/Sustainability)? I believe my engineering background could be useful there."
                 *   "I want to be a bridge between the Tech team and the Audit team. Is there a career path for a 'Hybrid' professional?"
                 """)
+        st.divider()
+        st.markdown("### 🧑‍💻 Programming Test")
+        prob = st.selectbox("Select Problem", ["FizzBuzz", "Two Sum", "Valid Parentheses", "Fibonacci", "Anagram Grouping"], key="code_prob")
+        starter = {
+            "FizzBuzz": "def fizzbuzz(n):\n    res = []\n    for i in range(1, n+1):\n        out = ''\n        if i % 3 == 0:\n            out += 'Fizz'\n        if i % 5 == 0:\n            out += 'Buzz'\n        res.append(out or str(i))\n    return res\n",
+            "Two Sum": "def two_sum(nums, target):\n    idx = {}\n    for i, x in enumerate(nums):\n        y = target - x\n        if y in idx:\n            return [idx[y], i]\n        idx[x] = i\n    return []\n",
+            "Valid Parentheses": "def valid_parentheses(s):\n    stack = []\n    m = {')':'(', ']':'[', '}':'{'}\n    for ch in s:\n        if ch in '([{':\n            stack.append(ch)\n        elif ch in ')]}':\n            if not stack or stack[-1] != m[ch]:\n                return False\n            stack.pop()\n    return not stack\n",
+            "Fibonacci": "def fib(n):\n    if n <= 1:\n        return n\n    a, b = 0, 1\n    for _ in range(n-1):\n        a, b = b, a+b\n    return b\n",
+            "Anagram Grouping": "def group_anagrams(words):\n    buckets = {}\n    for w in words:\n        k = ''.join(sorted(w))\n        buckets.setdefault(k, []).append(w)\n    return list(buckets.values())\n"
+        }[prob]
+        code = st.text_area("Write your function", value=starter, height=260, key="code_area")
+        if st.button("Run Tests", key="run_tests"):
+            safe_builtins = {'range': range, 'len': len, 'abs': abs, 'min': min, 'max': max, 'sum': sum, 'sorted': sorted, 'enumerate': enumerate, 'zip': zip, 'map': map, 'filter': filter, 'all': all, 'any': any, 'list': list, 'dict': dict, 'set': set, 'tuple': tuple}
+            g = {"__builtins__": safe_builtins}
+            l = {}
+            ok = False
+            try:
+                exec(code, g, l)
+                ok = True
+            except Exception as e:
+                st.error(f"Compile error: {e}")
+            if ok:
+                res_lines = []
+                def run_case(fn, args, exp):
+                    try:
+                        out = fn(*args)
+                        return out == exp, out, exp
+                    except Exception as err:
+                        return False, str(err), exp
+                tests = []
+                if prob == "FizzBuzz":
+                    tests = [([15], [str(i) if (i%3 and i%5) else ('Fizz'*(i%3==0)+'Buzz'*(i%5==0)) or str(i) for i in range(1,16)])]
+                    fn = l.get("fizzbuzz")
+                elif prob == "Two Sum":
+                    tests = [([[2,7,11,15], 9], [0,1]), ([[3,2,4], 6], [1,2])]
+                    fn = l.get("two_sum")
+                elif prob == "Valid Parentheses":
+                    tests = [(["()[]{}"], True), (["(]"], False), (["({[]})"], True)]
+                    fn = l.get("valid_parentheses")
+                elif prob == "Fibonacci":
+                    tests = [([0],0),([1],1),([10],55)]
+                    fn = l.get("fib")
+                else:
+                    tests = [([["eat","tea","tan","ate","nat","bat"]], [['eat','tea','ate'], ['tan','nat'], ['bat']])]
+                    fn = l.get("group_anagrams")
+                if not fn:
+                    st.error("Function not found with required name.")
+                else:
+                    passed = 0
+                    for args, exp in tests:
+                        ok, out, ex = run_case(fn, args, exp)
+                        if ok:
+                            passed += 1
+                        res_lines.append(f"Input={args} | Output={out} | Expected={ex} | {'OK' if ok else 'NG'}")
+                    st.code("\n".join(res_lines), language="text")
+                    st.metric("Passed", f"{passed}/{len(tests)}")
+        with st.expander("Solution Outline (Steps)", expanded=False):
+            if prob == "FizzBuzz":
+                st.write("Loop 1..n; if %3 append 'Fizz'; if %5 append 'Buzz'; else str(i).")
+            elif prob == "Two Sum":
+                st.write("Use hashmap: store value→index; for x find target−x.")
+            elif prob == "Valid Parentheses":
+                st.write("Use stack; push opens; on close check top and pop; stack empty at end.")
+            elif prob == "Fibonacci":
+                st.write("Iterate a,b; next=b,a+b; repeat n−1 times.")
+            else:
+                st.write("Key = sorted letters of word; group by key.")
 
     # --- Buy-Side Path Tab ---
     tab_bs = st.tabs(["Buy-Side Path 💹"])[0]
@@ -3182,6 +3321,135 @@ elif page == "Big 4 Job Hunting 💼":
         """)
         with st.expander("📎 ダウンロード（テンプレ）", expanded=False):
             st.markdown("- DCF テンプレ（準備中）\n- LBO テンプレ（準備中）\n- One-Pager 投資メモ（準備中）")
+
+        st.markdown("### What is Buy-Side?")
+        st.markdown("""
+        - Investors that allocate capital to generate returns.  
+        - 代表: アセットマネジメント（公募/機関）、プライベートエクイティ、ベンチャーキャピタル、ヘッジファンド。  
+        - 主な成果物: 投資リターン、投資メモ、DDレポート、ポートフォリオ管理。
+        """)
+        st.markdown("### Buy-Side vs Sell-Side")
+        st.markdown("""
+        | 観点 | Buy-Side | Sell-Side |
+        |---|---|---|
+        | 顧客 | 自社/投資家 | 外部クライアント |
+        | 成果 | リターン/損益 | フィー/アドバイス |
+        | 仕事 | 投資選定/DD/運用 | リサーチ/仲介/アドバイス |
+        | 時間軸 | 中長期（戦略/実行） | 短中期（案件/レポート） |
+        """)
+
+        if "buyside_plan" not in st.session_state:
+            try:
+                _data = load_data()
+                st.session_state["buyside_plan"] = _data.get("buyside_plan", {})
+            except Exception:
+                st.session_state["buyside_plan"] = {}
+
+        st.markdown("### Readiness Self-Assessment")
+        c1, c2, c3 = st.columns(3)
+        with c1:
+            r_acc = st.slider("Accounting/Valuation", 0, 10, 6, key="ready_acc")
+            r_mod = st.slider("Modeling (3表/DCF/LBO)", 0, 10, 5, key="ready_mod")
+        with c2:
+            r_dom = st.slider("Domain (製造/Tech理解)", 0, 10, 6, key="ready_dom")
+            r_data = st.slider("Data (Python/SQL)", 0, 10, 6, key="ready_data")
+        with c3:
+            r_eng = st.slider("English/Global", 0, 10, 5, key="ready_eng")
+            r_net = st.slider("Networking", 0, 10, 4, key="ready_net")
+        score = int((r_acc*0.2 + r_mod*0.2 + r_dom*0.15 + r_data*0.15 + r_eng*0.15 + r_net*0.15) * 10)
+        st.metric("Readiness Score", f"{score}/100")
+        st.progress(score)
+        if score < 60:
+            st.info("Focus: Modeling と English を引き上げる。DCF/LBO と英語ピッチの反復。")
+        elif score < 80:
+            st.success("Good 基盤。案件型アウトプット（投資メモ/月）を習慣化。")
+        else:
+            st.success("Ready 水準。応募＋面接練習を本格化。")
+
+        st.markdown("### 12-Week Plan")
+        plan_items = [
+            "Week1: 3表リンク再復習（運転資本/設備/税効果）",
+            "Week2: DCF（WACC/Terminal）を自作テンプレで2社",
+            "Week3: 上場製造業でQofE視点の調整を考える",
+            "Week4: LBO簡易モデル（5年・簡易金利・Exit倍数）",
+            "Week5: Stock Pitch #1（1-2ページ）",
+            "Week6: セクター研究（自動車/サプライチェーン）",
+            "Week7: DDフレーム（商流/財務/法務/オペレーション）",
+            "Week8: Stock Pitch #2（異業種）",
+            "Week9: Pythonでスクレイピング/財務データ取り込み",
+            "Week10: バリュエーション比較（Multiples × DCF）",
+            "Week11: 英語ピッチ練習（5分）を録音/改善",
+            "Week12: 面接総仕上げ（Buy-Side想定質疑）"
+        ]
+        current_plan = st.session_state.get("buyside_plan", {})
+        new_plan = {}
+        for item in plan_items:
+            checked = st.checkbox(item, value=bool(current_plan.get(item)), key=f"pl_{item}")
+            new_plan[item] = checked
+        csa1, csa2 = st.columns([1,1])
+        with csa1:
+            if st.button("Save Progress", key="save_buyside_plan"):
+                st.session_state["buyside_plan"] = new_plan
+                try:
+                    blob = load_data()
+                    blob["buyside_plan"] = new_plan
+                    save_data(blob)
+                    st.success("Saved progress.")
+                except Exception as e:
+                    st.error(f"Save failed: {e}")
+        with csa2:
+            if st.button("Reset Plan", key="reset_buyside_plan"):
+                for item in plan_items:
+                    st.session_state[f"pl_{item}"] = False
+                st.session_state["buyside_plan"] = {}
+                try:
+                    blob = load_data()
+                    blob["buyside_plan"] = {}
+                    save_data(blob)
+                except Exception:
+                    pass
+                st.info("Plan reset.")
+
+        st.markdown("### Stock Pitch Builder")
+        p1, p2 = st.columns([2,1])
+        with p1:
+            sp_name = st.text_input("Company", value="Example Corp")
+            sp_thesis = st.text_area("Thesis (3 bullets, one per line)", value="1) Structural growth\n2) Operating leverage\n3) Cash returns policy")
+            sp_catalysts = st.text_area("Catalysts", value="New product launch; Cost restructuring; Regulatory approval")
+        with p2:
+            sp_val = st.selectbox("Valuation Method", ["PE", "EV/EBITDA", "DCF"], index=1)
+            sp_risks = st.text_area("Risks", value="FX; Raw materials; Execution")
+        if st.button("Build One-Pager", key="build_pitch"):
+            text = f"""Company: {sp_name}
+Thesis:
+{sp_thesis}
+Valuation: {sp_val}
+Catalysts: {sp_catalysts}
+Risks: {sp_risks}
+"""
+            st.code(text, language="markdown")
+
+        st.markdown("### Quick LBO Estimator")
+        l1, l2, l3 = st.columns(3)
+        with l1:
+            ebitda = st.number_input("EBITDA (Year 1)", min_value=0.0, value=1000.0, step=50.0, key="lbo_ebitda")
+            entry_mult = st.number_input("Entry EV/EBITDA", min_value=1.0, value=8.0, step=0.5, key="lbo_entry_mult")
+        with l2:
+            debt_mult = st.number_input("Debt / EBITDA", min_value=0.0, value=4.0, step=0.5, key="lbo_debt_mult")
+            exit_mult = st.number_input("Exit EV/EBITDA", min_value=1.0, value=8.0, step=0.5, key="lbo_exit_mult")
+        with l3:
+            years = st.number_input("Hold Years", min_value=1, value=5, step=1, key="lbo_years")
+            growth = st.number_input("EBITDA CAGR (%)", min_value=0.0, value=5.0, step=0.5, key="lbo_cagr")
+        entry_ev = ebitda * entry_mult
+        debt = ebitda * debt_mult
+        equity = max(entry_ev - debt, 0.0)
+        ebitda_exit = ebitda * ((1 + growth/100) ** years)
+        exit_ev = ebitda_exit * exit_mult
+        equity_exit = max(exit_ev - debt, 0.0)
+        moic = (equity_exit / equity) if equity > 0 else None
+        irr = ((moic ** (1/years)) - 1) * 100 if moic and moic > 0 else None
+        st.metric("MOIC (approx)", f"{moic:.2f}x" if moic else "N/A")
+        st.metric("IRR (approx)", f"{irr:.1f}%" if irr else "N/A")
 
 
 elif page == "Company Directory 🏢":
@@ -3310,6 +3578,228 @@ elif page == "Company Directory 🏢":
     with tab3:
         st.subheader("Tech & Enterprise (CFO Track)")
         st.info("💡 **Business Side**: FP&A, Accounting Manager, IPO Prep.")
+        fc1, fc2 = st.columns([1, 2])
+        with fc1:
+            te_firm_type = st.selectbox("Firm Type", ["All", "Foreign", "Japanese"], index=0, key="te_firm_type")
+        with fc2:
+            te_standards = st.multiselect("Accounting Standard Experience", ["IFRS", "US GAAP", "JGAAP"], default=[], key="te_standards")
+        use_leftnav = st.checkbox("Left Navigation View (recommended)", value=True, key="te_leftnav")
+        if use_leftnav:
+            col_nav, col_view = st.columns([1, 3])
+            with col_nav:
+                subsec = st.radio(
+                    "Section",
+                    [
+                        "Tech / Global",
+                        "Holdings / Conglomerates",
+                        "Securities",
+                        "Makers",
+                        "Utilities & Energy",
+                        "Megabanks",
+                        "Consulting (MBB)",
+                        "Trading Companies",
+                        "Buy-Side (AM / PE / VC)",
+                        "User Catalog",
+                        "Bulk Add"
+                    ],
+                    index=0,
+                    key="te_nav"
+                )
+                cat_meta = {
+                    "Tech / Global": {"salary": "6–12M JPY", "diff": "High"},
+                    "Holdings / Conglomerates": {"salary": "7–12M JPY", "diff": "High"},
+                    "Securities": {"salary": "6–12M JPY", "diff": "High"},
+                    "Makers": {"salary": "5–9M JPY", "diff": "Medium"},
+                    "Utilities & Energy": {"salary": "5–8M JPY", "diff": "Low–Medium"},
+                    "Megabanks": {"salary": "6–10M JPY", "diff": "Medium"},
+                    "Consulting (MBB)": {"salary": "8–14M JPY", "diff": "Ultra"},
+                    "Trading Companies": {"salary": "8–14M JPY", "diff": "Ultra"},
+                    "Buy-Side (AM / PE / VC)": {"salary": "8–20M JPY", "diff": "Ultra"},
+                    "User Catalog": {"salary": "Varies", "diff": "Varies"},
+                    "Bulk Add": {"salary": "", "diff": ""}
+                }
+                meta = cat_meta.get(subsec, {})
+                if meta:
+                    st.metric("Salary (cat)", meta.get("salary", "—"))
+                    st.metric("Difficulty", meta.get("diff", "—"))
+            with col_view:
+                def _render_items(items, cat_name):
+                    for c in items:
+                        if te_firm_type != "All":
+                            ctype = c.get("type")
+                            if ctype and ctype != te_firm_type:
+                                continue
+                        if te_standards:
+                            cstd = c.get("standards", [])
+                            if cstd and not any(s in cstd for s in te_standards):
+                                continue
+                        sc = _score_company(c.get("attrs", {}), c.get("locs", []))
+                        if sc < min_score:
+                            continue
+                        st.markdown(f"**{c['name']}** — Score: {sc}/100  \n{c.get('desc','')} [Link]({c.get('link','')})")
+                        st.progress(sc)
+                        st.caption(f"Locations: {', '.join(c.get('locs', []))}")
+                        cm = cat_meta.get(cat_name, {})
+                        sal = c.get("salary") or cm.get("salary", "—")
+                        dif = c.get("difficulty") or cm.get("diff", "—")
+                        st.caption(f"Salary: {sal} | Difficulty: {dif}")
+                if subsec == "Tech / Global":
+                    items = [
+                        {"name": "Google / Amazon / MS (Japan)", "desc": "FP&A roles. Very high English requirement. Competitive.", "link": "https://careers.google.com/", "locs": ["Tokyo"], "attrs": {"CPA": False, "DS": True, "Global": True}, "type": "Foreign", "standards": ["US GAAP", "IFRS"], "salary": "10–14M+ JPY", "difficulty": "Ultra"},
+                        {"name": "Rakuten Group", "desc": "English official language. Massive FinTech ecosystem.", "link": "https://corp.rakuten.co.jp/careers/", "locs": ["Tokyo"], "attrs": {"CPA": "Medium", "DS": True, "Global": True}, "type": "Japanese", "standards": ["IFRS"], "salary": "6–10M JPY"},
+                        {"name": "Line Yahoo", "desc": "Major domestic tech player. Strong benefits.", "link": "https://www.lycorp.co.jp/ja/recruit/", "locs": ["Tokyo"], "attrs": {"CPA": "Medium", "DS": True, "Global": True}, "type": "Japanese", "standards": ["IFRS"]},
+                        {"name": "Mercari", "desc": "Modern tech culture. Good for ambitious finance pros.", "link": "https://careers.mercari.com/", "locs": ["Tokyo"], "attrs": {"CPA": "Medium", "DS": True, "Global": True}, "type": "Japanese", "standards": ["IFRS"]}
+                    ]
+                    _render_items(items, "Tech / Global")
+                elif subsec == "Holdings / Conglomerates":
+                    items = [
+                        {"name": "SoftBank Group", "desc": "Investment conglomerate. Complex consolidations and valuation analytics.", "link": "https://group.softbank/en/corp/recruit", "locs": ["Tokyo"], "attrs": {"CPA": "Medium", "DS": True, "Global": True}, "type": "Japanese", "standards": ["IFRS"]},
+                        {"name": "Recruit Holdings", "desc": "HR Tech conglomerate. Data-driven culture; FP&A and IR strong.", "link": "https://recruit-holdings.com/careers/", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": True, "Global": True}, "type": "Japanese", "standards": ["IFRS"]},
+                        {"name": "Fast Retailing (UNIQLO)", "desc": "Globally integrated retail. Inventory/FX/IFRS exposure.", "link": "https://www.fastretailing.com/employment/ja/", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Medium", "Global": True}, "type": "Japanese", "standards": ["IFRS"]},
+                        {"name": "Takeda Pharmaceutical", "desc": "Global pharma. R&D capitalization, global IFRS, treasury.", "link": "https://www.takeda.com/jp/ja-us/careers/", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Low", "Global": True}, "type": "Japanese", "standards": ["IFRS"]}
+                    ]
+                    _render_items(items, "Holdings / Conglomerates")
+                elif subsec == "Securities":
+                    items = [
+                        {"name": "Nomura Securities (野村證券)", "desc": "Top-tier securities. IB, Markets, Corporate planning/Finance roles.", "link": "https://www.nomura.com/jpn/careers/", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Medium", "Global": True}, "type": "Japanese", "standards": ["US GAAP", "IFRS"]},
+                        {"name": "Daiwa Securities (大和証券)", "desc": "Major securities group. IB/markets, group finance & IR.", "link": "https://www.daiwa-grp.jp/recruit/", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Low", "Global": True}, "type": "Japanese", "standards": ["IFRS"]}
+                    ]
+                    _render_items(items, "Securities")
+                elif subsec == "Makers":
+                    items = [
+                        {"name": "Toyota", "desc": "Global auto leader. Robust finance org; strong FP&A/treasury.", "link": "https://global.toyota/en/company/", "locs": ["Tokyo", "Aichi"], "attrs": {"CPA": True, "DS": "Medium", "Global": True}, "type": "Japanese", "standards": ["IFRS"]},
+                        {"name": "Keyence", "desc": "High-margin factory automation. Lean org, high productivity.", "link": "https://www.keyence.co.jp/jobs/", "locs": ["Tokyo", "Osaka"], "attrs": {"CPA": "Medium", "DS": "Medium", "Global": True}, "type": "Japanese", "standards": ["IFRS"]},
+                        {"name": "Fujifilm", "desc": "Diversified: healthcare, imaging, materials. Global operations.", "link": "https://recruit.fujifilm.com/", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Medium", "Global": True}, "type": "Japanese", "standards": ["IFRS"]},
+                        {"name": "Sony", "desc": "Entertainment + Electronics. Complex consolidation; great for CPAs.", "link": "https://www.sony.com/en/SonyInfo/Careers/", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": True, "Global": True}, "type": "Japanese", "standards": ["IFRS"]},
+                        {"name": "Panasonic", "desc": "Devices to solutions. Large-scale finance transformation roles.", "link": "https://holdings.panasonic/jp/corporate/jobs/", "locs": ["Tokyo", "Osaka"], "attrs": {"CPA": True, "DS": "Medium", "Global": True}, "type": "Japanese", "standards": ["IFRS"]},
+                        {"name": "Hitachi", "desc": "OT×IT leader. Project accounting, global IFRS exposure.", "link": "https://www.hitachi.co.jp/recruit/", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": True, "Global": True}, "type": "Japanese", "standards": ["IFRS"]}
+                    ]
+                    _render_items(items, "Makers")
+                elif subsec == "Utilities & Energy":
+                    items = [
+                        {"name": "Tokyo Gas", "desc": "Stable utility. Long-term planning, project finance, IFRS.", "link": "https://www.tokyo-gas-recruit.com/", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Low", "Global": False}, "type": "Japanese", "standards": ["IFRS"]},
+                        {"name": "TEPCO", "desc": "Large-scale regulated utility. Risk management heavy.", "link": "https://www.tepco.co.jp/recruit/index-j.html", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Low", "Global": False}, "type": "Japanese", "standards": ["IFRS"]}
+                    ]
+                    _render_items(items, "Utilities & Energy")
+                elif subsec == "Megabanks":
+                    items = [
+                        {"name": "MUFG", "desc": "Japan’s largest financial group. Treasury, ALM, IFRS9/CECL skills.", "link": "https://www.mufg.jp/csr/recruit/", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Medium", "Global": True}, "type": "Japanese", "standards": ["IFRS"]},
+                        {"name": "SMBC", "desc": "Corporate banking powerhouse. Debt/FX exposure for CFO track.", "link": "https://www.smbc.co.jp/recruit/", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Medium", "Global": True}, "type": "Japanese", "standards": ["IFRS"]},
+                        {"name": "Mizuho", "desc": "Universal bank. Group finance/controls; transformation programs.", "link": "https://www.mizuho-fg.co.jp/recruit/", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Medium", "Global": True}, "type": "Japanese", "standards": ["IFRS"]}
+                    ]
+                    _render_items(items, "Megabanks")
+                elif subsec == "Consulting (MBB)":
+                    items = [
+                        {"name": "McKinsey & Company", "desc": "Top strategy firm. CFO transformation, value creation.", "link": "https://www.mckinsey.com/careers", "locs": ["Tokyo"], "attrs": {"CPA": "Low", "DS": "Medium", "Global": True}, "type": "Foreign"},
+                        {"name": "Boston Consulting Group", "desc": "Deep corporate finance practice.", "link": "https://careers.bcg.com/", "locs": ["Tokyo"], "attrs": {"CPA": "Low", "DS": "Medium", "Global": True}, "type": "Foreign"},
+                        {"name": "Bain & Company", "desc": "Private equity, performance improvement.", "link": "https://www.bain.com/careers/", "locs": ["Tokyo"], "attrs": {"CPA": "Low", "DS": "Medium", "Global": True}, "type": "Foreign"}
+                    ]
+                    _render_items(items, "Consulting (MBB)")
+                elif subsec == "Trading Companies":
+                    st.markdown("Mitsubishi Corp, Mitsui & Co, Itochu, Sumitomo Corp, Marubeni")
+                    st.caption("Salary: 8–14M JPY | Difficulty: Ultra")
+                    st.caption("Extremely competitive. High salary. Global rotations.")
+                elif subsec == "Buy-Side (AM / PE / VC)":
+                    items = [
+                        {"name": "Nomura Asset Management", "desc": "Japan’s leading AM. Equity/Fixed Income/Quant.", "link": "https://www.nomura-am.co.jp/company/recruit/", "locs": ["Tokyo"], "attrs": {"CPA": "Medium", "DS": "Medium", "Global": True}, "type": "Japanese", "standards": ["IFRS"]},
+                        {"name": "Daiwa Asset Management", "desc": "Major AM house. Public equities and funds.", "link": "https://www.daiwa-am.co.jp/company/recruit/", "locs": ["Tokyo"], "attrs": {"CPA": "Medium", "DS": "Low", "Global": True}, "type": "Japanese", "standards": ["IFRS"]},
+                        {"name": "BlackRock Japan", "desc": "Global leader. iShares/Institutional mandates.", "link": "https://careers.blackrock.com/early-careers", "locs": ["Tokyo"], "attrs": {"CPA": "Low", "DS": True, "Global": True}, "type": "Foreign", "standards": ["US GAAP", "IFRS"]},
+                        {"name": "Fidelity Investments Japan", "desc": "Active management, research focus.", "link": "https://www.fidelity.co.jp/corporate/recruit/", "locs": ["Tokyo"], "attrs": {"CPA": "Medium", "DS": "Low", "Global": True}, "type": "Foreign", "standards": ["US GAAP", "IFRS"]},
+                        {"name": "Advantage Partners", "desc": "Japan’s top PE pioneer. Mid-market focus.", "link": "https://www.advantagepartners.com/jp/", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Low", "Global": True}, "type": "Japanese"},
+                        {"name": "Carlyle Japan", "desc": "Global PE. Large-cap to mid-cap.", "link": "https://www.carlyle.com/careers", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Low", "Global": True}, "type": "Foreign"},
+                        {"name": "Bain Capital Japan", "desc": "Global PE. Strong operating improvement.", "link": "https://www.baincapital.com/careers", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Low", "Global": True}, "type": "Foreign"},
+                        {"name": "Japan Industrial Partners (JIP)", "desc": "Carve-outs/turnarounds.", "link": "https://www.jipinc.com/", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Low", "Global": False}, "type": "Japanese"},
+                        {"name": "JAFCO", "desc": "Japan’s classic VC. Early to growth.", "link": "https://www.jafco.co.jp/english/recruit/", "locs": ["Tokyo"], "attrs": {"CPA": "Low", "DS": "Medium", "Global": True}, "type": "Japanese"},
+                        {"name": "Globis Capital Partners", "desc": "Top-tier domestic VC. SaaS/tech focus.", "link": "https://www.globis-capital.co.jp/en/", "locs": ["Tokyo"], "attrs": {"CPA": "Low", "DS": "Medium", "Global": True}, "type": "Japanese"},
+                        {"name": "Incubate Fund", "desc": "Early-stage specialist.", "link": "https://incubatefund.com/en/", "locs": ["Tokyo"], "attrs": {"CPA": "Low", "DS": "Medium", "Global": True}, "type": "Japanese"},
+                        {"name": "DNX Ventures", "desc": "B2B tech-focused VC (JP/US).", "link": "https://www.dnx.vc/", "locs": ["Tokyo"], "attrs": {"CPA": "Low", "DS": True, "Global": True}, "type": "Foreign"}
+                    ]
+                    _render_items(items, "Buy-Side (AM / PE / VC)")
+                elif subsec == "User Catalog":
+                    catalog = st.session_state.get("company_catalog", [])
+                    if catalog:
+                        for c in catalog:
+                            sc = _score_company(c.get("attrs", {}), c.get("locs", []))
+                            if sc < min_score:
+                                continue
+                            st.markdown(f"**{c.get('name','')}** — Score: {sc}/100  \n{c.get('desc','')} [Link]({c.get('link','')})")
+                            st.progress(sc)
+                            st.caption(f"Locations: {', '.join(c.get('locs', []))}")
+                            st.caption("Salary: Varies | Difficulty: Varies")
+                    else:
+                        st.info("No entries. Use 'Bulk Add' to import.")
+                else:
+                    st.markdown("#### Bulk Add Companies (CSV/JSON)")
+                    with st.expander("Import / Manage", expanded=True):
+                        st.caption("Schema: name, desc, link, locs(list or comma-separated), attrs.CPA(bool/str), attrs.DS(bool/str), attrs.Global(bool)")
+                        uploaded = st.file_uploader("Upload CSV or JSON", type=["csv", "json"], accept_multiple_files=False, key="company_catalog_uploader_left")
+                        if uploaded is not None:
+                            try:
+                                import json as _json
+                                import pandas as _pd
+                                if uploaded.name.lower().endswith(".json"):
+                                    entries = _json.loads(uploaded.read().decode("utf-8"))
+                                else:
+                                    dfu = _pd.read_csv(uploaded)
+                                    entries = dfu.to_dict(orient="records")
+                                if not isinstance(entries, list):
+                                    entries = [entries]
+                                catalog = st.session_state.get("company_catalog", [])
+                                for e in entries:
+                                    name = e.get("name") or e.get("Name")
+                                    if not name:
+                                        continue
+                                    desc = e.get("desc") or e.get("Desc") or ""
+                                    link = e.get("link") or e.get("Link") or ""
+                                    locs = e.get("locs") or e.get("Locs") or e.get("locations") or e.get("Locations") or []
+                                    if isinstance(locs, str):
+                                        locs = [s.strip() for s in locs.split(",") if s.strip()]
+                                    attrs = e.get("attrs") or {}
+                                    if not attrs:
+                                        attrs = {
+                                            "CPA": e.get("CPA") if e.get("CPA") is not None else False,
+                                            "DS": e.get("DS") if e.get("DS") is not None else False,
+                                            "Global": e.get("Global") if e.get("Global") is not None else False
+                                        }
+                                    item = {"name": name, "desc": desc, "link": link, "locs": locs, "attrs": attrs}
+                                    exists = False
+                                    for old in catalog:
+                                        if old.get("name") == name:
+                                            old.update(item)
+                                            exists = True
+                                            break
+                                    if not exists:
+                                        catalog.append(item)
+                                st.session_state["company_catalog"] = catalog
+                                try:
+                                    data_blob = load_data()
+                                    data_blob["company_catalog"] = catalog
+                                    save_data(data_blob)
+                                except Exception:
+                                    pass
+                                st.success(f"Imported {len(entries)} entries.")
+                            except Exception as e:
+                                st.error(f"Failed to import: {e}")
+                        col_i1, col_i2 = st.columns([1,1])
+                        with col_i1:
+                            if st.button("Clear Catalog", key="clear_catalog_left"):
+                                st.session_state["company_catalog"] = []
+                                try:
+                                    data_blob = load_data()
+                                    data_blob["company_catalog"] = []
+                                    save_data(data_blob)
+                                except Exception:
+                                    pass
+                                st.info("Catalog cleared.")
+                        with col_i2:
+                            if st.button("Load Catalog from Storage", key="load_catalog_left"):
+                                try:
+                                    data_blob = load_data()
+                                    st.session_state["company_catalog"] = data_blob.get("company_catalog", [])
+                                    st.success("Loaded from storage.")
+                                except Exception as e:
+                                    st.error(f"Failed to load: {e}")
+            st.stop()
         
         tech = [
             {"name": "Google / Amazon / MS (Japan)", "desc": "FP&A roles. Very high English requirement. Competitive.", "link": "https://careers.google.com/", "locs": ["Tokyo"], "attrs": {"CPA": False, "DS": True, "Global": True}},

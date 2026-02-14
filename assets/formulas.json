@@ -259,7 +259,8 @@
     "problem_ja": "問題: Rf=1%、β=0.8、Rm=6% ⇒ k_eは？",
     "problem_en": "Problem: Rf=1%, β=0.8, Rm=6% ⇒ ke?",
     "solution_ja": "解答: MRP=5%、k_e=1%+0.8×5%=5%",
-    "solution_en": "Solution: MRP=5%, ke=1%+0.8×5%=5%"
+    "solution_en": "Solution: MRP=5%, ke=1%+0.8×5%=5%",
+    "latex": "k_e = R_f + \\\\beta\\\\,(R_m - R_f)"
   },
   {
     "category": "Corp Finance",
@@ -272,7 +273,8 @@
     "problem_ja": "問題: w_e=0.7, w_d=0.3, k_e=12%, k_d=4%, T=25% ⇒ WACCは？",
     "problem_en": "Problem: we=0.7, wd=0.3, ke=12%, kd=4%, T=25% ⇒ WACC?",
     "solution_ja": "解答: 0.7×0.12 + 0.3×0.04×(1−0.25)=9.3%",
-    "solution_en": "Solution: 0.7×0.12 + 0.3×0.04×(1−0.25)=9.3%"
+    "solution_en": "Solution: 0.7×0.12 + 0.3×0.04×(1−0.25)=9.3%",
+    "latex": "WACC = w_e k_e + w_d k_d (1-T) + w_p k_p"
   },
   {
     "category": "Corp Finance",
@@ -298,7 +300,8 @@
     "problem_ja": "問題: CF0=-2,000、CF1-4=600、r=10% ⇒ NPVは？",
     "problem_en": "Problem: CF0=-2,000, CF1-4=600, r=10% ⇒ NPV?",
     "solution_ja": "解答: 600×[(1−1.1^(−4))/0.1]−2,000 ≈ -98.1",
-    "solution_en": "Solution: 600×[(1−1.1^(−4))/0.1]−2,000 ≈ -98.1"
+    "solution_en": "Solution: 600×[(1−1.1^(−4))/0.1]−2,000 ≈ -98.1",
+    "latex": "NPV = \\\\sum_{t=0}^{n} \\\\dfrac{CF_{t}}{(1+r)^{t}}"
   },
   {
     "category": "Corp Finance",
@@ -311,7 +314,8 @@
     "problem_ja": "問題: PV流入=900、投資=1,000 のPIは？採否は？",
     "problem_en": "Problem: PV inflows=900, investment=1,000 ⇒ PI? Accept?",
     "solution_ja": "解答: 0.9、1未満のため不採用",
-    "solution_en": "Solution: 0.9; below 1, reject"
+    "solution_en": "Solution: 0.9; below 1, reject",
+    "latex": "PI = \\\\dfrac{\\\\text{PV of Inflows}}{\\\\text{Initial Investment}}"
   },
   {
     "category": "Corp Finance",
@@ -324,7 +328,8 @@
     "problem_ja": "問題: 初期投資1,200、年CF=300 ⇒ 回収期間は？",
     "problem_en": "Problem: Initial 1,200, annual CF=300 ⇒ Payback?",
     "solution_ja": "解答: 1,200/300=4年",
-    "solution_en": "Solution: 1,200/300=4 years"
+    "solution_en": "Solution: 1,200/300=4 years",
+    "latex": "\\\\text{Payback} = \\\\dfrac{\\\\text{Initial Investment}}{\\\\text{Annual Cash Flow}}"
   },
   {
     "category": "Corp Finance",
@@ -428,7 +433,8 @@
     "problem_ja": "問題: 単価20、変動費/単位12、数量200 ⇒ 限界利益は？",
     "problem_en": "Problem: Price=20, Var/unit=12, Units=200 ⇒ CM?",
     "solution_ja": "解答: 単位CM=8、合計CM=8×200=1,600",
-    "solution_en": "Solution: Unit CM=8; Total CM=8×200=1,600"
+    "solution_en": "Solution: Unit CM=8; Total CM=8×200=1,600",
+    "latex": "CM = \\\\text{Sales} - \\\\text{Variable Costs}"
   },
   {
     "category": "Cost/Managerial",
@@ -454,7 +460,8 @@
     "problem_ja": "問題: 固定費5,000、単価50、変動費30 ⇒ BEQは？",
     "problem_en": "Problem: Fixed=5,000, Price=50, Var=30 ⇒ BEQ?",
     "solution_ja": "解答: BEQ=5,000 ÷ (50−30)=250単位",
-    "solution_en": "Solution: BEQ=5,000/(50−30)=250 units"
+    "solution_en": "Solution: BEQ=5,000/(50−30)=250 units",
+    "latex": "Q_{BE} = \\\\dfrac{\\\\text{Fixed Costs}}{\\\\text{Price} - \\\\text{Variable Cost per Unit}}"
   },
   {
     "category": "Cost/Managerial",
@@ -571,7 +578,8 @@
     "problem_ja": "問題: D=36,000、S=80、H=4 のEOQは？",
     "problem_en": "Problem: Find EOQ for D=36,000, S=80, H=4.",
     "solution_ja": "解答: EOQ=√(2×36,000×80/4)=√1,440,000≈1,200",
-    "solution_en": "Solution: EOQ=√(2×36,000×80/4)=√1,440,000≈1,200"
+    "solution_en": "Solution: EOQ=√(2×36,000×80/4)=√1,440,000≈1,200",
+    "latex": "EOQ = \\\\sqrt{\\\\dfrac{2DS}{H}}"
   },
   {
     "category": "Cost/Managerial",
@@ -584,7 +592,8 @@
     "problem_ja": "問題: d=80、L=5、SS=60 のROPは？",
     "problem_en": "Problem: Find ROP for d=80, L=5, SS=60.",
     "solution_ja": "解答: ROP=80×5+60=460",
-    "solution_en": "Solution: ROP=80×5+60=460"
+    "solution_en": "Solution: ROP=80×5+60=460",
+    "latex": "ROP = d\\\\times L + SS"
   },
   {
     "category": "Cost/Managerial",
@@ -597,7 +606,8 @@
     "problem_ja": "問題: σL=30、Z=1.96 の安全在庫は？",
     "problem_en": "Problem: Find SS for σL=30, Z=1.96.",
     "solution_ja": "解答: SS=1.96×30=58.8≈59",
-    "solution_en": "Solution: SS=1.96×30=58.8≈59"
+    "solution_en": "Solution: SS=1.96×30=58.8≈59",
+    "latex": "SS = Z\\\\times\\\\sigma_{L}"
   },
   {
     "category": "Cost/Managerial",
@@ -883,7 +893,8 @@
     "problem_ja": "問題: CA=360、CL=300 の流動比率は？",
     "problem_en": "Problem: CA=360, CL=300 ⇒ current ratio?",
     "solution_ja": "解答: 360/300=1.2倍",
-    "solution_en": "Solution: 360/300=1.2x"
+    "solution_en": "Solution: 360/300=1.2x",
+    "latex": "CR = \\\\dfrac{CA}{CL}"
   },
   {
     "category": "Ratios",
@@ -896,7 +907,8 @@
     "problem_ja": "問題: QA=180、CL=240 の当座比率は？",
     "problem_en": "Problem: QA=180, CL=240 ⇒ quick ratio?",
     "solution_ja": "解答: 180/240=0.75倍",
-    "solution_en": "Solution: 180/240=0.75x"
+    "solution_en": "Solution: 180/240=0.75x",
+    "latex": "QR = \\\\dfrac{\\\\text{Quick Assets}}{CL}"
   },
   {
     "category": "Ratios",
@@ -948,7 +960,8 @@
     "problem_ja": "問題: COGS=900、平均在庫=225 ⇒ 回転は？",
     "problem_en": "Problem: COGS=900, Avg Inv=225 ⇒ turnover?",
     "solution_ja": "解答: 900/225=4.0",
-    "solution_en": "Solution: 900/225=4.0"
+    "solution_en": "Solution: 900/225=4.0",
+    "latex": "\\\\text{Turnover} = \\\\dfrac{COGS}{\\\\text{Average Inventory}}"
   },
   {
     "category": "Ratios",
@@ -961,7 +974,8 @@
     "problem_ja": "問題: 在庫回転=5 のDIOは？",
     "problem_en": "Problem: Inventory turnover=5 ⇒ DIO?",
     "solution_ja": "解答: 365/5=73日",
-    "solution_en": "Solution: 365/5=73 days"
+    "solution_en": "Solution: 365/5=73 days",
+    "latex": "DIO = \\\\dfrac{365}{\\\\text{Inventory Turnover}}"
   },
   {
     "category": "Ratios",
@@ -1000,7 +1014,8 @@
     "problem_ja": "問題: DIO=60、DSO=30、DPO=50 のCCCは？",
     "problem_en": "Problem: DIO=60, DSO=30, DPO=50 ⇒ CCC?",
     "solution_ja": "解答: 60+30−50=40日",
-    "solution_en": "Solution: 60+30−50=40 days"
+    "solution_en": "Solution: 60+30−50=40 days",
+    "latex": "CCC = DIO + DSO - DPO"
   },
   {
     "category": "Ratios",
@@ -1039,7 +1054,8 @@
     "problem_ja": "問題: 負債=750、自己資本=500 のD/Eは？",
     "problem_en": "Problem: Debt=750, Equity=500 ⇒ D/E?",
     "solution_ja": "解答: 750/500=1.5",
-    "solution_en": "Solution: 750/500=1.5"
+    "solution_en": "Solution: 750/500=1.5",
+    "latex": "\\\\dfrac{\\\\text{Debt}}{\\\\text{Equity}}"
   },
   {
     "category": "Ratios",
@@ -1091,7 +1107,8 @@
     "problem_ja": "問題: 利益=90、売上=750 のマージンは？",
     "problem_en": "Problem: Profit=90, Sales=750 ⇒ margin?",
     "solution_ja": "解答: 90/750=12%",
-    "solution_en": "Solution: 90/750=12%"
+    "solution_en": "Solution: 90/750=12%",
+    "latex": "OM = \\\\dfrac{\\\\text{Operating Income}}{\\\\text{Sales}}"
   },
   {
     "category": "Ratios",
@@ -1104,7 +1121,8 @@
     "problem_ja": "問題: 利益=90、売上=750 のマージンは？",
     "problem_en": "Problem: Profit=90, Sales=750 ⇒ margin?",
     "solution_ja": "解答: 90/750=12%",
-    "solution_en": "Solution: 90/750=12%"
+    "solution_en": "Solution: 90/750=12%",
+    "latex": "NPM = \\\\dfrac{\\\\text{Net Income}}{\\\\text{Sales}}"
   },
   {
     "category": "Ratios",
@@ -1130,7 +1148,8 @@
     "problem_ja": "問題: 当期純利益80、平均自己資本400 ⇒ ROEは？",
     "problem_en": "Problem: NI=80, Avg Equity=400 ⇒ ROE?",
     "solution_ja": "解答: 80 ÷ 400 = 20%",
-    "solution_en": "Solution: 80/400 = 20%"
+    "solution_en": "Solution: 80/400 = 20%",
+    "latex": "ROE = \\\\dfrac{\\\\text{Net Income}}{\\\\text{Average Equity}}"
   },
   {
     "category": "Ratios",
@@ -1143,7 +1162,8 @@
     "problem_ja": "問題: NPM=8%、TAT=1.2、EM=1.8 ⇒ ROEは？",
     "problem_en": "Problem: NPM=8%, TAT=1.2, EM=1.8 ⇒ ROE?",
     "solution_ja": "解答: 0.08×1.2×1.8=0.1728 ⇒ 17.28%",
-    "solution_en": "Solution: 0.08×1.2×1.8=0.1728 ⇒ 17.28%"
+    "solution_en": "Solution: 0.08×1.2×1.8=0.1728 ⇒ 17.28%",
+    "latex": "ROE = \\\\text{NPM}\\\\times\\\\text{TAT}\\\\times\\\\text{EM}"
   },
   {
     "category": "Ratios",

@@ -89,6 +89,19 @@ mock_exams = [
     {'date': '2027-08-20', 'type': 'Essay', 'name': 'Official Aug Essay Exam', 'provider': 'CPAAOB', 'status': 'Target'}
 ]
 
+default_official_schedule = [
+    # Short I (Dec) 2026
+    {'date': '2026-12-13', 'category': 'Exam', 'event': '短答式 第I回（12月） 試験', 'notes': '企業法/管理/監査/財務（500点満点）'},
+    {'date': '2027-01-20', 'category': 'Result', 'event': '短答式 第I回 合格発表（目安）', 'notes': '公式発表時刻に従う・目安日付'},
+    # Short II (May) 2027
+    {'date': '2027-05-23', 'category': 'Exam', 'event': '短答式 第II回（5月） 試験', 'notes': '目標：同年の論文へ'},
+    {'date': '2027-06-20', 'category': 'Result', 'event': '短答式 第II回 合格発表（目安）', 'notes': '公式発表時刻に従う・目安日付'},
+    # Essay 2027
+    {'date': '2027-08-20', 'category': 'Exam', 'event': '論文式 試験', 'notes': '2日間科目・配点に注意'},
+    {'date': '2027-11-15', 'category': 'Result', 'event': '論文式 合格発表（目安）', 'notes': '例年11月頃発表・目安日付'}
+]
+
+official_schedule = st.session_state.data.get('official_schedule', default_official_schedule)
 # Vocabulary Data
 def load_vocab_data():
     vocab_path = "assets/vocab.json"
@@ -516,6 +529,25 @@ st.sidebar.markdown("""
     """, unsafe_allow_html=True)
 
 st.sidebar.markdown("---")
+with st.sidebar.expander("📅 Official Schedule (Edit)"):
+    if 'schedule_edit' not in st.session_state:
+        st.session_state.schedule_edit = [dict(item) for item in official_schedule]
+    edit_rows = []
+    for idx, item in enumerate(st.session_state.schedule_edit):
+        d = st.date_input(f"Date {idx+1}", value=pd.to_datetime(item.get('date')).date(), key=f"sch_d_{idx}")
+        c = st.selectbox(f"Category {idx+1}", options=["Exam", "Result"], index=0 if item.get('category','Exam')=='Exam' else 1, key=f"sch_c_{idx}")
+        e = st.text_input(f"Event {idx+1}", value=item.get('event',''), key=f"sch_e_{idx}")
+        n = st.text_input(f"Notes {idx+1}", value=item.get('notes',''), key=f"sch_n_{idx}")
+        edit_rows.append({'date': d.strftime("%Y-%m-%d"), 'category': c, 'event': e, 'notes': n})
+        st.markdown("---")
+    if st.button("Add Row"):
+        st.session_state.schedule_edit.append({'date': date.today().strftime("%Y-%m-%d"), 'category': 'Exam', 'event': '', 'notes': ''})
+        st.rerun()
+    if st.button("Save Schedule", type="primary"):
+        st.session_state.data['official_schedule'] = edit_rows
+        save_data(st.session_state.data)
+        st.toast("Official schedule saved", icon="✅")
+        official_schedule = edit_rows
 page = st.sidebar.radio("Navigation", ["Dashboard 📊", "My Syllabus 📚", "Vocabulary 📖", "Formulas 📐", "Old Exams 📄", "Study Timer ⏱️", "Mock Exams 📝", "Scores 📈", "Drills 🔧", "Survival Mode ⚡", "Roadmap 🗺️", "Big 4 Job Hunting 💼", "Company Directory 🏢", "Future 🚀"])
 
 if page == "Dashboard 📊":
@@ -583,6 +615,20 @@ if page == "Dashboard 📊":
             target = date(2027, 8, 20)
             diff = (target - today).days
             st.error(f"**Aug 2027 Essay**\n\n# {max(0, diff)} Days\n\n*Target: PASS*")
+
+        se = None
+        try:
+            sched_df = pd.DataFrame(official_schedule)
+            if not sched_df.empty:
+                sched_df['d'] = pd.to_datetime(sched_df['date']).dt.date
+                future = sched_df[sched_df['d'] >= today]
+                if not future.empty:
+                    se = future.sort_values('d').iloc[0]
+        except Exception:
+            pass
+        if se is not None:
+            dd = (se['d'] - today).days
+            st.info(f"**Next Official Event**: {se['event']} ({se['category']})\n\n# {dd} Days\n\n{se.get('notes','')}")
 
         # Weakness Analysis
         st.subheader("🧠 Weak Areas Analysis")
@@ -1298,9 +1344,22 @@ elif page == "Study Timer ⏱️":
             st.info("No logs yet.")
 
 elif page == "Mock Exams 📝":
-    st.header("Mock Exam Schedule")
-    df_exams = pd.DataFrame(mock_exams)
-    st.table(df_exams)
+    st.header("Exam Schedule")
+    t1, t2 = st.tabs(["📅 Official Schedule", "📝 Mock Schedule"])
+    with t1:
+        df_off = pd.DataFrame(official_schedule)
+        if not df_off.empty:
+            df_off = df_off.sort_values('date')
+            st.table(df_off)
+            st.caption("注: 合格発表日は目安。正式な日程・時刻はCPAAOBの公表に従ってください。")
+        else:
+            st.info("No official schedule available.")
+    with t2:
+        df_exams = pd.DataFrame(mock_exams)
+        if not df_exams.empty:
+            st.table(df_exams)
+        else:
+            st.info("No mock exams scheduled.")
 
 elif page == "Scores 📈":
     st.header("Score Tracker")
@@ -1746,6 +1805,14 @@ elif page == "Roadmap 🗺️":
         st.plotly_chart(fig, use_container_width=True)
         
         st.info("💡 **Golden Route**: Pass May Short -> Pass August Essay in one go.")
+        
+        with st.expander("📅 Official Dates & Announcements"):
+            try:
+                df_off2 = pd.DataFrame(official_schedule).sort_values('date')
+                st.table(df_off2)
+                st.caption("注: 合格発表日は目安。正式な公表に従って随時更新。")
+            except Exception as e:
+                st.error(f"Failed to load official schedule: {e}")
 
     with tab2:
         st.subheader("Detailed Monthly Strategy")

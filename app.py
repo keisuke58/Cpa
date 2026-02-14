@@ -2208,16 +2208,17 @@ elif page == "Old Exams 📄":
                         if sub_info:
                             st.caption(sub_info)
                     with col2:
-                        if st.button("Open", key=f"open_exam_{f}"):
-                            try:
-                                file_path = os.path.join(exam_dir, f)
-                                if os.name == 'nt':
-                                    os.startfile(file_path)
-                                    st.toast(f"Opening {f}...", icon="🚀")
-                                else:
-                                    st.warning("File opening is only supported on Windows locally.")
-                            except Exception as e:
-                                st.error(f"Error opening file: {e}")
+                        pv_key = f"pv_exam_{f}"
+                        st.checkbox("Preview", key=pv_key)
+                        try:
+                            file_path = os.path.join(exam_dir, f)
+                            with open(file_path, "rb") as fb:
+                                st.download_button("Download", data=fb.read(), file_name=f, mime="application/pdf", key=f"dl_exam_{f}")
+                        except Exception:
+                            st.warning("File not found for download.")
+                    if st.session_state.get(f"pv_exam_{f}", False):
+                        with st.expander(f"Preview: {display_title}", expanded=False):
+                            render_pdf(os.path.join(exam_dir, f), height=700)
                     st.divider()
             
             st.info("💡 Tip: Use these papers to practice time management.")

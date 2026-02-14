@@ -14,6 +14,34 @@ st.set_page_config(page_title="CPA Perfect Platform 2027", layout="wide", page_i
 
 DATA_FILE = "cpa_data.json"
 
+# ---- Generated Questions Utilities (lazy load) ----
+@st.cache_data(show_spinner=False)
+def load_generated_subject(subject: str):
+    try:
+        with open('questions.json', 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        return data.get(subject, [])
+    except FileNotFoundError:
+        return []
+    except Exception:
+        return []
+
+@st.cache_data(show_spinner=False)
+def available_tags(subject: str):
+    tags = set()
+    try:
+        for q in load_generated_subject(subject):
+            qtags = q.get('tags', [])
+            if isinstance(qtags, list):
+                for t in qtags:
+                    if isinstance(t, str):
+                        tags.add(t)
+            elif isinstance(qtags, str):
+                tags.add(qtags)
+    except Exception:
+        pass
+    return sorted(tags)
+
 def load_data():
     defaults = {
         "scores": [],
@@ -2604,14 +2632,13 @@ elif page == "Drills 🔧":
                         st.divider()
                 else:
                     st.warning("No vocabulary data available.")
-    
-        # Load generated questions if available and not already loaded
-        if 'generated_questions' not in st.session_state:
-            try:
-                with open('questions.json', 'r', encoding='utf-8') as f:
-                    st.session_state.generated_questions = json.load(f)
-            except FileNotFoundError:
-                st.session_state.generated_questions = {}
+        else:
+            # Optional tag filter for generated questions
+            tag_opts = available_tags(subject)
+            if tag_opts:
+                st.session_state['selected_tags'] = st.multiselect("Filter by Tags (optional)", tag_opts, key="tag_filter")
+            else:
+                st.session_state['selected_tags'] = []
 
         if st.button("Start / Restart Quiz"):
             import random
@@ -2649,8 +2676,15 @@ elif page == "Drills 🔧":
             
             elif selected_level == 2 or selected_level == 3:
                 # Use generated questions for Level 2/3
-                gen_qs = st.session_state.generated_questions.get(subject, [])
+                gen_qs = load_generated_subject(subject)
                 level_gen_qs = [q for q in gen_qs if q.get('level') == selected_level]
+                # Apply tag filter if selected
+                sel_tags = st.session_state.get('selected_tags', []) or []
+                if sel_tags:
+                    level_gen_qs = [
+                        q for q in level_gen_qs
+                        if any(t in sel_tags for t in (q.get('tags') or []))
+                    ]
                 
                 if level_gen_qs:
                      # Pick 10 random questions
@@ -2669,8 +2703,15 @@ elif page == "Drills 🔧":
                 static_level1 = [q for q in raw_questions if q.get('level', 1) == 1]
                 
                 # Fetch Level 0 from generated questions
-                gen_qs = st.session_state.generated_questions.get(subject, [])
+                gen_qs = load_generated_subject(subject)
                 level0_gen_qs = [q for q in gen_qs if q.get('level') == 0]
+                # Apply tag filter if selected (only to generated part)
+                sel_tags = st.session_state.get('selected_tags', []) or []
+                if sel_tags:
+                    level0_gen_qs = [
+                        q for q in level0_gen_qs
+                        if any(t in sel_tags for t in (q.get('tags') or []))
+                    ]
                 
                 # Merge
                 all_level1_questions = static_level1 + level0_gen_qs

@@ -630,6 +630,29 @@ def main(seed=None):
     js_content = f"const generatedQuestions = {json.dumps(all_data, ensure_ascii=False, indent=2)};"
     with open(js_path, "w", encoding="utf-8") as f:
         f.write(js_content)
+
+    # Additionally write sharded files by Subject x Level
+    shards_dir = os.path.join(output_dir, "questions")
+    os.makedirs(shards_dir, exist_ok=True)
+    manifest = {"shards": []}
+    for subject, items in all_data.items():
+        # group by level
+        buckets = {}
+        for q in items:
+            lvl = q.get("level")
+            buckets.setdefault(lvl, []).append(q)
+        for lvl, arr in buckets.items():
+            # level might be None in legacy; skip shards without defined level
+            if lvl is None:
+                continue
+            shard_name = f"{subject}_L{lvl}.json"
+            shard_path = os.path.join(shards_dir, shard_name)
+            with open(shard_path, "w", encoding="utf-8") as sf:
+                json.dump(arr, sf, ensure_ascii=False, indent=2)
+            manifest["shards"].append({"subject": subject, "level": lvl, "file": shard_name, "count": len(arr)})
+    # write manifest
+    with open(os.path.join(shards_dir, "manifest.json"), "w", encoding="utf-8") as mf:
+        json.dump(manifest, mf, ensure_ascii=False, indent=2)
     
     print(f"Generated {len(financial)} Financial, {len(management)} Management, {len(audit)} Audit, {len(company)} Company questions.")
     print(f"Saved to {output_dir}")

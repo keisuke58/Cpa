@@ -590,7 +590,7 @@ def main(seed=None):
         except Exception:
             random.seed(seed)
     # Generate Intro/Basic Questions (Level 0)
-    intro_data = generate_intro_questions(50)
+    intro_data = generate_intro_questions(150)
 
     # Generate Standard/Advanced Questions (Level 2/3)
     # Financial: 3 types * 200 = 600
@@ -598,10 +598,10 @@ def main(seed=None):
     # Audit: 10 templates * 40 = 400
     # Company: 10 templates * 40 = 400
     
-    financial = generate_financial_questions(600)
-    management = generate_management_questions(600)
-    audit = generate_audit_questions(400)
-    company = generate_company_law_questions(400)
+    financial = generate_financial_questions(1200)
+    management = generate_management_questions(1200)
+    audit = generate_audit_questions(800)
+    company = generate_company_law_questions(800)
     
     # Merge Intro questions
     financial.extend(intro_data["Financial"])

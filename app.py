@@ -276,6 +276,45 @@ st.markdown("""
         border: 1px solid #ef4444;
         color: #991b1b;
     }
+    .question-card {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 16px 18px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        margin-bottom: 12px;
+    }
+    .badge {
+        display: inline-block;
+        padding: 4px 10px;
+        font-size: 12px;
+        line-height: 1;
+        border-radius: 9999px;
+        background: #eff6ff;
+        color: #1d4ed8;
+        border: 1px solid #bfdbfe;
+        margin-right: 6px;
+    }
+    .badge-level {
+        background: #f5f3ff;
+        color: #6d28d9;
+        border-color: #ddd6fe;
+    }
+    [data-testid="stRadio"] label {
+        display: block;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 10px 12px;
+        margin-bottom: 8px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+        transition: border-color 0.12s ease, background-color 0.12s ease;
+        cursor: pointer;
+    }
+    [data-testid="stRadio"] label:hover {
+        border-color: #60a5fa;
+        background-color: #f0f7ff;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -2736,6 +2775,9 @@ elif page == "Drills 🔧":
                 st.session_state['selected_tags'] = st.multiselect("Filter by Tags (optional)", tag_opts, key="tag_filter")
             else:
                 st.session_state['selected_tags'] = []
+            st.session_state['kw_filter'] = st.text_input("Keyword filter (optional)", value=st.session_state.get('kw_filter', ''), key="kw_filter_input")
+            st.session_state['shuffle_opts'] = st.checkbox("Shuffle answer options", value=st.session_state.get('shuffle_opts', True), key="shuffle_opts")
+            st.session_state['qcount_drill'] = st.number_input("Question count", min_value=5, max_value=50, value=int(st.session_state.get('qcount_drill', 20) or 20), step=1, key="qcount_drill")
 
         if st.button("Start / Restart Quiz"):
             import random
@@ -2782,13 +2824,37 @@ elif page == "Drills 🔧":
                         q for q in level_gen_qs
                         if any(t in sel_tags for t in (q.get('tags') or []))
                     ]
+                kw = (st.session_state.get('kw_filter', '') or '').strip()
+                if kw:
+                    lkw = kw.lower()
+                    def _kw_match(q):
+                        try:
+                            text = str(q.get('q','')).lower()
+                            if lkw in text:
+                                return True
+                            for opt in (q.get('options') or []):
+                                if lkw in str(opt).lower():
+                                    return True
+                        except Exception:
+                            return False
+                        return False
+                    level_gen_qs = [q for q in level_gen_qs if _kw_match(q)]
                 
                 if level_gen_qs:
-                     # Pick 10 random questions
-                    if len(level_gen_qs) > 10:
-                        st.session_state.quiz_state['questions'] = random.sample(level_gen_qs, 10)
-                    else:
-                        st.session_state.quiz_state['questions'] = level_gen_qs
+                    qn = int(st.session_state.get('qcount_drill', 10) or 10)
+                    pool = random.sample(level_gen_qs, min(len(level_gen_qs), qn))
+                    out = []
+                    for q in pool:
+                        qq = q.copy()
+                        if st.session_state.get('shuffle_opts', True):
+                            try:
+                                correct_opt = qq['options'][qq['correct']]
+                                random.shuffle(qq['options'])
+                                qq['correct'] = qq['options'].index(correct_opt)
+                            except Exception:
+                                pass
+                        out.append(qq)
+                    st.session_state.quiz_state['questions'] = out
                 else:
                     st.warning(f"No generated questions for {subject} Level {selected_level} yet.")
                     st.session_state.quiz_state['active'] = False
@@ -2809,16 +2875,41 @@ elif page == "Drills 🔧":
                         q for q in level0_gen_qs
                         if any(t in sel_tags for t in (q.get('tags') or []))
                     ]
+                kw = (st.session_state.get('kw_filter', '') or '').strip()
+                if kw:
+                    lkw = kw.lower()
+                    def _kw_match(q):
+                        try:
+                            text = str(q.get('q','')).lower()
+                            if lkw in text:
+                                return True
+                            for opt in (q.get('options') or []):
+                                if lkw in str(opt).lower():
+                                    return True
+                        except Exception:
+                            return False
+                        return False
+                    static_level1 = [q for q in static_level1 if _kw_match(q)]
+                    level0_gen_qs = [q for q in level0_gen_qs if _kw_match(q)]
                 
                 # Merge
                 all_level1_questions = static_level1 + level0_gen_qs
                 
                 if all_level1_questions:
-                    # Random sample if too many
-                    if len(all_level1_questions) > 10:
-                        st.session_state.quiz_state['questions'] = random.sample(all_level1_questions, 10)
-                    else:
-                        st.session_state.quiz_state['questions'] = all_level1_questions
+                    qn = int(st.session_state.get('qcount_drill', 10) or 10)
+                    pool = random.sample(all_level1_questions, min(len(all_level1_questions), qn))
+                    out = []
+                    for q in pool:
+                        qq = q.copy()
+                        if st.session_state.get('shuffle_opts', True):
+                            try:
+                                correct_opt = qq['options'][qq['correct']]
+                                random.shuffle(qq['options'])
+                                qq['correct'] = qq['options'].index(correct_opt)
+                            except Exception:
+                                pass
+                        out.append(qq)
+                    st.session_state.quiz_state['questions'] = out
                 else:
                     st.warning(f"No questions found for {subject} Level 1.")
                     st.session_state.quiz_state['active'] = False
@@ -2828,9 +2919,22 @@ elif page == "Drills 🔧":
         if qs['active']:
             current_q = qs['questions'][qs['q_index']]
             total_q = len(qs['questions'])
-            
+            attemp = qs['q_index'] + (1 if qs.get('show_feedback') else 0)
+            acc = (qs['score'] / attemp * 100) if attemp > 0 else 0.0
+            m1, m2 = st.columns(2)
+            m1.metric("Score", f"{qs['score']} / {total_q}")
+            m2.metric("Accuracy", f"{acc:.1f}%")
+            prog = qs['q_index'] / total_q if total_q else 0.0
+            st.progress(prog)
+            subj = qs.get('subject', 'General') or 'General'
+            lvl = qs.get('level', '?')
+            if isinstance(lvl, int):
+                lvl_txt = f"Lv{lvl}"
+            else:
+                lvl_txt = str(lvl)
+            st.markdown(f"<span class='badge'>{subj}</span><span class='badge badge-level'>{lvl_txt}</span>", unsafe_allow_html=True)
             st.subheader(f"Question {qs['q_index'] + 1} / {total_q}")
-            st.markdown(f"**{current_q['q']}**")
+            st.markdown(f"""<div class='question-card'><strong>{current_q['q']}</strong></div>""", unsafe_allow_html=True)
             
             # Options
             options = current_q['options']

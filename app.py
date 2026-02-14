@@ -219,6 +219,25 @@ def seed_top10_examples():
             "solution_en": "Solution: 0.08×1.2×1.8=0.1728 ⇒ 17.28%"
         }
     }
+    # Also seed for Annuity Due PV/FV if present
+    top10.update({
+        "Annuity Due PV": {
+            "example_ja": "例: P=100、r=5%、n=3 ⇒ PVA_due = 100×[(1−1.05^(−3))/0.05]×(1.05) ≈ 286.98",
+            "example_en": "Example: P=100, r=5%, n=3 ⇒ PVA_due ≈ 286.98",
+            "problem_ja": "問題: P=50、r=6%、n=4 の年金現価（期首払い）は？",
+            "problem_en": "Problem: Find annuity-due present value for P=50, r=6%, n=4.",
+            "solution_ja": "解答: PVA_due = 50×[(1−1.06^(−4))/0.06]×1.06 ≈ 183.6",
+            "solution_en": "Solution: PVA_due = 50×[(1−1.06^(−4))/0.06]×1.06 ≈ 183.6"
+        },
+        "Annuity Due FV": {
+            "example_ja": "例: P=100、r=5%、n=3 ⇒ FVA_due = 100×[(1.05^3−1)/0.05]×(1.05) ≈ 331.0",
+            "example_en": "Example: P=100, r=5%, n=3 ⇒ FVA_due ≈ 331.0",
+            "problem_ja": "問題: P=80、r=4%、n=5 の年金将来価値（期首払い）は？",
+            "problem_en": "Problem: Find annuity-due future value for P=80, r=4%, n=5.",
+            "solution_ja": "解答: FVA_due = 80×[(1.04^5−1)/0.04]×1.04 ≈ 433.0",
+            "solution_en": "Solution: FVA_due = 80×[(1.04^5−1)/0.04]×1.04 ≈ 433.0"
+        }
+    })
     changed = False
     for i, item in enumerate(formulas_data):
         name = item.get("name", "")
@@ -229,6 +248,23 @@ def seed_top10_examples():
                     changed = True
     if changed:
         save_formulas_data(formulas_data)
+
+def _sanitize_text(v):
+    try:
+        if v is None:
+            return ""
+        # Handle numpy/pandas NaN
+        try:
+            import pandas as _pd
+            if _pd.isna(v):
+                return ""
+        except Exception:
+            pass
+        if isinstance(v, str) and v.strip().lower() == "nan":
+            return ""
+        return v
+    except Exception:
+        return ""
 
 seed_top10_examples()
 
@@ -1160,18 +1196,18 @@ elif page == "Formulas 📐":
                 etxt = row.get("explanation", "")
                 if etxt:
                     st.markdown(etxt)
-                ex_ja = row.get("example_ja", "")
-                ex_en = row.get("example_en", "")
+                ex_ja = _sanitize_text(row.get("example_ja", ""))
+                ex_en = _sanitize_text(row.get("example_en", ""))
                 if ex_ja or ex_en:
                     st.markdown("**Examples**")
                     if ex_ja:
                         st.markdown(f"🇯🇵 {ex_ja}")
                     if ex_en:
                         st.markdown(f"🇺🇸 {ex_en}")
-                prob_ja = row.get("problem_ja", "")
-                prob_en = row.get("problem_en", "")
-                sol_ja = row.get("solution_ja", "")
-                sol_en = row.get("solution_en", "")
+                prob_ja = _sanitize_text(row.get("problem_ja", ""))
+                prob_en = _sanitize_text(row.get("problem_en", ""))
+                sol_ja = _sanitize_text(row.get("solution_ja", ""))
+                sol_en = _sanitize_text(row.get("solution_en", ""))
                 if prob_ja or prob_en:
                     st.markdown("**Practice Problem**")
                     if prob_ja:
@@ -1186,12 +1222,12 @@ elif page == "Formulas 📐":
                                 st.markdown(f"🇺🇸 {sol_en}")
                 with st.expander("Edit Examples / Problem"):
                     with st.form(f"form_edit_{row.get('name','')}"):
-                        i_ex_ja = st.text_area("Example (JP)", value=ex_ja, height=100)
-                        i_ex_en = st.text_area("Example (EN)", value=ex_en, height=100)
-                        i_pb_ja = st.text_area("Problem (JP)", value=prob_ja, height=120)
-                        i_pb_en = st.text_area("Problem (EN)", value=prob_en, height=120)
-                        i_sol_ja = st.text_area("Solution (JP)", value=sol_ja, height=120)
-                        i_sol_en = st.text_area("Solution (EN)", value=sol_en, height=120)
+                        i_ex_ja = st.text_area("Example (JP)", value=_sanitize_text(ex_ja), height=100)
+                        i_ex_en = st.text_area("Example (EN)", value=_sanitize_text(ex_en), height=100)
+                        i_pb_ja = st.text_area("Problem (JP)", value=_sanitize_text(prob_ja), height=120)
+                        i_pb_en = st.text_area("Problem (EN)", value=_sanitize_text(prob_en), height=120)
+                        i_sol_ja = st.text_area("Solution (JP)", value=_sanitize_text(sol_ja), height=120)
+                        i_sol_en = st.text_area("Solution (EN)", value=_sanitize_text(sol_en), height=120)
                         submitted = st.form_submit_button("Save")
                         if submitted:
                             key_name = row.get("name", "")

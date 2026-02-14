@@ -1128,8 +1128,8 @@ st.markdown("""
     <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#1a73e8;margin-right:8px;"></span>
     Google Drive
   </a>
-  <a href="https://notebooklm.google.com/notebook/" target="_blank" style="display:inline-flex;align-items:center;background:#000;color:#fff !important;padding:10px 16px;border-radius:8px;font-weight:600;text-decoration:none;">
-    notebooklm
+  <a href="https://notebooklm.google.com/notebook/" target="_blank" style="display:inline-flex;align-items:center;background:#000;color:#ffffff !important;padding:10px 16px;border-radius:8px;font-weight:700;text-decoration:none;">
+    NotebookLM
   </a>
 </div>
 """, unsafe_allow_html=True)
@@ -2303,6 +2303,22 @@ elif page == "English Prep 🌐":
             st.session_state.data["english_prep"] = ep
             save_data(st.session_state.data)
             st.success("Saved")
+        if i.get("logs"):
+            try:
+                df_prev = pd.DataFrame(i.get("logs", []))
+                df_prev = df_prev.sort_values("date", ascending=False)
+                last = df_prev.iloc[0].to_dict()
+                cols = st.columns(4)
+                lv = float(last.get("listening", 0) or 0)
+                rv = float(last.get("reading", 0) or 0)
+                wv = float(last.get("writing", 0) or 0)
+                sv = float(last.get("speaking", 0) or 0)
+                cols[0].metric("Listening", f"{lv}")
+                cols[1].metric("Reading", f"{rv}")
+                cols[2].metric("Writing", f"{wv}")
+                cols[3].metric("Speaking", f"{sv}")
+            except Exception:
+                pass
         st.subheader("Checklist")
         if "checklist" in i:
             for idx, it in enumerate(i["checklist"]):
@@ -2314,9 +2330,16 @@ elif page == "English Prep 🌐":
             ld = st.date_input("Date", value=date.today(), key="ielts_log_date")
             typ = st.selectbox("Type", ["Mock", "Official"], key="ielts_log_type")
             score = st.number_input("Overall Band", min_value=0.0, max_value=9.0, value=6.5, step=0.5, key="ielts_log_score")
+            c3, c4 = st.columns(2)
+            with c3:
+                lsc = st.number_input("Listening", min_value=0.0, max_value=9.0, value=6.5, step=0.5, key="ielts_l")
+                rsc = st.number_input("Reading", min_value=0.0, max_value=9.0, value=6.5, step=0.5, key="ielts_r")
+            with c4:
+                wsc = st.number_input("Writing", min_value=0.0, max_value=9.0, value=6.5, step=0.5, key="ielts_w")
+                ssc = st.number_input("Speaking", min_value=0.0, max_value=9.0, value=6.5, step=0.5, key="ielts_s")
             submit = st.form_submit_button("Add Log")
             if submit:
-                ep["ielts"]["logs"].append({"date": ld.strftime("%Y-%m-%d"), "type": typ, "score": score})
+                ep["ielts"]["logs"].append({"date": ld.strftime("%Y-%m-%d"), "type": typ, "score": score, "listening": lsc, "reading": rsc, "writing": wsc, "speaking": ssc})
                 st.session_state.data["english_prep"] = ep
                 save_data(st.session_state.data)
                 st.success("Added")
@@ -2325,9 +2348,28 @@ elif page == "English Prep 🌐":
             st.dataframe(df.sort_values("date", ascending=False), use_container_width=True)
             b = df["score"].max()
             a = df["score"].mean()
-            m1, m2 = st.columns(2)
+            m1, m2, m3 = st.columns(3)
             m1.metric("Best", f"{b}")
             m2.metric("Average", f"{a:.2f}")
+            try:
+                tgt = float(tb)
+                gap = max(0.0, tgt - float(b))
+                days_left = 0
+                try:
+                    dleft = pd.to_datetime(i.get("exam_date")).date()
+                    days_left = (dleft - date.today()).days if dleft else 0
+                except Exception:
+                    days_left = 0
+                m3.metric("Gap to Target", f"{gap:.1f}", f"{days_left} days")
+            except Exception:
+                pass
+            try:
+                dfx = df.sort_values("date")
+                figx = px.line(dfx, x="date", y="score", title="IELTS Overall Trend")
+                figx.update_yaxes(range=[0, 9])
+                st.plotly_chart(figx, use_container_width=True)
+            except Exception:
+                pass
             st.download_button("Download CSV", data=df.to_csv(index=False).encode("utf-8"), file_name="ielts_logs.csv", mime="text/csv")
         st.subheader("Resources")
         new_r = st.text_input("Add Resource URL", key="ielts_res_url")
@@ -2353,6 +2395,22 @@ elif page == "English Prep 🌐":
             st.session_state.data["english_prep"] = ep
             save_data(st.session_state.data)
             st.success("Saved")
+        if t.get("logs"):
+            try:
+                df_prev = pd.DataFrame(t.get("logs", []))
+                df_prev = df_prev.sort_values("date", ascending=False)
+                last = df_prev.iloc[0].to_dict()
+                cols = st.columns(4)
+                rv = int(last.get("reading_s", 0) or 0)
+                lv = int(last.get("listening_s", 0) or 0)
+                sv = int(last.get("speaking_s", 0) or 0)
+                wv = int(last.get("writing_s", 0) or 0)
+                cols[0].metric("Reading", f"{rv}")
+                cols[1].metric("Listening", f"{lv}")
+                cols[2].metric("Speaking", f"{sv}")
+                cols[3].metric("Writing", f"{wv}")
+            except Exception:
+                pass
         st.subheader("Checklist")
         if "checklist" in t:
             for idx, it in enumerate(t["checklist"]):
@@ -2364,9 +2422,16 @@ elif page == "English Prep 🌐":
             ld = st.date_input("Date", value=date.today(), key="toefl_log_date")
             typ = st.selectbox("Type", ["Mock", "Official"], key="toefl_log_type")
             score = st.number_input("Total Score", min_value=0, max_value=120, value=90, step=1, key="toefl_log_score")
+            c3, c4 = st.columns(2)
+            with c3:
+                rsc = st.number_input("Reading (0-30)", min_value=0, max_value=30, value=22, step=1, key="toefl_r")
+                lsc = st.number_input("Listening (0-30)", min_value=0, max_value=30, value=22, step=1, key="toefl_l")
+            with c4:
+                ssc = st.number_input("Speaking (0-30)", min_value=0, max_value=30, value=22, step=1, key="toefl_s")
+                wsc = st.number_input("Writing (0-30)", min_value=0, max_value=30, value=22, step=1, key="toefl_w")
             submit = st.form_submit_button("Add Log")
             if submit:
-                ep["toefl"]["logs"].append({"date": ld.strftime("%Y-%m-%d"), "type": typ, "score": int(score)})
+                ep["toefl"]["logs"].append({"date": ld.strftime("%Y-%m-%d"), "type": typ, "score": int(score), "reading_s": int(rsc), "listening_s": int(lsc), "speaking_s": int(ssc), "writing_s": int(wsc)})
                 st.session_state.data["english_prep"] = ep
                 save_data(st.session_state.data)
                 st.success("Added")
@@ -2375,9 +2440,28 @@ elif page == "English Prep 🌐":
             st.dataframe(df.sort_values("date", ascending=False), use_container_width=True)
             b = df["score"].max()
             a = df["score"].mean()
-            m1, m2 = st.columns(2)
+            m1, m2, m3 = st.columns(3)
             m1.metric("Best", f"{b}")
             m2.metric("Average", f"{a:.2f}")
+            try:
+                tgt = int(ts)
+                gap = max(0, tgt - int(b))
+                days_left = 0
+                try:
+                    dleft = pd.to_datetime(t.get("exam_date")).date()
+                    days_left = (dleft - date.today()).days if dleft else 0
+                except Exception:
+                    days_left = 0
+                m3.metric("Gap to Target", f"{gap}", f"{days_left} days")
+            except Exception:
+                pass
+            try:
+                dfx = df.sort_values("date")
+                figx = px.line(dfx, x="date", y="score", title="TOEFL Total Trend")
+                figx.update_yaxes(range=[0, 120])
+                st.plotly_chart(figx, use_container_width=True)
+            except Exception:
+                pass
             st.download_button("Download CSV", data=df.to_csv(index=False).encode("utf-8"), file_name="toefl_logs.csv", mime="text/csv")
         st.subheader("Resources")
         new_r = st.text_input("Add Resource URL", key="toefl_res_url")

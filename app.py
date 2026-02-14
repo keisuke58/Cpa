@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 import json
 import os
 
@@ -14,7 +14,7 @@ st.set_page_config(page_title="CPA Perfect Platform 2027", layout="wide", page_i
 DATA_FILE = "cpa_data.json"
 
 def load_data():
-    defaults = {"scores": [], "logs": [], "xp": 0, "level": 1, "badges": []}
+    defaults = {"scores": [], "logs": [], "xp": 0, "level": 1, "badges": [], "wrong_answers": [], "retry": []}
     if os.path.exists(DATA_FILE):
         with open(DATA_FILE, 'r', encoding='utf-8') as f:
             try:
@@ -548,7 +548,7 @@ with st.sidebar.expander("📅 Official Schedule (Edit)"):
         save_data(st.session_state.data)
         st.toast("Official schedule saved", icon="✅")
         official_schedule = edit_rows
-page = st.sidebar.radio("Navigation", ["Dashboard 📊", "My Syllabus 📚", "Vocabulary 📖", "Formulas 📐", "Old Exams 📄", "Study Timer ⏱️", "Mock Exams 📝", "Scores 📈", "Drills 🔧", "Survival Mode ⚡", "Roadmap 🗺️", "Big 4 Job Hunting 💼", "Company Directory 🏢", "Future 🚀"])
+page = st.sidebar.radio("Navigation", ["Dashboard 📊", "My Syllabus 📚", "Vocabulary 📖", "Formulas 📐", "Old Exams 📄", "Study Timer ⏱️", "Mock Exams 📝", "Scores 📈", "Wrong Answers 📕", "Drills 🔧", "Exam Mode ⏲️", "Survival Mode ⚡", "Analytics 📊", "Roadmap 🗺️", "Big 4 Job Hunting 💼", "Company Directory 🏢", "Future 🚀"])
 
 if page == "Dashboard 📊":
     st.header("Dashboard 🚀")
@@ -580,6 +580,19 @@ if page == "Dashboard 📊":
     # 3. Total XP
     total_xp = st.session_state.data.get('xp', 0)
 
+    # Streak (consecutive study days up to today)
+    streak = 0
+    if not logs_df.empty:
+        try:
+            logs_df_dates = pd.to_datetime(logs_df['date']).dt.date
+            logged = set(logs_df_dates[logs_df['duration'] > 0].unique())
+            d = today
+            while d in logged:
+                streak += 1
+                d = d - timedelta(days=1)
+        except Exception:
+            pass
+
     m1, m2, m3, m4 = st.columns(4)
     m1.metric("Study Time (Today)", f"{minutes_today} min", delta=f"{minutes_today/60:.1f} hrs")
     m2.metric("Quizzes Completed", f"{quizzes_today}", delta=f"Avg: {avg_score_today:.0f}%" if quizzes_today > 0 else None)
@@ -589,6 +602,8 @@ if page == "Dashboard 📊":
     target_short = date(2026, 12, 13)
     days_short = (target_short - today).days
     m4.metric("Next Exam (Dec Short)", f"{days_short} Days", delta="-1 Day", delta_color="inverse")
+    
+    st.caption(f"🔥 Study Streak: {streak} days")
     
     st.markdown("---")
 
@@ -1390,6 +1405,7 @@ elif page == "Scores 📈":
             df = pd.DataFrame(st.session_state.data["scores"])
             st.subheader("History")
             st.dataframe(df.sort_values('date', ascending=False))
+            st.download_button("Download Scores CSV", data=df.to_csv(index=False).encode('utf-8'), file_name="scores.csv", mime="text/csv")
             
             # Line Chart
             st.subheader("Trend")
@@ -1540,6 +1556,19 @@ elif page == "Drills 🔧":
                 
                 st.markdown("### Explanation")
                 st.info(current_q['explanation'])
+                if qs['selected_option'] is not None and qs['selected_option'] != current_q['correct']:
+                    err = st.radio("Tag your error", ["careless", "concept", "guess", "time"], horizontal=True, key=f"err_{qs['q_index']}")
+                    if st.button("Save Tag", key=f"save_err_{qs['q_index']}"):
+                        idx = getattr(st.session_state, 'last_wrong_idx', None)
+                        try:
+                            if idx is not None and idx < len(st.session_state.data.get('wrong_answers', [])):
+                                st.session_state.data['wrong_answers'][idx]['error_type'] = err
+                                save_data(st.session_state.data)
+                                st.toast("Tag saved", icon="✅")
+                            else:
+                                st.warning("No recent wrong answer to tag.")
+                        except Exception:
+                            pass
                 
                 if qs['q_index'] < total_q - 1:
                     if st.button("Next Question"):
@@ -1590,11 +1619,27 @@ elif page == "Drills 🔧":
                         
             else:
                 choice = st.radio("Choose Answer:", options, index=None, key=f"q_{qs['q_index']}")
+                conf = st.select_slider("Confidence (1-5)", options=[1,2,3,4,5], value=3, key=f"conf_{qs['q_index']}")
                 if st.button("Submit Answer"):
                     if choice:
                         selected_idx = options.index(choice)
                         qs['selected_option'] = selected_idx
                         qs['show_feedback'] = True
+                        if selected_idx != current_q['correct']:
+                            wrong_entry = {
+                                'date': date.today().strftime("%Y-%m-%d"),
+                                'subject': qs.get('subject', 'General'),
+                                'level': qs.get('level', None),
+                                'q': current_q.get('q', ''),
+                                'options': current_q.get('options', []),
+                                'correct_idx': current_q.get('correct', None),
+                                'selected_idx': selected_idx,
+                                'explanation': current_q.get('explanation', ''),
+                                'confidence': int(conf)
+                            }
+                            st.session_state.data.setdefault('wrong_answers', []).append(wrong_entry)
+                            st.session_state.last_wrong_idx = len(st.session_state.data['wrong_answers']) - 1
+                            save_data(st.session_state.data)
                         if selected_idx == current_q['correct']:
                             qs['score'] += 1
                         st.rerun()
@@ -1602,6 +1647,177 @@ elif page == "Drills 🔧":
                         st.warning("Please select an option.")
         else:
             st.info("Select a subject and level from the sidebar to start.")
+
+elif page == "Wrong Answers 📕":
+    st.header("Wrong Answers")
+    wa = st.session_state.data.get('wrong_answers', [])
+    if not wa:
+        st.info("No wrong answers recorded yet.")
+    else:
+        df = pd.DataFrame(wa)
+        subjects = sorted([s for s in df['subject'].dropna().unique()])
+        c1, c2, c3 = st.columns([2, 1, 1])
+        with c1:
+            sub = st.selectbox("Subject", ["All"] + subjects)
+        with c2:
+            n = st.number_input("Retry count", min_value=5, max_value=50, value=20)
+        with c3:
+            csv = df.to_csv(index=False).encode('utf-8')
+            st.download_button("Download CSV", data=csv, file_name="wrong_answers.csv", mime="text/csv")
+        cc1, cc2 = st.columns([1,1])
+        with cc1:
+            if st.button("Clear All", type="secondary"):
+                st.session_state.data['wrong_answers'] = []
+                save_data(st.session_state.data)
+                st.rerun()
+        if sub != "All":
+            df = df[df['subject'] == sub]
+        st.dataframe(df[['date','subject','level','q']].sort_values('date', ascending=False), use_container_width=True)
+        if not df.empty:
+            if st.button("Retry 20"):
+                import random
+                sample = df.sample(min(len(df), n)).to_dict(orient='records')
+                qs = []
+                for r in sample:
+                    opts = r.get('options', [])
+                    correct_idx = r.get('correct_idx', None)
+                    if opts and correct_idx is not None:
+                        qs.append({
+                            'q': r.get('q',''),
+                            'options': opts,
+                            'correct': correct_idx,
+                            'explanation': r.get('explanation','')
+                        })
+                if qs:
+                    st.session_state.quiz_state['active'] = True
+                    st.session_state.quiz_state['subject'] = sub if sub != "All" else "Mixed"
+                    st.session_state.quiz_state['level'] = "Retry"
+                    st.session_state.quiz_state['q_index'] = 0
+                    st.session_state.quiz_state['score'] = 0
+                    st.session_state.quiz_state['show_feedback'] = False
+                    st.session_state.quiz_state['selected_option'] = None
+                    st.session_state.quiz_state['questions'] = qs
+                    st.toast("Retry started", icon="✅")
+                    st.rerun()
+
+elif page == "Exam Mode ⏲️":
+    st.header("Exam Mode")
+    if 'exam' not in st.session_state:
+        st.session_state.exam = {'active': False, 'start_ts': None, 'duration_min': 30, 'q_index': 0, 'questions': [], 'answers': [], 'finished': False, 'subject': 'Mixed'}
+    ex = st.session_state.exam
+    if not ex['active'] and not ex['finished']:
+        subject = st.selectbox("Subject", ["Mixed", "Financial", "Management", "Audit", "Company"])
+        qcount = st.number_input("Number of Questions", min_value=10, max_value=60, value=20, step=5)
+        duration = st.number_input("Time Limit (minutes)", min_value=10, max_value=180, value=60, step=5)
+        if st.button("Start Exam", type="primary", use_container_width=True):
+            import time, random
+            ex['active'] = True
+            ex['finished'] = False
+            ex['start_ts'] = int(time.time())
+            ex['duration_min'] = int(duration)
+            ex['q_index'] = 0
+            pool = []
+            if subject == "Mixed":
+                for sub, qs in drill_questions.items():
+                    for q in qs:
+                        qx = q.copy()
+                        qx['subject'] = sub
+                        pool.append(qx)
+            else:
+                for q in drill_questions.get(subject, []):
+                    qx = q.copy()
+                    qx['subject'] = subject
+                    pool.append(qx)
+            random.shuffle(pool)
+            ex['questions'] = pool[:int(qcount)]
+            ex['answers'] = [None] * len(ex['questions'])
+            ex['subject'] = subject
+            st.rerun()
+    elif ex['active'] and not ex['finished']:
+        import time
+        now = int(time.time())
+        elapsed = now - int(ex['start_ts'])
+        remain = max(0, ex['duration_min'] * 60 - elapsed)
+        mm = remain // 60
+        ss = remain % 60
+        st.metric("Time Remaining", f"{mm:02d}:{ss:02d}")
+        if remain == 0:
+            ex['finished'] = True
+            ex['active'] = False
+            st.rerun()
+        q = ex['questions'][ex['q_index']]
+        st.markdown(f"**[{q.get('subject','')}] Q{ex['q_index']+1}/{len(ex['questions'])}**")
+        st.write(q['q'])
+        key = f"exam_{ex['q_index']}"
+        sel = st.radio("Select answer", q['options'], index=ex['answers'][ex['q_index']] if ex['answers'][ex['q_index']] is not None else None, key=key)
+        if st.button("Save Answer"):
+            ex['answers'][ex['q_index']] = q['options'].index(sel) if sel else None
+            st.rerun()
+        c1, c2, c3 = st.columns(3)
+        with c1:
+            if st.button("Prev") and ex['q_index'] > 0:
+                ex['q_index'] -= 1
+                st.rerun()
+        with c2:
+            if st.button("Next") and ex['q_index'] < len(ex['questions']) - 1:
+                ex['q_index'] += 1
+                st.rerun()
+        with c3:
+            if st.button("Finish Now", type="primary"):
+                ex['finished'] = True
+                ex['active'] = False
+                st.rerun()
+    else:
+        corrects = 0
+        for i, q in enumerate(st.session_state.exam['questions']):
+            a = st.session_state.exam['answers'][i]
+            if a is not None and a == q.get('correct'):
+                corrects += 1
+        total = max(1, len(st.session_state.exam['questions']))
+        percent = round(corrects / total * 100, 1)
+        st.success(f"Finished. Score: {corrects}/{total} ({percent}%)")
+        earned_xp = corrects * 10
+        curr_xp = st.session_state.data.get('xp', 0)
+        curr_level = st.session_state.data.get('level', 1)
+        new_xp = curr_xp + earned_xp
+        req = curr_level * 100
+        leveled = False
+        while new_xp >= req:
+            new_xp -= req
+            curr_level += 1
+            req = curr_level * 100
+            leveled = True
+        st.session_state.data['xp'] = new_xp
+        st.session_state.data['level'] = curr_level
+        st.session_state.data["scores"].append({
+            'name': f"Exam Mode ({st.session_state.exam.get('subject','Mixed')})",
+            'date': date.today().strftime("%Y-%m-%d"),
+            'subject': st.session_state.exam.get('subject','Mixed'),
+            'val': percent
+        })
+        save_data(st.session_state.data)
+        if earned_xp > 0:
+            if leveled:
+                st.balloons()
+                st.success(f"+{earned_xp} XP, Level {curr_level}")
+            else:
+                st.info(f"+{earned_xp} XP added")
+        with st.expander("Review"):
+            for i, q in enumerate(st.session_state.exam['questions']):
+                st.markdown(f"**Q{i+1}.** {q['q']}")
+                a = st.session_state.exam['answers'][i]
+                for idx, opt in enumerate(q['options']):
+                    if idx == q.get('correct'):
+                        st.markdown(f"- ✅ {opt}")
+                    elif a is not None and idx == a:
+                        st.markdown(f"- ❌ {opt}")
+                    else:
+                        st.markdown(f"- {opt}")
+                st.caption(q.get('explanation',''))
+                st.divider()
+        if st.button("Reset Exam"):
+            st.session_state.exam = {'active': False, 'start_ts': None, 'duration_min': 30, 'q_index': 0, 'questions': [], 'answers': [], 'finished': False, 'subject': 'Mixed'}
+            st.rerun()
 
 elif page == "Survival Mode ⚡":
     st.header("⚡ Survival Mode")
@@ -1763,6 +1979,45 @@ elif page == "Survival Mode ⚡":
                     ss['feedback'] = False
                     st.rerun()
 
+elif page == "Analytics 📊":
+    st.header("Analytics")
+    scores_df = pd.DataFrame(st.session_state.data.get("scores", []))
+    logs_df = pd.DataFrame(st.session_state.data.get("logs", []))
+    c1, c2 = st.columns(2)
+    with c1:
+        st.subheader("Skill Radar")
+        subjects = ['Financial', 'Management', 'Audit', 'Company', 'Tax', 'Elective']
+        radar_scores = [30] * 6
+        if not scores_df.empty:
+            vals = []
+            for sub in subjects:
+                sub_df = scores_df[scores_df['subject'] == sub]
+                if not sub_df.empty:
+                    vals.append(sub_df['val'].mean())
+                else:
+                    vals.append(30)
+            radar_scores = vals
+        fig = go.Figure(data=go.Scatterpolar(r=radar_scores, theta=subjects, fill='toself', name='Avg'))
+        fig.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 100])), showlegend=False, height=350)
+        st.plotly_chart(fig, use_container_width=True)
+    with c2:
+        st.subheader("Pacing Histogram")
+        if not logs_df.empty:
+            logs_df['date'] = pd.to_datetime(logs_df['date'])
+            logs_df['minutes'] = logs_df['duration']
+            st.plotly_chart(px.histogram(logs_df, x='minutes', nbins=20, title="Study Session Lengths"), use_container_width=True)
+        else:
+            st.info("No study logs")
+    st.subheader("Weekly Heatmap")
+    if not logs_df.empty:
+        logs_df['date'] = pd.to_datetime(logs_df['date']).dt.date
+        df = logs_df.groupby('date')['duration'].sum().reset_index()
+        df['dow'] = pd.to_datetime(df['date']).dt.dayofweek
+        df['week'] = pd.to_datetime(df['date']).dt.isocalendar().week
+        pivot = df.pivot_table(index='dow', columns='week', values='duration', fill_value=0)
+        st.dataframe(pivot)
+    else:
+        st.info("No data for heatmap")
 elif page == "Roadmap 🗺️":
     st.header("🗺️ CPA Exam Strategy Roadmap (2026-2027)")
     

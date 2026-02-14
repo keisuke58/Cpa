@@ -1,0 +1,1618 @@
+{
+    "企業法": [
+        {
+            "word": "当該",
+            "count": 362
+        },
+        {
+            "word": "株式会社",
+            "count": 233
+        },
+        {
+            "word": "会社",
+            "count": 226
+        },
+        {
+            "word": "株主",
+            "count": 195
+        },
+        {
+            "word": "株式",
+            "count": 173
+        },
+        {
+            "word": "取締役",
+            "count": 173
+        },
+        {
+            "word": "DKIO",
+            "count": 127
+        },
+        {
+            "word": "indd",
+            "count": 106
+        },
+        {
+            "word": "総会",
+            "count": 98
+        },
+        {
+            "word": "企業",
+            "count": 97
+        },
+        {
+            "word": "とき",
+            "count": 92
+        },
+        {
+            "word": "発行",
+            "count": 89
+        },
+        {
+            "word": "決議",
+            "count": 87
+        },
+        {
+            "word": "製品",
+            "count": 87
+        },
+        {
+            "word": "設立",
+            "count": 84
+        },
+        {
+            "word": "アイ",
+            "count": 80
+        },
+        {
+            "word": "アウ",
+            "count": 80
+        },
+        {
+            "word": "アエ",
+            "count": 80
+        },
+        {
+            "word": "イウ",
+            "count": 80
+        },
+        {
+            "word": "イエ",
+            "count": 80
+        },
+        {
+            "word": "ウエ",
+            "count": 80
+        },
+        {
+            "word": "組合せ",
+            "count": 78
+        },
+        {
+            "word": "一つ",
+            "count": 78
+        },
+        {
+            "word": "監査",
+            "count": 77
+        },
+        {
+            "word": "社債",
+            "count": 76
+        },
+        {
+            "word": "販売",
+            "count": 74
+        },
+        {
+            "word": "事項",
+            "count": 73
+        },
+        {
+            "word": "製造",
+            "count": 73
+        },
+        {
+            "word": "新株",
+            "count": 69
+        },
+        {
+            "word": "設置",
+            "count": 69
+        },
+        {
+            "word": "定款",
+            "count": 68
+        },
+        {
+            "word": "請求",
+            "count": 68
+        },
+        {
+            "word": "会計",
+            "count": 67
+        },
+        {
+            "word": "責任",
+            "count": 63
+        },
+        {
+            "word": "記載",
+            "count": 57
+        },
+        {
+            "word": "社員",
+            "count": 55
+        },
+        {
+            "word": "取引",
+            "count": 53
+        },
+        {
+            "word": "予約",
+            "count": 53
+        },
+        {
+            "word": "営業",
+            "count": 52
+        },
+        {
+            "word": "行為",
+            "count": 50
+        },
+        {
+            "word": "募集",
+            "count": 46
+        },
+        {
+            "word": "交付",
+            "count": 46
+        },
+        {
+            "word": "発起人",
+            "count": 43
+        },
+        {
+            "word": "利益",
+            "count": 42
+        },
+        {
+            "word": "譲渡",
+            "count": 42
+        },
+        {
+            "word": "行使",
+            "count": 41
+        },
+        {
+            "word": "計算",
+            "count": 41
+        },
+        {
+            "word": "事業",
+            "count": 38
+        },
+        {
+            "word": "議決",
+            "count": 37
+        },
+        {
+            "word": "自己",
+            "count": 36
+        }
+    ],
+    "管理会計論": [
+        {
+            "word": "原価",
+            "count": 338
+        },
+        {
+            "word": "製造",
+            "count": 248
+        },
+        {
+            "word": "計算",
+            "count": 238
+        },
+        {
+            "word": "会計",
+            "count": 186
+        },
+        {
+            "word": "管理",
+            "count": 168
+        },
+        {
+            "word": "製品",
+            "count": 167
+        },
+        {
+            "word": "DKIO",
+            "count": 153
+        },
+        {
+            "word": "部門",
+            "count": 134
+        },
+        {
+            "word": "indd",
+            "count": 134
+        },
+        {
+            "word": "販売",
+            "count": 122
+        },
+        {
+            "word": "資料",
+            "count": 106
+        },
+        {
+            "word": "利益",
+            "count": 96
+        },
+        {
+            "word": "直接",
+            "count": 87
+        },
+        {
+            "word": "標準",
+            "count": 84
+        },
+        {
+            "word": "資本",
+            "count": 84
+        },
+        {
+            "word": "当期",
+            "count": 82
+        },
+        {
+            "word": "差異",
+            "count": 79
+        },
+        {
+            "word": "予算",
+            "count": 78
+        },
+        {
+            "word": "時間",
+            "count": 75
+        },
+        {
+            "word": "工程",
+            "count": 73
+        },
+        {
+            "word": "一つ",
+            "count": 72
+        },
+        {
+            "word": "材料",
+            "count": 66
+        },
+        {
+            "word": "加工",
+            "count": 65
+        },
+        {
+            "word": "発生",
+            "count": 60
+        },
+        {
+            "word": "資産",
+            "count": 56
+        },
+        {
+            "word": "当たり",
+            "count": 55
+        },
+        {
+            "word": "変動",
+            "count": 54
+        },
+        {
+            "word": "単位",
+            "count": 54
+        },
+        {
+            "word": "部品",
+            "count": 54
+        },
+        {
+            "word": "基準",
+            "count": 53
+        },
+        {
+            "word": "kg",
+            "count": 53
+        },
+        {
+            "word": "事業",
+            "count": 51
+        },
+        {
+            "word": "次期",
+            "count": 49
+        },
+        {
+            "word": "組合せ",
+            "count": 48
+        },
+        {
+            "word": "論文",
+            "count": 48
+        },
+        {
+            "word": "午後",
+            "count": 48
+        },
+        {
+            "word": "費用",
+            "count": 47
+        },
+        {
+            "word": "経営",
+            "count": 46
+        },
+        {
+            "word": "期間",
+            "count": 46
+        },
+        {
+            "word": "固定",
+            "count": 45
+        },
+        {
+            "word": "当社",
+            "count": 44
+        },
+        {
+            "word": "間接",
+            "count": 44
+        },
+        {
+            "word": "補助",
+            "count": 42
+        },
+        {
+            "word": "作業",
+            "count": 41
+        },
+        {
+            "word": "増加",
+            "count": 41
+        },
+        {
+            "word": "その他",
+            "count": 39
+        },
+        {
+            "word": "価格",
+            "count": 39
+        },
+        {
+            "word": "売上",
+            "count": 39
+        },
+        {
+            "word": "償却",
+            "count": 39
+        },
+        {
+            "word": "予定",
+            "count": 38
+        }
+    ],
+    "監査論": [
+        {
+            "word": "監査",
+            "count": 1059
+        },
+        {
+            "word": "報告",
+            "count": 155
+        },
+        {
+            "word": "財務諸表",
+            "count": 130
+        },
+        {
+            "word": "実施",
+            "count": 125
+        },
+        {
+            "word": "事項",
+            "count": 110
+        },
+        {
+            "word": "重要",
+            "count": 102
+        },
+        {
+            "word": "業務",
+            "count": 102
+        },
+        {
+            "word": "当該",
+            "count": 99
+        },
+        {
+            "word": "手続",
+            "count": 95
+        },
+        {
+            "word": "DKIO",
+            "count": 95
+        },
+        {
+            "word": "一つ",
+            "count": 84
+        },
+        {
+            "word": "内部",
+            "count": 81
+        },
+        {
+            "word": "アイ",
+            "count": 80
+        },
+        {
+            "word": "アウ",
+            "count": 80
+        },
+        {
+            "word": "アエ",
+            "count": 80
+        },
+        {
+            "word": "イウ",
+            "count": 80
+        },
+        {
+            "word": "イエ",
+            "count": 80
+        },
+        {
+            "word": "ウエ",
+            "count": 80
+        },
+        {
+            "word": "経営",
+            "count": 80
+        },
+        {
+            "word": "組合せ",
+            "count": 79
+        },
+        {
+            "word": "記載",
+            "count": 74
+        },
+        {
+            "word": "indd",
+            "count": 74
+        },
+        {
+            "word": "表示",
+            "count": 71
+        },
+        {
+            "word": "責任",
+            "count": 69
+        },
+        {
+            "word": "統制",
+            "count": 69
+        },
+        {
+            "word": "評価",
+            "count": 68
+        },
+        {
+            "word": "基準",
+            "count": 67
+        },
+        {
+            "word": "財務",
+            "count": 65
+        },
+        {
+            "word": "不正",
+            "count": 61
+        },
+        {
+            "word": "検討",
+            "count": 61
+        },
+        {
+            "word": "会計",
+            "count": 60
+        },
+        {
+            "word": "会社",
+            "count": 59
+        },
+        {
+            "word": "公認",
+            "count": 58
+        },
+        {
+            "word": "会計士",
+            "count": 57
+        },
+        {
+            "word": "判断",
+            "count": 55
+        },
+        {
+            "word": "リスク",
+            "count": 55
+        },
+        {
+            "word": "企業",
+            "count": 55
+        },
+        {
+            "word": "情報",
+            "count": 51
+        },
+        {
+            "word": "必要",
+            "count": 51
+        },
+        {
+            "word": "事務所",
+            "count": 51
+        },
+        {
+            "word": "証拠",
+            "count": 50
+        },
+        {
+            "word": "虚偽",
+            "count": 49
+        },
+        {
+            "word": "利用",
+            "count": 48
+        },
+        {
+            "word": "品質",
+            "count": 44
+        },
+        {
+            "word": "意見",
+            "count": 42
+        },
+        {
+            "word": "状況",
+            "count": 42
+        },
+        {
+            "word": "目的",
+            "count": 41
+        },
+        {
+            "word": "作成",
+            "count": 40
+        },
+        {
+            "word": "不備",
+            "count": 37
+        },
+        {
+            "word": "内容",
+            "count": 37
+        }
+    ],
+    "財務会計論": [
+        {
+            "word": "会計",
+            "count": 271
+        },
+        {
+            "word": "資産",
+            "count": 199
+        },
+        {
+            "word": "資料",
+            "count": 171
+        },
+        {
+            "word": "利益",
+            "count": 160
+        },
+        {
+            "word": "株式",
+            "count": 157
+        },
+        {
+            "word": "計算",
+            "count": 149
+        },
+        {
+            "word": "当期",
+            "count": 144
+        },
+        {
+            "word": "財務",
+            "count": 140
+        },
+        {
+            "word": "企業",
+            "count": 131
+        },
+        {
+            "word": "金額",
+            "count": 123
+        },
+        {
+            "word": "取得",
+            "count": 120
+        },
+        {
+            "word": "連結",
+            "count": 119
+        },
+        {
+            "word": "一つ",
+            "count": 117
+        },
+        {
+            "word": "DKIO",
+            "count": 116
+        },
+        {
+            "word": "取引",
+            "count": 115
+        },
+        {
+            "word": "計上",
+            "count": 110
+        },
+        {
+            "word": "価額",
+            "count": 107
+        },
+        {
+            "word": "処理",
+            "count": 106
+        },
+        {
+            "word": "資本",
+            "count": 97
+        },
+        {
+            "word": "会社",
+            "count": 95
+        },
+        {
+            "word": "indd",
+            "count": 88
+        },
+        {
+            "word": "原価",
+            "count": 86
+        },
+        {
+            "word": "当社",
+            "count": 85
+        },
+        {
+            "word": "当該",
+            "count": 83
+        },
+        {
+            "word": "販売",
+            "count": 83
+        },
+        {
+            "word": "剰余",
+            "count": 81
+        },
+        {
+            "word": "期間",
+            "count": 80
+        },
+        {
+            "word": "商品",
+            "count": 80
+        },
+        {
+            "word": "適用",
+            "count": 79
+        },
+        {
+            "word": "決算",
+            "count": 78
+        },
+        {
+            "word": "ドル",
+            "count": 74
+        },
+        {
+            "word": "財務諸表",
+            "count": 73
+        },
+        {
+            "word": "株主",
+            "count": 71
+        },
+        {
+            "word": "費用",
+            "count": 71
+        },
+        {
+            "word": "貸借",
+            "count": 69
+        },
+        {
+            "word": "対照",
+            "count": 68
+        },
+        {
+            "word": "負債",
+            "count": 67
+        },
+        {
+            "word": "損益",
+            "count": 66
+        },
+        {
+            "word": "基準",
+            "count": 66
+        },
+        {
+            "word": "その他",
+            "count": 64
+        },
+        {
+            "word": "時価",
+            "count": 64
+        },
+        {
+            "word": "子会社",
+            "count": 62
+        },
+        {
+            "word": "契約",
+            "count": 62
+        },
+        {
+            "word": "償却",
+            "count": 62
+        },
+        {
+            "word": "顧客",
+            "count": 62
+        },
+        {
+            "word": "差額",
+            "count": 59
+        },
+        {
+            "word": "退職",
+            "count": 59
+        },
+        {
+            "word": "評価",
+            "count": 58
+        },
+        {
+            "word": "事業",
+            "count": 58
+        },
+        {
+            "word": "組合せ",
+            "count": 57
+        }
+    ],
+    "租税法": [
+        {
+            "word": "DKIO",
+            "count": 96
+        },
+        {
+            "word": "indd",
+            "count": 96
+        },
+        {
+            "word": "金額",
+            "count": 69
+        },
+        {
+            "word": "租税",
+            "count": 54
+        },
+        {
+            "word": "課税",
+            "count": 53
+        },
+        {
+            "word": "論文",
+            "count": 48
+        },
+        {
+            "word": "法人",
+            "count": 45
+        },
+        {
+            "word": "当社",
+            "count": 40
+        },
+        {
+            "word": "消費",
+            "count": 39
+        },
+        {
+            "word": "費用",
+            "count": 37
+        },
+        {
+            "word": "計算",
+            "count": 36
+        },
+        {
+            "word": "所得",
+            "count": 34
+        },
+        {
+            "word": "以下",
+            "count": 33
+        },
+        {
+            "word": "事業",
+            "count": 31
+        },
+        {
+            "word": "税額",
+            "count": 31
+        },
+        {
+            "word": "当期",
+            "count": 31
+        },
+        {
+            "word": "　 ",
+            "count": 27
+        },
+        {
+            "word": "期間",
+            "count": 26
+        },
+        {
+            "word": "とおり",
+            "count": 24
+        },
+        {
+            "word": "配当",
+            "count": 23
+        },
+        {
+            "word": "控除",
+            "count": 22
+        },
+        {
+            "word": "処理",
+            "count": 21
+        },
+        {
+            "word": "合計",
+            "count": 20
+        },
+        {
+            "word": "資産",
+            "count": 20
+        },
+        {
+            "word": "株式会社",
+            "count": 19
+        },
+        {
+            "word": "株式",
+            "count": 19
+        },
+        {
+            "word": "取得",
+            "count": 19
+        },
+        {
+            "word": "資料",
+            "count": 18
+        },
+        {
+            "word": "価額",
+            "count": 18
+        },
+        {
+            "word": "借方",
+            "count": 17
+        },
+        {
+            "word": "貸方",
+            "count": 17
+        },
+        {
+            "word": "預金",
+            "count": 17
+        },
+        {
+            "word": "取引",
+            "count": 16
+        },
+        {
+            "word": "申告",
+            "count": 16
+        },
+        {
+            "word": "答案",
+            "count": 15
+        },
+        {
+            "word": "売上",
+            "count": 15
+        },
+        {
+            "word": "保険",
+            "count": 15
+        },
+        {
+            "word": "売却",
+            "count": 14
+        },
+        {
+            "word": "内国",
+            "count": 13
+        },
+        {
+            "word": "会計",
+            "count": 13
+        },
+        {
+            "word": "会社",
+            "count": 12
+        },
+        {
+            "word": "相当",
+            "count": 12
+        },
+        {
+            "word": "退職",
+            "count": 12
+        },
+        {
+            "word": "給付",
+            "count": 12
+        },
+        {
+            "word": "事項",
+            "count": 11
+        },
+        {
+            "word": "上場",
+            "count": 11
+        },
+        {
+            "word": "譲渡",
+            "count": 11
+        },
+        {
+            "word": "年中",
+            "count": 11
+        },
+        {
+            "word": "収入",
+            "count": 11
+        },
+        {
+            "word": "地方",
+            "count": 11
+        }
+    ],
+    "経営学": [
+        {
+            "word": "DKIO",
+            "count": 112
+        },
+        {
+            "word": "indd",
+            "count": 112
+        },
+        {
+            "word": "経営",
+            "count": 69
+        },
+        {
+            "word": "企業",
+            "count": 61
+        },
+        {
+            "word": "論文",
+            "count": 56
+        },
+        {
+            "word": "配当",
+            "count": 43
+        },
+        {
+            "word": "市場",
+            "count": 34
+        },
+        {
+            "word": "事業",
+            "count": 32
+        },
+        {
+            "word": "組織",
+            "count": 31
+        },
+        {
+            "word": "証券",
+            "count": 31
+        },
+        {
+            "word": "説明",
+            "count": 30
+        },
+        {
+            "word": "以下",
+            "count": 26
+        },
+        {
+            "word": "投資",
+            "count": 26
+        },
+        {
+            "word": "収益",
+            "count": 26
+        },
+        {
+            "word": "価値",
+            "count": 25
+        },
+        {
+            "word": "計算",
+            "count": 24
+        },
+        {
+            "word": "全て",
+            "count": 23
+        },
+        {
+            "word": "モデル",
+            "count": 23
+        },
+        {
+            "word": "資本",
+            "count": 21
+        },
+        {
+            "word": "資産",
+            "count": 19
+        },
+        {
+            "word": "単位",
+            "count": 18
+        },
+        {
+            "word": "政策",
+            "count": 18
+        },
+        {
+            "word": "株主",
+            "count": 18
+        },
+        {
+            "word": "現在",
+            "count": 18
+        },
+        {
+            "word": "株式",
+            "count": 17
+        },
+        {
+            "word": "ポートフォリオ",
+            "count": 17
+        },
+        {
+            "word": "特許",
+            "count": 16
+        },
+        {
+            "word": "一つ",
+            "count": 15
+        },
+        {
+            "word": "利益",
+            "count": 15
+        },
+        {
+            "word": "リスク",
+            "count": 15
+        },
+        {
+            "word": "文章",
+            "count": 14
+        },
+        {
+            "word": "将来",
+            "count": 14
+        },
+        {
+            "word": "効率",
+            "count": 14
+        },
+        {
+            "word": "数値",
+            "count": 14
+        },
+        {
+            "word": "機会",
+            "count": 14
+        },
+        {
+            "word": "期末",
+            "count": 14
+        },
+        {
+            "word": "情報",
+            "count": 13
+        },
+        {
+            "word": "行動",
+            "count": 12
+        },
+        {
+            "word": "多角",
+            "count": 12
+        },
+        {
+            "word": "期待",
+            "count": 12
+        },
+        {
+            "word": "株価",
+            "count": 12
+        },
+        {
+            "word": "ファクター",
+            "count": 12
+        },
+        {
+            "word": "段階",
+            "count": 11
+        },
+        {
+            "word": "生産",
+            "count": 11
+        },
+        {
+            "word": "期間",
+            "count": 11
+        },
+        {
+            "word": "小数点",
+            "count": 11
+        },
+        {
+            "word": "ベータ",
+            "count": 11
+        },
+        {
+            "word": "必要",
+            "count": 10
+        },
+        {
+            "word": "競争",
+            "count": 10
+        },
+        {
+            "word": "理論",
+            "count": 10
+        }
+    ],
+    "経済学": [
+        {
+            "word": "DKIO",
+            "count": 48
+        },
+        {
+            "word": "indd",
+            "count": 48
+        },
+        {
+            "word": "経済",
+            "count": 30
+        },
+        {
+            "word": "論文",
+            "count": 24
+        },
+        {
+            "word": "消費",
+            "count": 22
+        },
+        {
+            "word": "価格",
+            "count": 15
+        },
+        {
+            "word": "グループ",
+            "count": 15
+        },
+        {
+            "word": "公共",
+            "count": 13
+        },
+        {
+            "word": "需要",
+            "count": 13
+        },
+        {
+            "word": "答案",
+            "count": 10
+        },
+        {
+            "word": "それぞれ",
+            "count": 10
+        },
+        {
+            "word": "とき",
+            "count": 10
+        },
+        {
+            "word": "企業",
+            "count": 9
+        },
+        {
+            "word": "私的",
+            "count": 8
+        },
+        {
+            "word": "政府",
+            "count": 8
+        },
+        {
+            "word": "関数",
+            "count": 8
+        },
+        {
+            "word": "インフレ",
+            "count": 8
+        },
+        {
+            "word": "GDP",
+            "count": 8
+        },
+        {
+            "word": "　～　",
+            "count": 6
+        },
+        {
+            "word": "供給",
+            "count": 6
+        },
+        {
+            "word": "均衡",
+            "count": 6
+        },
+        {
+            "word": "中央",
+            "count": 6
+        },
+        {
+            "word": "銀行",
+            "count": 6
+        },
+        {
+            "word": "資本",
+            "count": 6
+        },
+        {
+            "word": "合図",
+            "count": 5
+        },
+        {
+            "word": "生産",
+            "count": 5
+        },
+        {
+            "word": "**",
+            "count": 5
+        },
+        {
+            "word": "市場",
+            "count": 5
+        },
+        {
+            "word": "人口",
+            "count": 5
+        },
+        {
+            "word": "ギャップ",
+            "count": 5
+        },
+        {
+            "word": "家計",
+            "count": 5
+        },
+        {
+            "word": "利子",
+            "count": 5
+        },
+        {
+            "word": "xt",
+            "count": 5
+        },
+        {
+            "word": "注意",
+            "count": 4
+        },
+        {
+            "word": "事項",
+            "count": 4
+        },
+        {
+            "word": "開始",
+            "count": 4
+        },
+        {
+            "word": "挙手",
+            "count": 4
+        },
+        {
+            "word": "終了",
+            "count": 4
+        },
+        {
+            "word": "xB",
+            "count": 4
+        },
+        {
+            "word": "保有",
+            "count": 4
+        },
+        {
+            "word": "単位",
+            "count": 4
+        },
+        {
+            "word": "効用",
+            "count": 4
+        },
+        {
+            "word": "tA",
+            "count": 4
+        },
+        {
+            "word": "tB",
+            "count": 4
+        },
+        {
+            "word": "リンダール",
+            "count": 4
+        },
+        {
+            "word": "独占",
+            "count": 4
+        },
+        {
+            "word": "ここ",
+            "count": 4
+        },
+        {
+            "word": "最大",
+            "count": 4
+        },
+        {
+            "word": "労働",
+            "count": 4
+        },
+        {
+            "word": "政策",
+            "count": 4
+        }
+    ],
+    "統計学": [
+        {
+            "word": "DKIO",
+            "count": 96
+        },
+        {
+            "word": "indd",
+            "count": 96
+        },
+        {
+            "word": "統計",
+            "count": 54
+        },
+        {
+            "word": "論文",
+            "count": 48
+        },
+        {
+            "word": "労働",
+            "count": 30
+        },
+        {
+            "word": "uniE",
+            "count": 28
+        },
+        {
+            "word": "信頼",
+            "count": 22
+        },
+        {
+            "word": "uni",
+            "count": 22
+        },
+        {
+            "word": "BC",
+            "count": 22
+        },
+        {
+            "word": "回帰",
+            "count": 22
+        },
+        {
+            "word": "前年",
+            "count": 21
+        },
+        {
+            "word": "同月",
+            "count": 21
+        },
+        {
+            "word": "賃金",
+            "count": 19
+        },
+        {
+            "word": "係数",
+            "count": 17
+        },
+        {
+            "word": "女性",
+            "count": 15
+        },
+        {
+            "word": "条件",
+            "count": 14
+        },
+        {
+            "word": "結果",
+            "count": 14
+        },
+        {
+            "word": "とき",
+            "count": 13
+        },
+        {
+            "word": "分布",
+            "count": 13
+        },
+        {
+            "word": "検定",
+            "count": 12
+        },
+        {
+            "word": "男性",
+            "count": 12
+        },
+        {
+            "word": "ôTRVBSFE",
+            "count": 12
+        },
+        {
+            "word": "確率",
+            "count": 11
+        },
+        {
+            "word": "データ",
+            "count": 11
+        },
+        {
+            "word": "名目",
+            "count": 11
+        },
+        {
+            "word": "実質",
+            "count": 11
+        },
+        {
+            "word": "商品",
+            "count": 10
+        },
+        {
+            "word": "納品",
+            "count": 10
+        },
+        {
+            "word": "企業",
+            "count": 10
+        },
+        {
+            "word": "計算",
+            "count": 10
+        },
+        {
+            "word": "消費",
+            "count": 10
+        },
+        {
+            "word": "物価",
+            "count": 10
+        },
+        {
+            "word": "指数",
+            "count": 10
+        },
+        {
+            "word": "常用",
+            "count": 10
+        },
+        {
+            "word": "一般",
+            "count": 10
+        },
+        {
+            "word": "分析",
+            "count": 10
+        },
+        {
+            "word": "答案",
+            "count": 9
+        },
+        {
+            "word": "小数",
+            "count": 9
+        },
+        {
+            "word": "正規",
+            "count": 9
+        },
+        {
+            "word": "就業",
+            "count": 9
+        },
+        {
+            "word": "仮説",
+            "count": 9
+        },
+        {
+            "word": "推定",
+            "count": 9
+        },
+        {
+            "word": "自由",
+            "count": 9
+        },
+        {
+            "word": "%'",
+            "count": 9
+        },
+        {
+            "word": "log",
+            "count": 9
+        },
+        {
+            "word": "(┼，/",
+            "count": 8
+        },
+        {
+            "word": "WBMVF",
+            "count": 8
+        },
+        {
+            "word": "PO",
+            "count": 8
+        },
+        {
+            "word": "判断",
+            "count": 7
+        },
+        {
+            "word": "事象",
+            "count": 7
+        }
+    ]
+}

@@ -3105,59 +3105,123 @@ elif page == "Company Directory 🏢":
     st.header("🏢 Company Directory for CPA Candidates")
     st.markdown("A curated list of potential employers in Japan for CPA holders, ranging from Audit to Tech.")
 
+    st.subheader("Preferences")
+    c1, c2, c3, c4 = st.columns(4)
+    with c1:
+        target_city = st.selectbox("Target City", ["Tokyo", "Osaka", "Nagoya", "Any"], index=0)
+    with c2:
+        w_cpa = st.slider("Weight: CPA Track", 0, 50, 20)
+    with c3:
+        w_ds = st.slider("Weight: Data Science/Tech", 0, 50, 15)
+    with c4:
+        w_global = st.slider("Weight: Global Brand", 0, 30, 5)
+    min_score = st.slider("Show companies with score ≥", 0, 100, 0, 5)
+
+    def _score_company(attrs, locs):
+        score = 50
+        try:
+            if target_city != "Any":
+                if isinstance(locs, list) and target_city in locs:
+                    score += 30
+                else:
+                    score -= 10
+            cpa_v = attrs.get("CPA", False)
+            if isinstance(cpa_v, bool):
+                score += w_cpa if cpa_v else 0
+            elif isinstance(cpa_v, str):
+                m = {"High": 1.0, "Medium": 0.6, "Low": 0.2}.get(cpa_v, 0.0)
+                score += int(w_cpa * m)
+            ds_v = attrs.get("DS", False)
+            if isinstance(ds_v, bool):
+                score += w_ds if ds_v else 0
+            elif isinstance(ds_v, str):
+                m = {"High": 1.0, "Medium": 0.6, "Low": 0.2}.get(ds_v, 0.0)
+                score += int(w_ds * m)
+            global_v = attrs.get("Global", False)
+            if global_v:
+                score += w_global
+        except Exception:
+            pass
+        if score < 0:
+            score = 0
+        if score > 100:
+            score = 100
+        return int(score)
+
     tab1, tab2, tab3 = st.tabs(["Audit (Big 4 & Mid)", "Consulting & FAS", "Tech & Enterprise"])
 
     with tab1:
         st.subheader("Big 4 Audit Firms (The Standard Path)")
         big4 = [
-            {"name": "Deloitte Touche Tohmatsu", "desc": "Largest scale, aggressive growth. Strong in IPO support.", "link": "https://www2.deloitte.com/jp/ja/pages/audit/topics/recruit-index.html"},
-            {"name": "KPMG AZSA", "desc": "Balanced portfolio, strong manufacturing clients. 'Gentleman' culture.", "link": "https://home.kpmg/jp/ja/home/careers.html"},
-            {"name": "EY ShinNihon", "desc": "Longest history, most listed clients. Strong Digital Audit focus.", "link": "https://www.ey.com/ja_jp/careers/audit"},
-            {"name": "PwC Aarata / Kyoto", "desc": "Global integration, innovative. PwC Kyoto is famous for high profitability.", "link": "https://www.pwc.com/jp/ja/careers/audit.html"}
+            {"name": "Deloitte Touche Tohmatsu", "desc": "Largest scale, aggressive growth. Strong in IPO support.", "link": "https://www2.deloitte.com/jp/ja/pages/audit/topics/recruit-index.html", "locs": ["Tokyo", "Osaka", "Nagoya"], "attrs": {"CPA": True, "DS": True, "Global": True}},
+            {"name": "KPMG AZSA", "desc": "Balanced portfolio, strong manufacturing clients. 'Gentleman' culture.", "link": "https://home.kpmg/jp/ja/home/careers.html", "locs": ["Tokyo", "Osaka", "Nagoya"], "attrs": {"CPA": True, "DS": True, "Global": True}},
+            {"name": "EY ShinNihon", "desc": "Longest history, most listed clients. Strong Digital Audit focus.", "link": "https://www.ey.com/ja_jp/careers/audit", "locs": ["Tokyo", "Osaka", "Nagoya"], "attrs": {"CPA": True, "DS": True, "Global": True}},
+            {"name": "PwC Aarata / Kyoto", "desc": "Global integration, innovative. PwC Kyoto is famous for high profitability.", "link": "https://www.pwc.com/jp/ja/careers/audit.html", "locs": ["Tokyo", "Osaka"], "attrs": {"CPA": True, "DS": True, "Global": True}}
         ]
         for c in big4:
-            with st.expander(f"🦁 {c['name']}"):
+            sc = _score_company(c.get("attrs", {}), c.get("locs", []))
+            if sc < min_score:
+                continue
+            with st.expander(f"🦁 {c['name']}  |  Score: {sc}/100"):
                 st.write(c['desc'])
+                st.progress(sc)
+                st.caption(f"Locations: {', '.join(c.get('locs', []))}")
                 st.link_button("Recruit Page", c['link'])
 
         st.divider()
         st.subheader("Mid-Tier Audit Firms (准大手)")
         st.info("💡 **Why Mid-Tier?** Faster promotion, broader experience (you do everything), better work-life balance.")
         mid_tier = [
-            {"name": "Grant Thornton Taiyo (太陽)", "desc": "Largest mid-tier. Very growing. Good alternative to Big 4.", "link": "https://www.grantthornton.jp/recruit/"},
-            {"name": "Crowe Toyo (東陽)", "desc": "Strong in domestic IPOs. Traditional but stable.", "link": "https://www.toyo-audit.or.jp/recruit/"},
-            {"name": "BDO Sanyu (三優)", "desc": "Friendly culture. Good international network via BDO.", "link": "https://www.bdo.or.jp/sanyu/recruit/"},
-            {"name": "RSM Seiwa (清和)", "desc": "Mid-sized, focus on healthcare and mid-cap clients.", "link": "https://www.seiwa-audit.or.jp/recruit/"}
+            {"name": "Grant Thornton Taiyo (太陽)", "desc": "Largest mid-tier. Very growing. Good alternative to Big 4.", "link": "https://www.grantthornton.jp/recruit/", "locs": ["Tokyo", "Osaka"], "attrs": {"CPA": True, "DS": "Medium", "Global": True}},
+            {"name": "Crowe Toyo (東陽)", "desc": "Strong in domestic IPOs. Traditional but stable.", "link": "https://www.toyo-audit.or.jp/recruit/", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Low", "Global": True}},
+            {"name": "BDO Sanyu (三優)", "desc": "Friendly culture. Good international network via BDO.", "link": "https://www.bdo.or.jp/sanyu/recruit/", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Low", "Global": True}},
+            {"name": "RSM Seiwa (清和)", "desc": "Mid-sized, focus on healthcare and mid-cap clients.", "link": "https://www.seiwa-audit.or.jp/recruit/", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Low", "Global": True}}
         ]
         for c in mid_tier:
-            with st.expander(f"🐯 {c['name']}"):
+            sc = _score_company(c.get("attrs", {}), c.get("locs", []))
+            if sc < min_score:
+                continue
+            with st.expander(f"🐯 {c['name']}  |  Score: {sc}/100"):
                 st.write(c['desc'])
+                st.progress(sc)
+                st.caption(f"Locations: {', '.join(c.get('locs', []))}")
                 st.link_button("Recruit Page", c['link'])
 
     with tab2:
         st.subheader("FAS (Financial Advisory Services)")
         st.info("💡 **High Expertise**: M&A, Valuation, Forensics. Often requires CPA + English/Tech.")
         fas = [
-            {"name": "Deloitte Tohmatsu Financial Advisory (DTFA)", "link": "https://www2.deloitte.com/jp/ja/pages/about-deloitte/articles/dtfa/dtfa-recruit.html"},
-            {"name": "KPMG FAS", "link": "https://home.kpmg/jp/ja/home/careers/fas.html"},
-            {"name": "PwC Advisory", "link": "https://www.pwc.com/jp/ja/careers/advisory.html"},
-            {"name": "EY Strategy and Transactions", "link": "https://www.ey.com/ja_jp/careers/strategy-and-transactions"}
+            {"name": "Deloitte Tohmatsu Financial Advisory (DTFA)", "link": "https://www2.deloitte.com/jp/ja/pages/about-deloitte/articles/dtfa/dtfa-recruit.html", "locs": ["Tokyo", "Osaka"], "attrs": {"CPA": True, "DS": "Medium", "Global": True}},
+            {"name": "KPMG FAS", "link": "https://home.kpmg/jp/ja/home/careers/fas.html", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Medium", "Global": True}},
+            {"name": "PwC Advisory", "link": "https://www.pwc.com/jp/ja/careers/advisory.html", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Medium", "Global": True}},
+            {"name": "EY Strategy and Transactions", "link": "https://www.ey.com/ja_jp/careers/strategy-and-transactions", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Medium", "Global": True}}
         ]
         for c in fas:
-            st.link_button(f"💼 {c['name']}", c['link'])
+            sc = _score_company(c.get("attrs", {}), c.get("locs", []))
+            if sc < min_score:
+                continue
+            with st.expander(f"💼 {c['name']}  |  Score: {sc}/100"):
+                st.progress(sc)
+                st.caption(f"Locations: {', '.join(c.get('locs', []))}")
+                st.link_button("Recruit Page", c['link'])
 
         st.divider()
         st.subheader("Consulting Firms")
         st.markdown("Finance transformation, ERP implementation, Strategy.")
         consulting = [
-            {"name": "Accenture (Strategy & Consulting)", "desc": "Top tier for DX/IT. High salary, hard work.", "link": "https://www.accenture.com/jp-ja/careers"},
-            {"name": "BayCurrent Consulting", "desc": "Rapidly growing Japanese firm. High salary.", "link": "https://www.baycurrent.co.jp/recruit/"},
-            {"name": "Nomura Research Institute (NRI)", "desc": "Stable, high salary, strong domestic presence.", "link": "https://www.nri.com/jp/career"},
-            {"name": "ABeam Consulting", "desc": "Strong in SAP/ERP. Good for CPAs liking systems.", "link": "https://www.abeam.com/jp/ja/careers"}
+            {"name": "Accenture (Strategy & Consulting)", "desc": "Top tier for DX/IT. High salary, hard work.", "link": "https://www.accenture.com/jp-ja/careers", "locs": ["Tokyo"], "attrs": {"CPA": False, "DS": True, "Global": True}},
+            {"name": "BayCurrent Consulting", "desc": "Rapidly growing Japanese firm. High salary.", "link": "https://www.baycurrent.co.jp/recruit/", "locs": ["Tokyo"], "attrs": {"CPA": "Low", "DS": "Medium", "Global": False}},
+            {"name": "Nomura Research Institute (NRI)", "desc": "Stable, high salary, strong domestic presence.", "link": "https://www.nri.com/jp/career", "locs": ["Tokyo"], "attrs": {"CPA": "Low", "DS": "Medium", "Global": True}},
+            {"name": "ABeam Consulting", "desc": "Strong in SAP/ERP. Good for CPAs liking systems.", "link": "https://www.abeam.com/jp/ja/careers", "locs": ["Tokyo", "Osaka"], "attrs": {"CPA": "Low", "DS": "Medium", "Global": True}}
         ]
         for c in consulting:
-            with st.expander(f"🧠 {c['name']}"):
+            sc = _score_company(c.get("attrs", {}), c.get("locs", []))
+            if sc < min_score:
+                continue
+            with st.expander(f"🧠 {c['name']}  |  Score: {sc}/100"):
                 st.write(c['desc'])
+                st.progress(sc)
+                st.caption(f"Locations: {', '.join(c.get('locs', []))}")
                 st.link_button("Recruit Page", c['link'])
 
     with tab3:
@@ -3165,14 +3229,19 @@ elif page == "Company Directory 🏢":
         st.info("💡 **Business Side**: FP&A, Accounting Manager, IPO Prep.")
         
         tech = [
-            {"name": "Google / Amazon / MS (Japan)", "desc": "FP&A roles. Very high English requirement. Competitive.", "link": "https://careers.google.com/"},
-            {"name": "Rakuten Group", "desc": "English official language. Massive FinTech ecosystem.", "link": "https://corp.rakuten.co.jp/careers/"},
-            {"name": "Line Yahoo", "desc": "Major domestic tech player. Strong benefits.", "link": "https://www.lycorp.co.jp/ja/recruit/"},
-            {"name": "Mercari", "desc": "Modern tech culture. Good for ambitious finance pros.", "link": "https://careers.mercari.com/"}
+            {"name": "Google / Amazon / MS (Japan)", "desc": "FP&A roles. Very high English requirement. Competitive.", "link": "https://careers.google.com/", "locs": ["Tokyo"], "attrs": {"CPA": False, "DS": True, "Global": True}},
+            {"name": "Rakuten Group", "desc": "English official language. Massive FinTech ecosystem.", "link": "https://corp.rakuten.co.jp/careers/", "locs": ["Tokyo"], "attrs": {"CPA": "Medium", "DS": True, "Global": True}},
+            {"name": "Line Yahoo", "desc": "Major domestic tech player. Strong benefits.", "link": "https://www.lycorp.co.jp/ja/recruit/", "locs": ["Tokyo"], "attrs": {"CPA": "Medium", "DS": True, "Global": True}},
+            {"name": "Mercari", "desc": "Modern tech culture. Good for ambitious finance pros.", "link": "https://careers.mercari.com/", "locs": ["Tokyo"], "attrs": {"CPA": "Medium", "DS": True, "Global": True}}
         ]
         st.markdown("#### Tech / Global")
         for c in tech:
-            st.markdown(f"**{c['name']}**: {c['desc']} [Link]({c['link']})")
+            sc = _score_company(c.get("attrs", {}), c.get("locs", []))
+            if sc < min_score:
+                continue
+            st.markdown(f"**{c['name']}** — Score: {sc}/100  \n{c['desc']} [Link]({c['link']})")
+            st.progress(sc)
+            st.caption(f"Locations: {', '.join(c.get('locs', []))}")
 
         st.divider()
         st.markdown("#### Trading Companies (Sogo Shosha)")
@@ -3183,44 +3252,64 @@ elif page == "Company Directory 🏢":
         st.divider()
         st.markdown("#### Makers (Tier 1)")
         makers = [
-            {"name": "Toyota", "desc": "Global auto leader. Robust finance org; strong FP&A/treasury.", "link": "https://global.toyota/en/company/"},
-            {"name": "Keyence", "desc": "High-margin factory automation. Lean org, high productivity.", "link": "https://www.keyence.co.jp/jobs/"},
-            {"name": "Fujifilm", "desc": "Diversified: healthcare, imaging, materials. Global operations.", "link": "https://recruit.fujifilm.com/"},
-            {"name": "Sony", "desc": "Entertainment + Electronics. Complex consolidation; great for CPAs.", "link": "https://www.sony.com/en/SonyInfo/Careers/"},
-            {"name": "Panasonic", "desc": "Devices to solutions. Large-scale finance transformation roles.", "link": "https://holdings.panasonic/jp/corporate/jobs/"},
-            {"name": "Hitachi", "desc": "OT×IT leader. Project accounting, global IFRS exposure.", "link": "https://www.hitachi.co.jp/recruit/"}
+            {"name": "Toyota", "desc": "Global auto leader. Robust finance org; strong FP&A/treasury.", "link": "https://global.toyota/en/company/", "locs": ["Tokyo", "Aichi"], "attrs": {"CPA": True, "DS": "Medium", "Global": True}},
+            {"name": "Keyence", "desc": "High-margin factory automation. Lean org, high productivity.", "link": "https://www.keyence.co.jp/jobs/", "locs": ["Tokyo", "Osaka"], "attrs": {"CPA": "Medium", "DS": "Medium", "Global": True}},
+            {"name": "Fujifilm", "desc": "Diversified: healthcare, imaging, materials. Global operations.", "link": "https://recruit.fujifilm.com/", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Medium", "Global": True}},
+            {"name": "Sony", "desc": "Entertainment + Electronics. Complex consolidation; great for CPAs.", "link": "https://www.sony.com/en/SonyInfo/Careers/", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": True, "Global": True}},
+            {"name": "Panasonic", "desc": "Devices to solutions. Large-scale finance transformation roles.", "link": "https://holdings.panasonic/jp/corporate/jobs/", "locs": ["Tokyo", "Osaka"], "attrs": {"CPA": True, "DS": "Medium", "Global": True}},
+            {"name": "Hitachi", "desc": "OT×IT leader. Project accounting, global IFRS exposure.", "link": "https://www.hitachi.co.jp/recruit/", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": True, "Global": True}}
         ]
         for c in makers:
-            st.markdown(f"**{c['name']}**: {c['desc']} [Link]({c['link']})")
+            sc = _score_company(c.get("attrs", {}), c.get("locs", []))
+            if sc < min_score:
+                continue
+            st.markdown(f"**{c['name']}** — Score: {sc}/100  \n{c['desc']} [Link]({c['link']})")
+            st.progress(sc)
+            st.caption(f"Locations: {', '.join(c.get('locs', []))}")
 
         st.divider()
         st.markdown("#### Utilities & Energy")
         utilities = [
-            {"name": "Tokyo Gas", "desc": "Stable utility. Long-term planning, project finance, IFRS.", "link": "https://www.tokyo-gas-recruit.com/"},
-            {"name": "TEPCO", "desc": "Large-scale regulated utility. Risk management heavy.", "link": "https://www.tepco.co.jp/recruit/index-j.html"}
+            {"name": "Tokyo Gas", "desc": "Stable utility. Long-term planning, project finance, IFRS.", "link": "https://www.tokyo-gas-recruit.com/", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Low", "Global": False}},
+            {"name": "TEPCO", "desc": "Large-scale regulated utility. Risk management heavy.", "link": "https://www.tepco.co.jp/recruit/index-j.html", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Low", "Global": False}}
         ]
         for c in utilities:
-            st.markdown(f"**{c['name']}**: {c['desc']} [Link]({c['link']})")
+            sc = _score_company(c.get("attrs", {}), c.get("locs", []))
+            if sc < min_score:
+                continue
+            st.markdown(f"**{c['name']}** — Score: {sc}/100  \n{c['desc']} [Link]({c['link']})")
+            st.progress(sc)
+            st.caption(f"Locations: {', '.join(c.get('locs', []))}")
 
         st.divider()
         st.markdown("#### Megabanks")
         megabanks = [
-            {"name": "MUFG", "desc": "Japan’s largest financial group. Treasury, ALM, IFRS9/CECL skills.", "link": "https://www.mufg.jp/csr/recruit/"},
-            {"name": "SMBC", "desc": "Corporate banking powerhouse. Debt/FX exposure for CFO track.", "link": "https://www.smbc.co.jp/recruit/"},
-            {"name": "Mizuho", "desc": "Universal bank. Group finance/controls; transformation programs.", "link": "https://www.mizuho-fg.co.jp/recruit/"}
+            {"name": "MUFG", "desc": "Japan’s largest financial group. Treasury, ALM, IFRS9/CECL skills.", "link": "https://www.mufg.jp/csr/recruit/", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Medium", "Global": True}},
+            {"name": "SMBC", "desc": "Corporate banking powerhouse. Debt/FX exposure for CFO track.", "link": "https://www.smbc.co.jp/recruit/", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Medium", "Global": True}},
+            {"name": "Mizuho", "desc": "Universal bank. Group finance/controls; transformation programs.", "link": "https://www.mizuho-fg.co.jp/recruit/", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Medium", "Global": True}}
         ]
         for c in megabanks:
-            st.markdown(f"**{c['name']}**: {c['desc']} [Link]({c['link']})")
+            sc = _score_company(c.get("attrs", {}), c.get("locs", []))
+            if sc < min_score:
+                continue
+            st.markdown(f"**{c['name']}** — Score: {sc}/100  \n{c['desc']} [Link]({c['link']})")
+            st.progress(sc)
+            st.caption(f"Locations: {', '.join(c.get('locs', []))}")
 
         st.divider()
         st.markdown("#### Strategy Consulting (MBB)")
         mbb = [
-            {"name": "McKinsey & Company", "desc": "Top strategy firm. CFO transformation, value creation.", "link": "https://www.mckinsey.com/careers"},
-            {"name": "Boston Consulting Group", "desc": "Deep corporate finance practice.", "link": "https://careers.bcg.com/"},
-            {"name": "Bain & Company", "desc": "Private equity, performance improvement.", "link": "https://www.bain.com/careers/"}
+            {"name": "McKinsey & Company", "desc": "Top strategy firm. CFO transformation, value creation.", "link": "https://www.mckinsey.com/careers", "locs": ["Tokyo"], "attrs": {"CPA": "Low", "DS": "Medium", "Global": True}},
+            {"name": "Boston Consulting Group", "desc": "Deep corporate finance practice.", "link": "https://careers.bcg.com/", "locs": ["Tokyo"], "attrs": {"CPA": "Low", "DS": "Medium", "Global": True}},
+            {"name": "Bain & Company", "desc": "Private equity, performance improvement.", "link": "https://www.bain.com/careers/", "locs": ["Tokyo"], "attrs": {"CPA": "Low", "DS": "Medium", "Global": True}}
         ]
         for c in mbb:
-            st.markdown(f"**{c['name']}**: {c['desc']} [Link]({c['link']})")
+            sc = _score_company(c.get("attrs", {}), c.get("locs", []))
+            if sc < min_score:
+                continue
+            st.markdown(f"**{c['name']}** — Score: {sc}/100  \n{c['desc']} [Link]({c['link']})")
+            st.progress(sc)
+            st.caption(f"Locations: {', '.join(c.get('locs', []))}")
 
 
 elif page == "Future 🚀":

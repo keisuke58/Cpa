@@ -1685,17 +1685,18 @@ elif page == "Old Exams 📄":
         - 足切り: 1科目でも得点比率（偏差値）が40％未満のものがある場合は不合格
         - 得点比率（偏差値）の一般式: 50 + 10 × (個人の得点 − 平均点) / 標準偏差
         
-        近年の合格点（公表資料/報道ベース）
-        - 令和6年 (2024): 約52.0前後（毎年微調整）
-        - 令和5年 (2023): 約51.8前後（微調整）
-        - 令和4年 (2022): 約52.0前後（基準に近い）
-        - 令和7年 (2025): 公表ページ参照（偏差値法の説明あり）
-        - 令和8年 (2026): 公表予定
+        近年の合格点（公表資料/報道・参考ベース）
+        - 令和6年 (2024): 合格基準 約52.0 前後 / 平均得点率 約45% 前後
+        - 令和7年 (2025): 合格基準 約52.2 / 平均得点率 約45.7%
+        - 令和8年 (2026): 合格基準 見込み 52.0 前後 / 平均得点率 見込み 45〜46%
+        - 令和9年 (2027): 合格基準 52%→54%へ段階的引上げ見込み（注意）
         
         - 出典（公式）:
           - 合格基準について（短答式/論文式の公式基準）: https://www.fsa.go.jp/cpaaob/kouninkaikeishi-shiken/kijuntou/05.html
           - 令和7年 論文式 合格点の公表例（PDF、偏差値法の説明含む）: https://www.fsa.go.jp/cpaaob/kouninkaikeishi-shiken/r7shiken/ronbungoukaku_r07/02.pdf
         """)
+        st.warning("参考情報: 令和9年（2027年）以降、論文式の合格基準が現行の約52%から約54%へ段階的に引き上げられる見込みです。初年度は精度高いアウトプットが必要。")
+        st.info("素点の目安: 50%で安全圏（平均45〜46%想定でD≈54–56）、45%が当落線上（D≈50）、40%未満は足切りリスク（D<40）")
         # R4-R8 short-answer border mini chart
         try:
             df_borders = pd.DataFrame([
@@ -1781,6 +1782,23 @@ elif page == "Old Exams 📄":
                 st.session_state["tanto_audit_pct"] = 70
                 st.session_state["tanto_fin_pct"] = 75
                 st.rerun()
+
+        st.markdown("##### テンプレ（科目別目標％）")
+        tpl_options = {
+            "Balanced 70/70/70/70": (70, 70, 70, 70),
+            "Fin Priority 65/65/65/78": (65, 65, 65, 78),
+            "Safety 75/70/70/75": (75, 70, 70, 75),
+            "Aggressive Fin 80/68/68/82": (80, 68, 68, 82),
+            "Audit Backstop 70/68/75/78": (70, 68, 75, 78),
+        }
+        sel_tpl = st.selectbox("テンプレを選択", list(tpl_options.keys()), index=0, key="tanto_tpl_sel")
+        if st.button("テンプレ適用"):
+            cp, mp, ap, fp = tpl_options[sel_tpl]
+            st.session_state["tanto_corp_pct"] = cp
+            st.session_state["tanto_mgmt_pct"] = mp
+            st.session_state["tanto_audit_pct"] = ap
+            st.session_state["tanto_fin_pct"] = fp
+            st.rerun()
 
         # Inputs with keys to allow presets
         if "tanto_corp_pct" not in st.session_state:

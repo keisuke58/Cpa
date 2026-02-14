@@ -3024,7 +3024,7 @@ elif page == "Big 4 Job Hunting 💼":
 
         # --- Interactive Mock Interview ---
         st.markdown("### 🤖 Mock Interview Simulator")
-        mock_mode = st.radio("Select Mode:", ["Behavioral (HR/Partner)", "Technical (Audit/Accounting)", "Case/Logic (Consulting)"], horizontal=True)
+        mock_mode = st.radio("Select Mode:", ["Behavioral (HR/Partner)", "Technical (Audit/Accounting)", "Case/Logic (Consulting)", "Buy-Side (Investment)"], horizontal=True)
         
         if st.button("🎲 Generate Question"):
             import random
@@ -3046,12 +3046,19 @@ elif page == "Big 4 Job Hunting 💼":
                     {"q": "What are the risks of using AI in financial reporting?", "hint": "Black box logic, Bias, Hallucinations, Lack of audit trail."},
                     {"q": "Explain the concept of 'Going Concern'.", "hint": "The assumption that a company will continue operating in the foreseeable future."}
                 ]
-            else: # Case
+            elif "Case/Logic" in mock_mode: # Case
                 q_bank = [
                     {"q": "Estimate the number of smartphones sold in Japan annually.", "hint": "Pop (125M) x Penetration (80%) / Replacement Cycle (3 years)."},
                     {"q": "A client's profit is down 20%. How do you analyze it?", "hint": "Revenue vs Cost. Price x Vol. Fixed vs Variable. External vs Internal."},
                     {"q": "Should a Japanese auto-maker enter the EV market in India?", "hint": "Market Size, Competition, Regulation, Infrastructure, Capabilities."},
                     {"q": "How would you use AI to improve audit efficiency?", "hint": "Automated document review, Anomaly detection in journals, Chatbot for inquiries."}
+                ]
+            else: # Buy-Side
+                q_bank = [
+                    {"q": "Pitch a stock you would buy today (Japan-listed).", "hint": "Thesis, Catalysts, Valuation (PE/EV/EBITDA/DCF), Risks."},
+                    {"q": "Walk me through an LBO model at a high level.", "hint": "Sources & Uses, Leverage, Operating Case, Exit Multiple, IRR/MOIC."},
+                    {"q": "How would you diligence a mid-cap manufacturing target?", "hint": "Unit economics, customers, order backlog, capex, working capital seasonality."},
+                    {"q": "What is your investment edge as a CPA + Engineer?", "hint": "Accounting quality + Technical moat assessment + Data skills."}
                 ]
             
             selected = random.choice(q_bank)
@@ -3067,6 +3074,36 @@ elif page == "Big 4 Job Hunting 💼":
             if st.session_state.get('show_hint', False):
                 st.success(f"💡 **Direction**: {st.session_state['mock_q']['hint']}")
         
+        st.divider()
+
+        # --- Case Interview Prep ---
+        st.markdown("### 🧮 Case Interview Prep")
+        with st.expander("Framework Cheatsheet（フレームワーク早見）", expanded=False):
+            st.markdown("""
+            - Profitability: Profit = Price×Volume − Fixed − Variable
+            - Market Sizing: Top-down (Population→Penetration→Frequency) / Bottom-up (Units×Price)
+            - Growth: New customers / ARPU / Retention / New products / Geographies
+            - Cost Cut: COGS（材料/歩留/物流）× 稼働率、SG&A（人件費/広告/IT）
+            - Pricing: Value-based / Cost-plus / Competitive parity / Segmentation
+            - Investment: Thesis / Catalysts / Moat / Valuation / Risks
+            """)
+        with st.expander("Quick Calculators（即席計算）", expanded=False):
+            col_q1, col_q2 = st.columns(2)
+            with col_q1:
+                st.caption("Break-even Units")
+                be_f = st.number_input("Fixed Costs", min_value=0.0, value=1000.0, step=10.0, key="case_be_f")
+                be_p = st.number_input("Price per Unit", min_value=0.0, value=20.0, step=1.0, key="case_be_p")
+                be_v = st.number_input("Variable per Unit", min_value=0.0, value=12.0, step=1.0, key="case_be_v")
+                be_units = (be_f / (be_p - be_v)) if (be_p - be_v) > 0 else None
+                st.metric("Q_BE", f"{be_units:.1f}" if be_units else "N/A")
+            with col_q2:
+                st.caption("Simple DCF (Perpetual)")
+                cf1 = st.number_input("FCF Year 1", min_value=0.0, value=100.0, step=5.0, key="case_dcf_cf1")
+                g = st.number_input("Growth g (%)", min_value=0.0, max_value=10.0, value=2.0, step=0.5, key="case_dcf_g")
+                k = st.number_input("Discount k (%)", min_value=1.0, max_value=20.0, value=8.0, step=0.5, key="case_dcf_k")
+                pv = (cf1 * (1 + g/100)) / ((k/100) - (g/100)) if k > g else None
+                st.metric("PV (Gordon)", f"{pv:.1f}" if pv else "N/A")
+
         st.divider()
 
         # --- Detailed Guide ---
@@ -3115,6 +3152,36 @@ elif page == "Big 4 Job Hunting 💼":
                 *   "How is the firm preparing for the auditing of **Non-Financial Information** (ESG/Sustainability)? I believe my engineering background could be useful there."
                 *   "I want to be a bridge between the Tech team and the Audit team. Is there a career path for a 'Hybrid' professional?"
                 """)
+
+    # --- Buy-Side Path Tab ---
+    tab_bs = st.tabs(["Buy-Side Path 💹"])[0]
+    with tab_bs:
+        st.subheader("💹 Buy-Side（AM / PE / VC）への道：CPA×Engineer")
+        st.markdown("""
+        **Roles**
+        - AM（アセットマネジメント）: Equity/Fixed Income Analyst → PM  
+        - PE: Deal Sourcing, DD（商流/財務/業界）, モデル（LBO）, バリューアップ  
+        - VC: Sourcing, Tech DD, Term Sheet, ポートフォリオ支援
+        
+        **必須スキル**
+        - Accounting/Valuation: 財務3表、DCF/Multiples、Quality of Earnings
+        - Modeling: 3-statement, LBO, Sensitivity（Excel/Sheets; Python可）
+        - Domain/Tech: 事業理解（製造/Tech）、データ処理（Python, SQL）
+        - Edge（差別化）: CPAの会計品質×Engineerの技術理解/自動化
+        
+        **典型ルート**
+        1) 監査（上場/製造/Tech）→ FAS（DD/Valuation）→ PE  
+        2) 監査 → 事業会社（Corp Dev/IR/FP&A）→ PE/AM  
+        3) Data/ML（Fin）→ Quant/AM  
+        
+        **実装アクション（ToDo）**
+        - モデルポートフォリオ作成：3表・DCF・LBO（テンプレ整備）
+        - 投資メモ（1-2ページ）: Thesis/Catalysts/Valuation/Risks（月1本）
+        - 認定: CFA（推奨）＋CPA、Pythonプロジェクト（バックテスト/スクレイピング）
+        - ネットワーキング: ミートアップ、OB訪問、LinkedIn最適化
+        """)
+        with st.expander("📎 ダウンロード（テンプレ）", expanded=False):
+            st.markdown("- DCF テンプレ（準備中）\n- LBO テンプレ（準備中）\n- One-Pager 投資メモ（準備中）")
 
 
 elif page == "Company Directory 🏢":
@@ -3350,6 +3417,33 @@ elif page == "Company Directory 🏢":
             {"name": "Bain & Company", "desc": "Private equity, performance improvement.", "link": "https://www.bain.com/careers/", "locs": ["Tokyo"], "attrs": {"CPA": "Low", "DS": "Medium", "Global": True}}
         ]
         for c in mbb:
+            sc = _score_company(c.get("attrs", {}), c.get("locs", []))
+            if sc < min_score:
+                continue
+            st.markdown(f"**{c['name']}** — Score: {sc}/100  \n{c['desc']} [Link]({c['link']})")
+            st.progress(sc)
+            st.caption(f"Locations: {', '.join(c.get('locs', []))}")
+
+        st.divider()
+        st.markdown("#### Buy-Side (AM / PE / VC)")
+        buyside = [
+            # Asset Management
+            {"name": "Nomura Asset Management", "desc": "Japan’s leading AM. Equity/Fixed Income/Quant.", "link": "https://www.nomura-am.co.jp/company/recruit/", "locs": ["Tokyo"], "attrs": {"CPA": "Medium", "DS": "Medium", "Global": True}},
+            {"name": "Daiwa Asset Management", "desc": "Major AM house. Public equities and funds.", "link": "https://www.daiwa-am.co.jp/company/recruit/", "locs": ["Tokyo"], "attrs": {"CPA": "Medium", "DS": "Low", "Global": True}},
+            {"name": "BlackRock Japan", "desc": "Global leader. iShares/Institutional mandates.", "link": "https://careers.blackrock.com/early-careers", "locs": ["Tokyo"], "attrs": {"CPA": "Low", "DS": True, "Global": True}},
+            {"name": "Fidelity Investments Japan", "desc": "Active management, research focus.", "link": "https://www.fidelity.co.jp/corporate/recruit/", "locs": ["Tokyo"], "attrs": {"CPA": "Medium", "DS": "Low", "Global": True}},
+            # Private Equity
+            {"name": "Advantage Partners", "desc": "Japan’s top PE pioneer. Mid-market focus.", "link": "https://www.advantagepartners.com/jp/", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Low", "Global": True}},
+            {"name": "Carlyle Japan", "desc": "Global PE. Large-cap to mid-cap.", "link": "https://www.carlyle.com/careers", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Low", "Global": True}},
+            {"name": "Bain Capital Japan", "desc": "Global PE. Strong operating improvement.", "link": "https://www.baincapital.com/careers", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Low", "Global": True}},
+            {"name": "Japan Industrial Partners (JIP)", "desc": "Carve-outs/turnarounds.", "link": "https://www.jipinc.com/", "locs": ["Tokyo"], "attrs": {"CPA": True, "DS": "Low", "Global": False}},
+            # Venture Capital
+            {"name": "JAFCO", "desc": "Japan’s classic VC. Early to growth.", "link": "https://www.jafco.co.jp/english/recruit/", "locs": ["Tokyo"], "attrs": {"CPA": "Low", "DS": "Medium", "Global": True}},
+            {"name": "Globis Capital Partners", "desc": "Top-tier domestic VC. SaaS/tech focus.", "link": "https://www.globis-capital.co.jp/en/", "locs": ["Tokyo"], "attrs": {"CPA": "Low", "DS": "Medium", "Global": True}},
+            {"name": "Incubate Fund", "desc": "Early-stage specialist.", "link": "https://incubatefund.com/en/", "locs": ["Tokyo"], "attrs": {"CPA": "Low", "DS": "Medium", "Global": True}},
+            {"name": "DNX Ventures", "desc": "B2B tech-focused VC (JP/US).", "link": "https://www.dnx.vc/", "locs": ["Tokyo"], "attrs": {"CPA": "Low", "DS": True, "Global": True}}
+        ]
+        for c in buyside:
             sc = _score_company(c.get("attrs", {}), c.get("locs", []))
             if sc < min_score:
                 continue

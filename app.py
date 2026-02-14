@@ -56,7 +56,31 @@ def render_pdf(path: str, height: int = 800):
         with open(path, "rb") as f:
             data = f.read()
         b64 = base64.b64encode(data).decode("utf-8")
-        html = f'<iframe src="data:application/pdf;base64,{b64}" width="100%" height="{height}" type="application/pdf"></iframe>'
+        bid = os.path.basename(path).replace(".", "_").replace(" ", "_")
+        html = f"""
+        <div>
+          <iframe src="data:application/pdf;base64,{b64}" width="100%" height="{height}" type="application/pdf"></iframe>
+          <div style="margin-top:8px">
+            <button id="open_{bid}" style="padding:8px 12px;border-radius:6px;border:1px solid #ddd;background:#f6f6f6;cursor:pointer;">Open in new tab (if blocked)</button>
+          </div>
+        </div>
+        <script>
+        (function() {{
+          var b64 = "{b64}";
+          var s = atob(b64);
+          var arr = new Uint8Array(s.length);
+          for (var i = 0; i < s.length; i++) arr[i] = s.charCodeAt(i);
+          var blob = new Blob([arr], {{type: "application/pdf"}});
+          var url = URL.createObjectURL(blob);
+          var btn = document.getElementById("open_{bid}");
+          if (btn) {{
+            btn.addEventListener("click", function() {{
+              window.open(url, "_blank");
+            }});
+          }}
+        }})();
+        </script>
+        """
         components.html(html, height=height, scrolling=True)
     except Exception as e:
         st.error(f"PDF表示に失敗: {e}")

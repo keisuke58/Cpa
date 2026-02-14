@@ -3363,6 +3363,88 @@ elif page == "Company Directory 🏢":
             st.caption(f"Locations: {', '.join(c.get('locs', []))}")
 
         st.divider()
+        st.markdown("#### Bulk Add Companies (CSV/JSON)")
+        with st.expander("Import / Manage", expanded=False):
+            st.caption("Schema: name, desc, link, locs(list or comma-separated), attrs.CPA(bool/str), attrs.DS(bool/str), attrs.Global(bool)")
+            uploaded = st.file_uploader("Upload CSV or JSON", type=["csv", "json"], accept_multiple_files=False, key="company_catalog_uploader")
+            if uploaded is not None:
+                try:
+                    import json as _json
+                    import pandas as _pd
+                    if uploaded.name.lower().endswith(".json"):
+                        entries = _json.loads(uploaded.read().decode("utf-8"))
+                    else:
+                        dfu = _pd.read_csv(uploaded)
+                        entries = dfu.to_dict(orient="records")
+                    if not isinstance(entries, list):
+                        entries = [entries]
+                    catalog = st.session_state.get("company_catalog", [])
+                    for e in entries:
+                        name = e.get("name") or e.get("Name")
+                        if not name:
+                            continue
+                        desc = e.get("desc") or e.get("Desc") or ""
+                        link = e.get("link") or e.get("Link") or ""
+                        locs = e.get("locs") or e.get("Locs") or e.get("locations") or e.get("Locations") or []
+                        if isinstance(locs, str):
+                            locs = [s.strip() for s in locs.split(",") if s.strip()]
+                        attrs = e.get("attrs") or {}
+                        if not attrs:
+                            attrs = {
+                                "CPA": e.get("CPA") if e.get("CPA") is not None else False,
+                                "DS": e.get("DS") if e.get("DS") is not None else False,
+                                "Global": e.get("Global") if e.get("Global") is not None else False
+                            }
+                        item = {"name": name, "desc": desc, "link": link, "locs": locs, "attrs": attrs}
+                        exists = False
+                        for old in catalog:
+                            if old.get("name") == name:
+                                old.update(item)
+                                exists = True
+                                break
+                        if not exists:
+                            catalog.append(item)
+                    st.session_state["company_catalog"] = catalog
+                    try:
+                        data_blob = load_data()
+                        data_blob["company_catalog"] = catalog
+                        save_data(data_blob)
+                    except Exception:
+                        pass
+                    st.success(f"Imported {len(entries)} entries.")
+                except Exception as e:
+                    st.error(f"Failed to import: {e}")
+            col_i1, col_i2 = st.columns([1,1])
+            with col_i1:
+                if st.button("Clear Catalog"):
+                    st.session_state["company_catalog"] = []
+                    try:
+                        data_blob = load_data()
+                        data_blob["company_catalog"] = []
+                        save_data(data_blob)
+                    except Exception:
+                        pass
+                    st.info("Catalog cleared.")
+            with col_i2:
+                if st.button("Load Catalog from Storage"):
+                    try:
+                        data_blob = load_data()
+                        st.session_state["company_catalog"] = data_blob.get("company_catalog", [])
+                        st.success("Loaded from storage.")
+                    except Exception as e:
+                        st.error(f"Failed to load: {e}")
+        user_catalog = st.session_state.get("company_catalog", [])
+        if user_catalog:
+            st.markdown("#### User Catalog")
+            for c in user_catalog:
+                sc = _score_company(c.get("attrs", {}), c.get("locs", []))
+                if sc < min_score:
+                    continue
+                st.markdown(f"**{c.get('name','')}** — Score: {sc}/100  \n{c.get('desc','')} [Link]({c.get('link','')})")
+                st.progress(sc)
+                st.caption(f"Locations: {', '.join(c.get('locs', []))}")
+
+        st.divider()
         st.markdown("#### Makers (Tier 1)")
         makers = [
             {"name": "Toyota", "desc": "Global auto leader. Robust finance org; strong FP&A/treasury.", "link": "https://global.toyota/en/company/", "locs": ["Tokyo", "Aichi"], "attrs": {"CPA": True, "DS": "Medium", "Global": True}},

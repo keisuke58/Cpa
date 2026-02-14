@@ -194,7 +194,6 @@ def ielts_reading_band(module: str, raw_correct: int) -> float:
         if r >= 2: return 1.5
         if r >= 1: return 1.0
         return 0.0
-
 # Initialize Session State
 if 'data' not in st.session_state:
     st.session_state.data = load_data()

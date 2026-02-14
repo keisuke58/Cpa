@@ -6,15 +6,34 @@ import plotly.express as px
 from datetime import datetime, date, timedelta
 import json
 import os
+import base64
+import streamlit.components.v1 as components
 
 # Set page config
 st.set_page_config(page_title="CPA Perfect Platform 2027", layout="wide", page_icon="📚")
 
-# Data Persistence
 DATA_FILE = "cpa_data.json"
 
 def load_data():
-    defaults = {"scores": [], "logs": [], "xp": 0, "level": 1, "badges": [], "wrong_answers": [], "retry": []}
+    defaults = {
+        "scores": [],
+        "logs": [],
+        "xp": 0,
+        "level": 1,
+        "badges": [],
+        "wrong_answers": [],
+        "retry": [],
+        "official_checklist": [
+            {"item": "受験資格・身分証の要件確認", "done": False, "notes": ""},
+            {"item": "受験申込期間・受験料の確認", "done": False, "notes": ""},
+            {"item": "持込可否（電卓等）・注意事項の確認", "done": False, "notes": ""},
+            {"item": "短答合格の有効期間の把握", "done": False, "notes": ""},
+            {"item": "出題範囲（シラバス）ダウンロード", "done": False, "notes": ""},
+            {"item": "過去問PDF入手（直近3年）", "done": False, "notes": ""},
+            {"item": "試験当日の持ち物・会場アクセス確認", "done": False, "notes": ""}
+        ],
+        "revisions": []
+    }
     if os.path.exists(DATA_FILE):
         with open(DATA_FILE, 'r', encoding='utf-8') as f:
             try:
@@ -32,10 +51,57 @@ def save_data(data):
     with open(DATA_FILE, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
+def render_pdf(path: str, height: int = 800):
+    try:
+        with open(path, "rb") as f:
+            data = f.read()
+        b64 = base64.b64encode(data).decode("utf-8")
+        html = f'<iframe src="data:application/pdf;base64,{b64}" width="100%" height="{height}" type="application/pdf"></iframe>'
+        components.html(html, height=height, scrolling=True)
+    except Exception as e:
+        st.error(f"PDF表示に失敗: {e}")
+
 # Initialize Session State
 if 'data' not in st.session_state:
     st.session_state.data = load_data()
 
+seeded = False
+if isinstance(st.session_state.data.get("official_checklist", None), list) and len(st.session_state.data.get("official_checklist", [])) == 0:
+    st.session_state.data["official_checklist"] = [
+        {"item": "受験資格・身分証の要件確認", "done": False, "notes": ""},
+        {"item": "受験申込期間の開始・締切をカレンダー登録", "done": False, "notes": ""},
+        {"item": "受験料の支払完了・証憑保存", "done": False, "notes": ""},
+        {"item": "受験票ダウンロード・印刷", "done": False, "notes": ""},
+        {"item": "持込可否（電卓/時計等）・注意事項確認", "done": False, "notes": ""},
+        {"item": "試験会場のアクセス確認（代替ルート含む）", "done": False, "notes": ""},
+        {"item": "当日の持ち物チェック（身分証/受験票/筆記具/電卓）", "done": False, "notes": ""},
+        {"item": "出題範囲（シラバス）最新版のDL", "done": False, "notes": ""},
+        {"item": "直近3年の過去問・模範答案のDL", "done": False, "notes": ""},
+        {"item": "模試・答練スケジュールの整理", "done": False, "notes": ""},
+        {"item": "本試験時間割・注意事項の確認", "done": False, "notes": ""},
+        {"item": "結果発表日のカレンダー登録", "done": False, "notes": ""},
+        {"item": "短答合格の有効期間の確認", "done": False, "notes": ""},
+        {"item": "論文受験資格・出願要件の確認", "done": False, "notes": ""}
+    ]
+    seeded = True
+if isinstance(st.session_state.data.get("revisions", None), list) and len(st.session_state.data.get("revisions", [])) == 0:
+    from datetime import date as _d
+    eff = _d.today().strftime("%Y-%m-%d")
+    st.session_state.data["revisions"] = [
+        {"area": "Accounting", "topic": "収益認識（IFRS15/J-IFRS）主要論点", "effective": eff, "importance": "High", "status": "TODO", "notes": ""},
+        {"area": "Accounting", "topic": "リース（IFRS16）使用権資産/負債の測定", "effective": eff, "importance": "High", "status": "TODO", "notes": ""},
+        {"area": "Accounting", "topic": "金融商品（IFRS9）区分・減損・ヘッジ", "effective": eff, "importance": "High", "status": "TODO", "notes": ""},
+        {"area": "Accounting", "topic": "税効果会計（重要論点）", "effective": eff, "importance": "Medium", "status": "TODO", "notes": ""},
+        {"area": "Accounting", "topic": "キャッシュ・フロー計算書（表示と典型ミス）", "effective": eff, "importance": "Medium", "status": "TODO", "notes": ""},
+        {"area": "Audit", "topic": "監査のリスクアプローチと重要性", "effective": eff, "importance": "High", "status": "TODO", "notes": ""},
+        {"area": "Audit", "topic": "サンプリング・IT全般統制（ITGC）", "effective": eff, "importance": "High", "status": "TODO", "notes": ""},
+        {"area": "Company Law", "topic": "会社法改正（機関設計・開示周り）", "effective": eff, "importance": "Medium", "status": "TODO", "notes": ""},
+        {"area": "Tax", "topic": "税制改正（法人税）主要改正項目", "effective": eff, "importance": "High", "status": "TODO", "notes": ""},
+        {"area": "Tax", "topic": "消費税（仕入税額控除・インボイス）", "effective": eff, "importance": "Medium", "status": "TODO", "notes": ""}
+    ]
+    seeded = True
+if seeded:
+    save_data(st.session_state.data)
 if 'quiz_state' not in st.session_state:
     st.session_state.quiz_state = {
         'active': False,
@@ -1025,7 +1091,7 @@ with st.sidebar.expander("📅 Official Schedule (Edit)"):
         save_data(st.session_state.data)
         st.toast("Official schedule saved", icon="✅")
         official_schedule = edit_rows
-page = st.sidebar.radio("Navigation", ["Dashboard 📊", "My Syllabus 📚", "Vocabulary 📖", "Formulas 📐", "Old Exams 📄", "Study Timer ⏱️", "Mock Exams 📝", "Scores 📈", "Wrong Answers 📕", "Drills 🔧", "Exam Mode ⏲️", "Survival Mode ⚡", "Analytics 📊", "Roadmap 🗺️", "Big 4 Job Hunting 💼", "Company Directory 🏢", "Future 🚀"])
+page = st.sidebar.radio("Navigation", ["Dashboard 📊", "My Syllabus 📚", "Official Checklist ✅", "Revisions 🧭", "Vocabulary 📖", "Formulas 📐", "Old Exams 📄", "Study Timer ⏱️", "Mock Exams 📝", "Scores 📈", "Wrong Answers 📕", "Drills 🔧", "Exam Mode ⏲️", "Survival Mode ⚡", "Analytics 📊", "Roadmap 🗺️", "Big 4 Job Hunting 💼", "Company Directory 🏢", "Future 🚀"])
 
 if page == "Dashboard 📊":
     st.header("Dashboard 🚀")
@@ -1121,6 +1187,28 @@ if page == "Dashboard 📊":
         if se is not None:
             dd = (se['d'] - today).days
             st.info(f"**Next Official Event**: {se['event']} ({se['category']})\n\n# {dd} Days\n\n{se.get('notes','')}")
+
+        st.subheader("✅ Compliance Summary")
+        csum1, csum2 = st.columns(2)
+        with csum1:
+            cl_items = st.session_state.data.get("official_checklist", [])
+            total_cl = len(cl_items)
+            done_cl = sum(1 for x in cl_items if x.get("done"))
+            pct_cl = (done_cl / total_cl) if total_cl else 0
+            st.metric("Checklist Done", f"{done_cl}/{total_cl}")
+            st.progress(pct_cl)
+        with csum2:
+            revs = st.session_state.data.get("revisions", [])
+            todo_h = sum(1 for r in revs if r.get("status") == "TODO" and r.get("importance") == "High")
+            read_n = sum(1 for r in revs if r.get("status") == "Read")
+            sum_n = sum(1 for r in revs if r.get("status") == "Summarized")
+            tst_n = sum(1 for r in revs if r.get("status") == "Tested")
+            st.metric("High-Priority TODO", f"{todo_h}")
+            st.caption(f"Read: {read_n} / Summarized: {sum_n} / Tested: {tst_n}")
+            if todo_h > 0:
+                top3 = [r for r in revs if r.get("status") == "TODO" and r.get("importance") == "High"][:3]
+                for r in top3:
+                    st.markdown(f"- {r.get('topic','')} ({r.get('area','')}) — {r.get('effective','')}")
 
         # Weakness Analysis
         st.subheader("🧠 Weak Areas Analysis")
@@ -1260,19 +1348,22 @@ elif page == "My Syllabus 📚":
                         st.subheader(f"{subject} ({len(items)} Lectures)")
                     with c2:
                         if pdf_path:
-                            if st.button(f"📄 Open PDF", key=f"pdf_{subject}"):
-                                try:
-                                    os.startfile(pdf_path)
-                                    st.toast(f"Opening {subject} PDF...", icon="🚀")
-                                except Exception as e:
-                                    st.error(f"Cannot open PDF: {e}")
-                        
-                        if st.button(f"📊 Open Excel", key=f"excel_{subject}"):
+                            pv_key = f"pv_pdf_{subject}"
+                            st.checkbox("Preview PDF here", key=pv_key)
                             try:
-                                os.startfile(excel_path)
-                                st.toast(f"Opening {subject} Excel...", icon="📊")
-                            except Exception as e:
-                                st.error(f"Cannot open Excel: {e}")
+                                with open(pdf_path, "rb") as f:
+                                    st.download_button("Download PDF", data=f.read(), file_name=os.path.basename(pdf_path), mime="application/pdf", key=f"dl_pdf_{subject}")
+                            except Exception:
+                                st.warning("PDF not found for download.")
+                        if excel_path:
+                            try:
+                                with open(excel_path, "rb") as f:
+                                    st.download_button("Download Excel", data=f.read(), file_name=os.path.basename(excel_path), mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", key=f"dl_xlsx_{subject}")
+                            except Exception:
+                                st.warning("Excel not found for download.")
+                    if pdf_path and st.session_state.get(f"pv_pdf_{subject}", False):
+                        with st.expander("📄 PDF Preview", expanded=False):
+                            render_pdf(pdf_path, height=700)
 
                     
                     # Progress Bar for Subject
@@ -1312,16 +1403,169 @@ elif page == "My Syllabus 📚":
             st.markdown("---")
             st.subheader("📚 Supplemental Resources")
             for i, pdf in enumerate(extra_pdfs):
-                c1, c2 = st.columns([4, 1])
+                c1, c2 = st.columns([4, 2])
                 with c1:
                     st.markdown(f"📄 **{pdf['name']}**")
                 with c2:
-                    if st.button("Open", key=f"extra_pdf_{i}_{pdf['name']}"):
-                        try:
-                            os.startfile(pdf['path'])
-                            st.toast(f"Opening {pdf['name']}...", icon="🚀")
-                        except Exception as e:
-                            st.error(f"Cannot open PDF: {e}")
+                    pvk = f"pv_extra_{i}"
+                    st.checkbox("Preview here", key=pvk)
+                    try:
+                        with open(pdf['path'], "rb") as f:
+                            st.download_button("Download", data=f.read(), file_name=os.path.basename(pdf['path']), mime="application/pdf", key=f"dl_extra_{i}")
+                    except Exception:
+                        st.warning("File not found for download.")
+                if st.session_state.get(f"pv_extra_{i}", False):
+                    with st.expander(f"Preview: {pdf['name']}", expanded=False):
+                        render_pdf(pdf['path'], height=600)
+
+elif page == "Official Checklist ✅":
+    st.header("Official Checklist ✅")
+    items = st.session_state.data.get("official_checklist", [])
+    if 'checklist_state' not in st.session_state:
+        st.session_state.checklist_state = [dict(x) for x in items]
+    with st.expander("Helpful Links"):
+        st.markdown("- [CPAAOB 試験情報](https://www.fsa.go.jp/cpaaob/kouninkaikeishi-shiken/index.html)")
+        st.markdown("- [短答・論文 合格基準](https://www.fsa.go.jp/cpaaob/kouninkaikeishi-shiken/kijuntou/05.html)")
+        st.markdown("- [企業会計基準委員会 (ASBJ)](https://www.asb.or.jp/)")
+        st.markdown("- [日本公認会計士協会 (JICPA) 実務指針](https://jicpa.or.jp/specialized_field/)")
+    with st.expander("Quick Add Templates"):
+        cqa1, cqa2, cqa3 = st.columns(3)
+        if cqa1.button("Add: 最新シラバスDL"):
+            st.session_state.checklist_state.append({"item": "最新シラバスを公式からDL", "done": False, "notes": ""})
+            st.rerun()
+        if cqa2.button("Add: 電卓・持込確認"):
+            st.session_state.checklist_state.append({"item": "電卓・持込可否と注意事項の確認", "done": False, "notes": ""})
+            st.rerun()
+        if cqa3.button("Add: 会場アクセス確認"):
+            st.session_state.checklist_state.append({"item": "試験会場と当日のアクセス確認", "done": False, "notes": ""})
+            st.rerun()
+    st.subheader("Progress")
+    total = len(st.session_state.checklist_state)
+    done = sum(1 for x in st.session_state.checklist_state if x.get("done"))
+    pct = (done / total) if total else 0
+    st.progress(pct)
+    st.caption(f"Completed: {done} / {total} ({pct:.0%})")
+    st.markdown("---")
+    rows = []
+    for i, x in enumerate(st.session_state.checklist_state):
+        c1, c2, c3 = st.columns([0.6, 3, 2])
+        with c1:
+            checked = st.checkbox("", value=bool(x.get("done", False)), key=f"chk_item_{i}")
+        with c2:
+            label = st.text_input("Item", value=x.get("item", ""), key=f"txt_item_{i}")
+        with c3:
+            note = st.text_input("Notes", value=x.get("notes", ""), key=f"note_item_{i}")
+        rows.append({"item": label, "done": checked, "notes": note})
+    c_add, c_save, c_dl = st.columns([1,1,1])
+    with c_add:
+        with st.form("add_check_item"):
+            new_item = st.text_input("Add a new checklist item")
+            add_now = st.form_submit_button("Add")
+            if add_now and new_item.strip():
+                st.session_state.checklist_state.append({"item": new_item.strip(), "done": False, "notes": ""})
+                st.rerun()
+    with c_save:
+        if st.button("Save Checklist", type="primary"):
+            st.session_state.data["official_checklist"] = rows
+            save_data(st.session_state.data)
+            st.toast("Checklist saved", icon="✅")
+            st.session_state.checklist_state = [dict(r) for r in rows]
+    with c_dl:
+        if rows:
+            df_dl = pd.DataFrame(rows)
+            st.download_button("Download CSV", data=df_dl.to_csv(index=False).encode("utf-8"), file_name="official_checklist.csv", mime="text/csv")
+
+elif page == "Revisions 🧭":
+    st.header("改正トラッカー 🧭")
+    st.info("会計基準・監査基準・会社法・税制改正などの重要トピックを管理します。")
+    if "revisions" not in st.session_state.data:
+        st.session_state.data["revisions"] = []
+    with st.expander("Seed Common Topics"):
+        if st.button("Seed Accounting Core"):
+            seeds = [
+                {"area":"Accounting","topic":"収益認識 基本論点 (IFRS15/J-IFRS)","effective":date.today().strftime("%Y-%m-%d"),"importance":"High","status":"TODO","notes":""},
+                {"area":"Accounting","topic":"リース 会計 (IFRS16/J-IFRS)","effective":date.today().strftime("%Y-%m-%d"),"importance":"High","status":"TODO","notes":""},
+                {"area":"Accounting","topic":"金融商品 区分・測定 (IFRS9)","effective":date.today().strftime("%Y-%m-%d"),"importance":"High","status":"TODO","notes":""}
+            ]
+            exist = set((r.get("area"), r.get("topic")) for r in st.session_state.data["revisions"])
+            for s in seeds:
+                key = (s["area"], s["topic"])
+                if key not in exist:
+                    st.session_state.data["revisions"].append(s)
+            save_data(st.session_state.data)
+            st.rerun()
+        if st.button("Seed Audit/Company/Tax"):
+            seeds = [
+                {"area":"Audit","topic":"監査基準の更新 リスクアプローチ","effective":date.today().strftime("%Y-%m-%d"),"importance":"High","status":"TODO","notes":""},
+                {"area":"Company Law","topic":"会社法 改正点 (機関設計・開示)","effective":date.today().strftime("%Y-%m-%d"),"importance":"Medium","status":"TODO","notes":""},
+                {"area":"Tax","topic":"税制改正 法人税 主要改正項目","effective":date.today().strftime("%Y-%m-%d"),"importance":"High","status":"TODO","notes":""}
+            ]
+            exist = set((r.get("area"), r.get("topic")) for r in st.session_state.data["revisions"])
+            for s in seeds:
+                key = (s["area"], s["topic"])
+                if key not in exist:
+                    st.session_state.data["revisions"].append(s)
+            save_data(st.session_state.data)
+            st.rerun()
+    with st.expander("Add Revision / 改正を追加", expanded=True):
+        with st.form("rev_add"):
+            c1, c2, c3 = st.columns(3)
+            with c1:
+                area = st.selectbox("Area", ["Accounting", "Audit", "Company Law", "Tax"], index=0, key="rev_area")
+            with c2:
+                topic = st.text_input("Topic", key="rev_topic")
+            with c3:
+                eff = st.date_input("Effective Date", value=date.today(), key="rev_eff")
+            c4, c5, c6 = st.columns(3)
+            with c4:
+                importance = st.selectbox("Importance", ["High", "Medium", "Low"], index=0, key="rev_imp")
+            with c5:
+                status = st.selectbox("Status", ["TODO", "Read", "Summarized", "Tested"], index=0, key="rev_stat")
+            with c6:
+                notes = st.text_input("Notes", key="rev_notes")
+            add_btn = st.form_submit_button("Add")
+            if add_btn and topic.strip():
+                st.session_state.data["revisions"].append({
+                    "area": area,
+                    "topic": topic.strip(),
+                    "effective": eff.strftime("%Y-%m-%d"),
+                    "importance": importance,
+                    "status": status,
+                    "notes": notes
+                })
+                save_data(st.session_state.data)
+                st.success("Added.")
+                st.rerun()
+    data = st.session_state.data.get("revisions", [])
+    if data:
+        df = pd.DataFrame(data)
+        f1, f2 = st.columns([1, 1])
+        with f1:
+            f_area = st.multiselect("Filter Area", ["Accounting", "Audit", "Company Law", "Tax"], default=[])
+        with f2:
+            f_stat = st.multiselect("Filter Status", ["TODO", "Read", "Summarized", "Tested"], default=[])
+        df_view = df.copy()
+        if f_area:
+            df_view = df_view[df_view["area"].isin(f_area)]
+        if f_stat:
+            df_view = df_view[df_view["status"].isin(f_stat)]
+        st.dataframe(df_view.sort_values(["importance", "effective"], ascending=[True, False]), use_container_width=True)
+        with st.expander("Update Status / ステータス更新"):
+            for i, row in df.iterrows():
+                c1, c2, c3 = st.columns([3, 2, 2])
+                with c1:
+                    st.markdown(f"- {row['topic']} ({row['area']}) — {row['effective']}")
+                with c2:
+                    new_stat = st.selectbox("Status", ["TODO", "Read", "Summarized", "Tested"], index=["TODO","Read","Summarized","Tested"].index(row["status"]), key=f"rev_status_{i}")
+                with c3:
+                    if st.button("Save", key=f"rev_save_{i}"):
+                        st.session_state.data["revisions"][i]["status"] = new_stat
+                        save_data(st.session_state.data)
+                        st.toast("Updated", icon="✅")
+                        st.rerun()
+        st.download_button("Download CSV", data=df.to_csv(index=False).encode("utf-8"), file_name="revisions.csv", mime="text/csv")
+    else:
+        st.info("No revisions yet. Add important topics above.")
 
 elif page == "Vocabulary 📖":
     st.header("Vocabulary Mastery 📖")

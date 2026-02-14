@@ -59,12 +59,23 @@ def load_data():
                 "logs": [],
                 "checklist": [
                     {"item": "アカデミック語彙 3000 語", "done": False},
-                    {"item": "リスニング 10 模試", "done": False},
-                    {"item": "リーディング 10 模試", "done": False},
-                    {"item": "ライティング Task1/Task2 20本", "done": False},
-                    {"item": "スピーキング 20 セッション", "done": False}
+                    {"item": "Cambridge IELTS Reading 10回", "done": False},
+                    {"item": "リーディング T/F/NG 対策 50問", "done": False},
+                    {"item": "Listening 10 模試（地図/表/多肢）", "done": False},
+                    {"item": "スペリング・数字読み上げ対策", "done": False},
+                    {"item": "Writing Task1 グラフ別テンプレ構築", "done": False},
+                    {"item": "Writing Task2 論点・例示バンク50", "done": False},
+                    {"item": "Speaking Part2 キューカード50本", "done": False},
+                    {"item": "Speaking Part3 ディスカッション練習", "done": False},
+                    {"item": "Band Descriptors 熟読（W/S）", "done": False},
+                    {"item": "時間配分リハーサル（R60/L30/W60/S14）", "done": False}
                 ],
-                "resources": []
+                "resources": [
+                    "https://www.ielts.org/about-ielts/what-is-ielts/ielts-scoring-in-detail",
+                    "https://www.ielts.org/for-test-takers/how-ielts-is-scored",
+                    "https://ieltsliz.com/",
+                    "https://ieltssimon.com/"
+                ]
             },
             "toefl": {
                 "target_score": 100,

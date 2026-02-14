@@ -90,98 +90,17 @@ mock_exams = [
 ]
 
 # Vocabulary Data
-vocab_data = {
-    'Financial': [
-        {'term': 'Going Concern', 'jp': '継続企業の前提', 'desc': '企業が将来にわたって事業を継続するという前提。', 'desc_en': 'The assumption that an entity will continue to operate for the foreseeable future.'},
-        {'term': 'Accrual Basis', 'jp': '発生主義', 'desc': '現金の収支にかかわらず、経済的事象の発生時点で収益・費用を認識する原則。', 'desc_en': 'The principle of recognizing revenues and expenses when they occur, regardless of cash flow.'},
-        {'term': 'Materiality', 'jp': '重要性', 'desc': '財務諸表利用者の意思決定に影響を与える情報の性質や金額の大きさ。', 'desc_en': 'The significance of information that could influence the economic decisions of users.'},
-        {'term': 'Impairment', 'jp': '減損', 'desc': '資産の収益性が低下した結果、投資額の回収が見込めなくなった場合に帳簿価額を減額すること。', 'desc_en': 'A reduction in the carrying amount of an asset when its recoverable amount is less than its carrying value.'},
-        {'term': 'Asset Retirement Obligation', 'jp': '資産除去債務', 'desc': '有形固定資産の取得や使用によって生じる、除去に関する将来の法的義務。', 'desc_en': 'A legal obligation associated with the retirement of a tangible long-lived asset.'},
-        {'term': 'Fair Value', 'jp': '公正価値', 'desc': '市場参加者間で秩序ある取引が行われた場合に成立する価格。', 'desc_en': 'The price that would be received to sell an asset in an orderly transaction between market participants.'},
-        {'term': 'Deferred Tax Asset', 'jp': '繰延税金資産', 'desc': '将来の税金を減らす効果がある一時差異。回収可能性の検討が必要。', 'desc_en': 'An asset representing future tax deductions arising from temporary differences.'},
-        {'term': 'Equity Method', 'jp': '持分法', 'desc': '投資会社の持分に応じて、被投資会社の損益等を反映させる会計処理。関連会社等に適用。', 'desc_en': 'An accounting method for investments where the investor recognizes their share of the investee profits/losses.'},
-        {'term': 'Goodwill', 'jp': 'のれん', 'desc': '企業買収等の際に支払った対価が、受け入れた純資産の時価を上回る超過収益力。', 'desc_en': 'An intangible asset arising from a business combination, representing the excess of purchase price over fair value of net assets.'},
-        {'term': 'Comprehensive Income', 'jp': '包括利益', 'desc': '純資産の変動額のうち、資本取引によらない部分。当期純利益＋その他の包括利益。', 'desc_en': 'The change in equity during a period from transactions and other events, excluding those with owners.'},
-        {'term': 'Provision', 'jp': '引当金', 'desc': '将来の特定の費用や損失に備えて、当期の費用として計上される金額。', 'desc_en': 'A liability of uncertain timing or amount.'},
-        {'term': 'Contingent Liability', 'jp': '偶発債務', 'desc': '将来の事象の発生・不発生によって債務が確定する潜在的な義務。', 'desc_en': 'A potential obligation that depends on the outcome of a future event.'},
-        {'term': 'Functional Currency', 'jp': '機能通貨', 'desc': '企業が営業活動を行う主たる経済環境の通貨。', 'desc_en': 'The currency of the primary economic environment in which the entity operates.'},
-        {'term': 'Revaluation Surplus', 'jp': '再評価剰余金', 'desc': '資産の再評価（時価評価）によって生じた純資産の増加額。', 'desc_en': 'An equity reserve created when an asset is revalued at a higher amount than its carrying value.'},
-        {'term': 'Retained Earnings', 'jp': '利益剰余金', 'desc': '企業が過去に獲得した利益のうち、配当せずに内部留保したもの。', 'desc_en': 'The cumulative net income of a company less any dividends declared.'},
-        {'term': 'Non-controlling Interest', 'jp': '非支配株主持分', 'desc': '子会社の資本のうち、親会社に帰属しない部分。', 'desc_en': 'The portion of equity ownership in a subsidiary not attributable to the parent company.'},
-        {'term': 'Cash Flow Statement', 'jp': 'キャッシュ・フロー計算書', 'desc': '一会計期間における現金の流入と流出を表す財務諸表。', 'desc_en': 'A financial statement that summarizes the amount of cash and cash equivalents entering and leaving a company.'},
-        {'term': 'Inventory Valuation', 'jp': '棚卸資産評価', 'desc': '取得原価と正味売却価額のいずれか低い方で評価する（低価法）。', 'desc_en': 'Valuation at the lower of cost or net realizable value.'},
-        {'term': 'Revenue Recognition', 'jp': '収益認識', 'desc': '顧客への財・サービスの移転時に、その対価として権利を得ると見込まれる金額で収益を認識すること。', 'desc_en': 'Recognizing revenue when goods or services are transferred to customers.'},
-        {'term': 'Intangible Assets', 'jp': '無形資産', 'desc': '物理的実体を持たない識別可能な非貨幣性資産（特許権、商標権など）。', 'desc_en': 'Identifiable non-monetary assets without physical substance.'},
-        {'term': 'Financial Instruments', 'jp': '金融商品', 'desc': '一方の企業に金融資産を生じさせ、他方の企業に金融負債または資本性金融商品を生じさせる契約。', 'desc_en': 'Contracts that give rise to a financial asset of one entity and a financial liability or equity instrument of another entity.'},
-        {'term': 'Consolidated Financial Statements', 'jp': '連結財務諸表', 'desc': '親会社と子会社を単一の経済的実体とみなして作成される財務諸表。', 'desc_en': 'Financial statements of a group presented as those of a single economic entity.'}
-    ],
-    'Management': [
-        {'term': 'Opportunity Cost', 'jp': '機会原価', 'desc': 'ある代替案を選択したことによって犠牲となった（諦めた）最大の利益。', 'desc_en': 'The potential benefit lost when one alternative is chosen over another.'},
-        {'term': 'Sunk Cost', 'jp': '埋没原価', 'desc': '過去の意思決定によって既に発生し、回収不能なコスト。意思決定では無視すべき。', 'desc_en': 'A cost that has already been incurred and cannot be recovered.'},
-        {'term': 'Break-even Point', 'jp': '損益分岐点', 'desc': '売上高と総費用が等しくなり、利益がゼロとなる点。', 'desc_en': 'The level of sales where total revenue equals total costs (zero profit).'},
-        {'term': 'Safety Margin', 'jp': '安全余裕率', 'desc': '現在の売上高が損益分岐点をどれだけ上回っているかを示す指標。高いほど安全。', 'desc_en': 'The difference between actual sales and break-even sales.'},
-        {'term': 'Cost Driver', 'jp': 'コスト・ドライバー', 'desc': '活動原価計算（ABC）において、コスト発生の原因となる活動量や要因。', 'desc_en': 'The factor that causes a change in the cost of an activity.'},
-        {'term': 'Standard Costing', 'jp': '標準原価計算', 'desc': '科学的・統計的調査に基づいて設定された目標原価を用いて行う原価計算。', 'desc_en': 'A system of using predetermined costs for products or services for planning and control.'},
-        {'term': 'Variance Analysis', 'jp': '差異分析', 'desc': '標準原価と実際原価の差額（差異）を分析し、原因を特定して管理に役立てる手法。', 'desc_en': 'The quantitative investigation of the difference between actual and standard behavior.'},
-        {'term': 'Direct Costing', 'jp': '直接原価計算', 'desc': '原価を変動費と固定費に分解し、変動費のみを製品原価とする計算手法（CVP分析に有用）。', 'desc_en': 'A costing method that only assigns variable costs to products (useful for CVP analysis).'},
-        {'term': 'ROI (Return on Investment)', 'jp': '投下資本利益率', 'desc': '投資した資本に対してどれだけの利益を上げたかを示す収益性指標。', 'desc_en': 'A performance measure used to evaluate the efficiency of an investment.'},
-        {'term': 'Balanced Scorecard', 'jp': 'バランスト・スコアカード', 'desc': '財務、顧客、業務プロセス、学習と成長の4つの視点から業績を評価する手法。', 'desc_en': 'A strategic management performance metric used to identify and improve internal business functions.'},
-        {'term': 'Just-In-Time (JIT)', 'jp': 'ジャスト・イン・タイム', 'desc': '必要なものを、必要な時に、必要な量だけ生産・供給する生産方式。', 'desc_en': 'An inventory strategy to increase efficiency by receiving goods only as they are needed.'},
-        {'term': 'Kaizen Costing', 'jp': '改善原価計算', 'desc': '製造段階において、継続的な改善活動を通じて原価低減を図る手法。', 'desc_en': 'A system of continuous improvement in cost reduction during the manufacturing phase.'},
-        {'term': 'Activity-Based Costing (ABC)', 'jp': '活動基準原価計算', 'desc': '間接費を活動（アクティビティ）ごとに集計し、活動量（コストドライバー）に基づいて製品に配賦する手法。', 'desc_en': 'A costing method that assigns overhead and indirect costs to related products and services.'},
-        {'term': 'Target Costing', 'jp': '原価企画', 'desc': '製品の企画・開発段階で目標原価を設定し、その達成を目指して原価を作り込む活動。', 'desc_en': 'A system under which a company plans in advance for the price points, product costs, and margins.'},
-        {'term': 'Bottleneck', 'jp': 'ボトルネック', 'desc': '生産工程全体の中で能力が最も低く、全体の生産能力を制約している工程。', 'desc_en': 'A point of congestion in a production system that slows down the overall process.'},
-        {'term': 'Contribution Margin', 'jp': '貢献利益', 'desc': '売上高から変動費を差し引いた利益。固定費の回収と営業利益の創出に貢献する。', 'desc_en': 'Sales revenue less variable costs.'},
-        {'term': 'Variable Cost', 'jp': '変動費', 'desc': '操業度（生産量や売上高）の増減に比例して発生する原価。', 'desc_en': 'A corporate expense that changes in proportion to production output.'},
-        {'term': 'Product Life Cycle', 'jp': '製品ライフサイクル', 'desc': '製品が市場に投入されてから撤退するまでのプロセス（導入期、成長期、成熟期、衰退期）。', 'desc_en': 'The succession of stages a product goes through from introduction to withdrawal.'},
-        {'term': 'Transfer Pricing', 'jp': '振替価格', 'desc': '企業内の事業部門間で財・サービスを取引する際に設定される価格。', 'desc_en': 'The price at which goods and services are transferred between divisions of the same company.'},
-        {'term': 'Economic Value Added (EVA)', 'jp': '経済的付加価値', 'desc': '税引後営業利益から資本コストを差し引いた、企業が生み出した真の経済的価値。', 'desc_en': 'A measure of a company\'s financial performance based on the residual wealth calculated by deducting its cost of capital from its operating profit.'},
-        {'term': 'Learning Curve', 'jp': '学習曲線', 'desc': '累積生産量が増加するにつれて、単位当たりの労働時間やコストが一定の割合で減少する経験則。', 'desc_en': 'A graphical representation of the increase of learning (vertical axis) with experience (horizontal axis).'},
-        {'term': 'Benchmarking', 'jp': 'ベンチマーキング', 'desc': '自社の製品やプロセスを、業界最高水準の他社と比較・分析し、改善を図る手法。', 'desc_en': 'Comparing one\'s business processes and performance metrics to industry bests and best practices.'}
-    ],
-    'Audit': [
-        {'term': 'Professional Skepticism', 'jp': '職業的懐疑心', 'desc': '常に疑念を持ち、監査証拠を批判的に評価する姿勢。', 'desc_en': 'An attitude that includes a questioning mind and a critical assessment of audit evidence.'},
-        {'term': 'Audit Risk', 'jp': '監査リスク', 'desc': '財務諸表に重要な虚偽表示があるにもかかわらず、監査人が不適切な意見を表明するリスク。', 'desc_en': 'The risk that the auditor expresses an inappropriate audit opinion when the financial statements are materially misstated.'},
-        {'term': 'Material Misstatement', 'jp': '重要な虚偽表示', 'desc': '財務諸表利用者の判断を誤らせる可能性のある誤りや不正。', 'desc_en': 'An error or fraud in financial statements that is significant enough to impact user decisions.'},
-        {'term': 'Internal Control', 'jp': '内部統制', 'desc': '業務の有効性・効率性、財務報告の信頼性などを確保するために組織内に構築されるプロセス。', 'desc_en': 'A process designed to provide reasonable assurance regarding the achievement of objectives.'},
-        {'term': 'Substantive Procedures', 'jp': '実証手続', 'desc': '重要な虚偽表示を発見するために、取引や残高の詳細を直接検証する手続。', 'desc_en': 'Audit procedures designed to detect material misstatements at the assertion level.'},
-        {'term': 'Significant Deficiency', 'jp': '重要な不備', 'desc': '内部統制の不備のうち、財務諸表の信頼性に重要な影響を及ぼす可能性が高いもの。', 'desc_en': 'A deficiency in internal control that is less severe than a material weakness yet important enough to merit attention.'},
-        {'term': 'Key Audit Matters (KAM)', 'jp': '監査上の主要な検討事項', 'desc': '当年度の監査において、職業的専門家として特に重要であると判断した事項。', 'desc_en': 'Those matters that, in the auditor\'s professional judgment, were of most significance in the audit.'},
-        {'term': 'Audit Evidence', 'jp': '監査証拠', 'desc': '監査意見の基礎となる結論を導くために監査人が入手した情報。', 'desc_en': 'Information used by the auditor in arriving at the conclusions on which the auditor\'s opinion is based.'},
-        {'term': 'Sampling Risk', 'jp': '試査リスク', 'desc': '監査人が母集団の一部（試査）に基づいて結論を出す際に、母集団全体を精査した場合と異なる結論になるリスク。', 'desc_en': 'The risk that the auditor\'s conclusion based on a sample may be different from the conclusion if the entire population were subjected to the same audit procedure.'},
-        {'term': 'Management Representation Letter', 'jp': '経営者確認書', 'desc': '経営者が監査人に対して、財務諸表作成責任の履行や情報の完全性などを文書で確認するもの。', 'desc_en': 'A letter from management confirming certain representations made to the auditor.'},
-        {'term': 'Subsequent Events', 'jp': '後発事象', 'desc': '決算日後に発生した事象で、次期以降の財政状態や経営成績に影響を及ぼすもの。', 'desc_en': 'Events occurring between the date of the financial statements and the date of the auditor\'s report.'},
-        {'term': 'Audit Opinion', 'jp': '監査意見', 'desc': '財務諸表が適正に表示されているかどうかについての監査人の結論。', 'desc_en': 'The conclusion expressed by the auditor regarding the financial statements.'},
-        {'term': 'Emphasis of Matter Paragraph', 'jp': '強調事項区分', 'desc': '監査意見には影響しないが、財務諸表利用者の理解のために特に強調すべき事項を記載する区分。', 'desc_en': 'A paragraph included in the auditor\'s report that refers to a matter appropriately presented or disclosed in the financial statements.'},
-        {'term': 'Independence', 'jp': '独立性', 'desc': '監査人が被監査会社から精神的・外観的に独立していること。公正不偏な態度の保持。', 'desc_en': 'The state of being objective and not influenced by personal or business relationships.'},
-        {'term': 'Fraud Triangle', 'jp': '不正のトライアングル', 'desc': '不正発生の3要素（動機・プレッシャー、機会、正当化）を示すモデル。', 'desc_en': 'A framework designed to explain the reasoning behind a worker\'s decision to commit workplace fraud.'},
-        {'term': 'Analytical Procedures', 'jp': '分析的手続', 'desc': '財務データと非財務データの間の相関関係などを分析し、異常な変動を識別する手続。', 'desc_en': 'Evaluations of financial information through analysis of plausible relationships among both financial and non-financial data.'},
-        {'term': 'Audit Engagement Letter', 'jp': '監査契約書', 'desc': '監査人と被監査会社との間で交わされる、監査の目的や範囲、責任等を明確にした契約書。', 'desc_en': 'A written agreement between an auditor and a client defining the scope and terms of the audit engagement.'},
-        {'term': 'Significant Risk', 'jp': '特別な検討を必要とするリスク', 'desc': '監査人が、監査上の対応として特別な考慮が必要であると判断した、重要な虚偽表示リスク。', 'desc_en': 'An identified and assessed risk of material misstatement that, in the auditor\'s judgment, requires special audit consideration.'},
-        {'term': 'Performance Materiality', 'jp': '手続実施上の重要性', 'desc': '未発見の虚偽表示が財務諸表全体としての重要性を超えないようにするために設定される、重要性より低い金額。', 'desc_en': 'The amount set by the auditor at less than materiality for the financial statements as a whole to reduce to an appropriately low level the probability that the aggregate of uncorrected and undetected misstatements exceeds materiality.'},
-        {'term': 'Walkthrough', 'jp': 'ウォークスルー', 'desc': '取引の開始から記帳、報告に至るまでの一連のプロセスを追跡し、内部統制の整備状況を確かめる手続。', 'desc_en': 'Tracing a transaction step-by-step through the accounting system from its inception to the final disposition.'},
-        {'term': 'External Confirmation', 'jp': '確認', 'desc': '監査人が、取引先や銀行などの第三者から直接、書面による回答を入手する手続。', 'desc_en': 'Audit evidence obtained as a direct written response to the auditor from a third party.'}
-    ],
-    'Company': [
-        {'term': 'Fiduciary Duty', 'jp': '受託者責任', 'desc': '取締役などが会社や株主のために忠実に職務を遂行する義務（善管注意義務・忠実義務）。', 'desc_en': 'The legal duty to act solely in another party\'s interests.'},
-        {'term': 'Shareholder Derivative Suit', 'jp': '株主代表訴訟', 'desc': '会社が取締役の責任を追及しない場合に、株主が会社に代わって提起する訴訟。', 'desc_en': 'A lawsuit brought by a shareholder on behalf of a corporation against a third party.'},
-        {'term': 'Business Judgment Rule', 'jp': '経営判断の原則', 'desc': '取締役の経営判断が合理的で誠実に行われた場合、結果的に損害が生じても責任を問われない原則。', 'desc_en': 'A presumption that directors\' decisions are based on informed and good faith judgment.'},
-        {'term': 'Authorized Shares', 'jp': '発行可能株式総数', 'desc': '定款で定められた、会社が発行することができる株式の上限数。', 'desc_en': 'The maximum number of shares that a corporation is legally permitted to issue.'},
-        {'term': 'Treasury Stock', 'jp': '自己株式', 'desc': '会社が保有する自社の株式。議決権や配当請求権はない。', 'desc_en': 'Stock which is bought back by the issuing company.'},
-        {'term': 'Articles of Incorporation', 'jp': '定款', 'desc': '会社の目的、商号、本店所在地などの基本規則を定めた根本規則。', 'desc_en': 'The primary rules governing the management of a corporation.'},
-        {'term': 'Board of Directors', 'jp': '取締役会', 'desc': '業務執行の決定や取締役の職務執行の監督を行う機関。', 'desc_en': 'An elected group of individuals that represent shareholders.'},
-        {'term': 'Statutory Auditor', 'jp': '監査役', 'desc': '取締役の職務執行や会計を監査する機関。', 'desc_en': 'An official responsible for checking the accuracy of business records.'},
-        {'term': 'General Meeting of Shareholders', 'jp': '株主総会', 'desc': '株式会社の最高意思決定機関。株主で構成される。', 'desc_en': 'The highest decision-making body of a company.'},
-        {'term': 'Corporate Governance', 'jp': 'コーポレート・ガバナンス', 'desc': '企業経営を規律するための仕組み。企業統治。', 'desc_en': 'The system of rules, practices, and processes by which a firm is directed and controlled.'},
-        {'term': 'Stock Option', 'jp': 'ストック・オプション', 'desc': '自社株をあらかじめ決められた価格で購入できる権利。役員や従業員へのインセンティブ。', 'desc_en': 'A privilege that gives the buyer the right to buy or sell stock at an agreed price.'},
-        {'term': 'Mergers and Acquisitions (M&A)', 'jp': 'M&A（合併・買収）', 'desc': '企業の合併や買収の総称。組織再編行為を含む。', 'desc_en': 'The consolidation of companies or assets through various financial transactions.'},
-        {'term': 'Audit & Supervisory Committee', 'jp': '監査等委員会', 'desc': '取締役会の中に設置される委員会で、取締役の職務執行の監査等を担う（監査等委員会設置会社）。', 'desc_en': 'A committee consisting of directors that audits the execution of duties by directors.'},
-        {'term': 'Nomination Committee', 'jp': '指名委員会', 'desc': '株主総会に提出する取締役の選任・解任に関する議案の内容を決定する委員会（指名委員会等設置会社）。', 'desc_en': 'A committee that decides on the content of proposals regarding the election and dismissal of directors to be submitted to the shareholders meeting.'},
-        {'term': 'Conflict of Interest', 'jp': '利益相反', 'desc': '取締役自身の利益と会社の利益が対立する状況。このような取引には取締役会の承認が必要。', 'desc_en': 'A situation in which a person or organization is involved in multiple interests, financial or otherwise, and serving one interest could involve working against another.'},
-        {'term': 'Minority Shareholder Rights', 'jp': '少数株主権', 'desc': '一定の株式数や比率を持つ株主のみが行使できる権利（株主提案権、帳簿閲覧権など）。', 'desc_en': 'Rights held by shareholders who own a small percentage of the company\'s shares.'},
-        {'term': 'Public Notice', 'jp': '公告', 'desc': '会社が合併や減資などの重要な決定を行った際に、債権者や株主に対して広く知らせること。', 'desc_en': 'A notice given to the public regarding certain types of legal proceedings.'}
-    ]
-}
+def load_vocab_data():
+    vocab_path = "assets/vocab.json"
+    if os.path.exists(vocab_path):
+        with open(vocab_path, 'r', encoding='utf-8') as f:
+            try:
+                return json.load(f)
+            except:
+                return {}
+    return {}
+
+vocab_data = load_vocab_data()
 
 drill_questions = {
     'Financial': [

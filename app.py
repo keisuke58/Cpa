@@ -528,10 +528,19 @@ def seed_latex_formulas():
         "future value (single sum)": r"FV = PV\\times(1+r)^{n}",
         "present value (single sum)": r"PV = \\dfrac{FV}{(1+r)^{n}}",
         "present value of annuity": r"PVA = P\\times\\dfrac{1-(1+r)^{-n}}{r}",
+        "future value of annuity": r"FVA = P\\times\\dfrac{(1+r)^{n}-1}{r}",
+        "fv of annuity": r"FVA = P\\times\\dfrac{(1+r)^{n}-1}{r}",
+        "pv of annuity": r"PVA = P\\times\\dfrac{1-(1+r)^{-n}}{r}",
         "present value (annuity due)": r"PVA_{\\text{due}} = P\\times\\dfrac{1-(1+r)^{-n}}{r}\\times(1+r)",
         "future value (annuity due)": r"FVA_{\\text{due}} = P\\times\\dfrac{(1+r)^{n}-1}{r}\\times(1+r)",
         "annuity due pv": r"PVA_{\\text{due}} = P\\times\\dfrac{1-(1+r)^{-n}}{r}\\times(1+r)",
         "annuity due fv": r"FVA_{\\text{due}} = P\\times\\dfrac{(1+r)^{n}-1}{r}\\times(1+r)",
+        "pv of growing annuity": r"PV = P\\times\\dfrac{1 - \\left(\\dfrac{1+g}{1+r}\\right)^{n}}{r-g}",
+        "pv of growing perpetuity": r"PV = \\dfrac{C_1}{r-g}",
+        "present value of growing perpetuity": r"PV = \\dfrac{C_1}{r-g}",
+        "growing annuity": r"PV = P\\times\\dfrac{1 - \\left(\\dfrac{1+g}{1+r}\\right)^{n}}{r-g}",
+        "continuous compounding fv": r"FV = PV\\,e^{rt}",
+        "continuous compounding pv": r"PV = FV\\,e^{-rt}",
         "contribution margin": r"CM = \\text{Sales} - \\text{Variable Costs}",
         "break-even units": r"Q_{BE} = \\dfrac{\\text{Fixed Costs}}{\\text{Price} - \\text{Variable Cost per Unit}}",
         "net present value": r"NPV = \\sum_{t=0}^{n} \\dfrac{CF_{t}}{(1+r)^{t}}",
@@ -544,6 +553,7 @@ def seed_latex_formulas():
         "payback period": r"\\text{Payback} = \\dfrac{\\text{Initial Investment}}{\\text{Annual Cash Flow}}",
         "present value of perpetuity": r"PV = \\dfrac{C}{r}",
         "gordon growth (ddm)": r"P_0 = \\dfrac{D_1}{k-g}",
+        "pv of growing ddm": r"P_0 = \\dfrac{D_1}{k-g}",
         "current ratio": r"CR = \\dfrac{CA}{CL}",
         "quick ratio": r"QR = \\dfrac{\\text{Quick Assets}}{CL}",
         "debt-to-equity": r"\\dfrac{\\text{Debt}}{\\text{Equity}}",
@@ -558,16 +568,27 @@ def seed_latex_formulas():
         "economic order quantity (eoq)": r"EOQ = \\sqrt{\\dfrac{2DS}{H}}",
         "reorder point": r"ROP = d\\times L + SS",
         "safety stock": r"SS = Z\\times\\sigma_{L}",
-        "capm": r"k_e = R_f + \\beta\\,(R_m - R_f)"
+        "capm": r"k_e = R_f + \\beta\\,(R_m - R_f)",
+        "effective annual rate": r"EAR = (1 + i/m)^{m} - 1",
+        "future value of annuity (ordinary)": r"FVA = P\\times\\dfrac{(1+r)^{n}-1}{r}",
+        "future value (annuity)": r"FVA = P\\times\\dfrac{(1+r)^{n}-1}{r}"
     }
     changed = False
     for i, item in enumerate(formulas_data):
         nm = str(item.get("name", "")).strip().lower()
-        if nm in mapping:
-            cur = item.get("latex", "")
-            if _is_missing_text(cur):
+        cur = item.get("latex", "")
+        if _is_missing_text(cur):
+            # exact match
+            if nm in mapping:
                 formulas_data[i]["latex"] = mapping[nm]
                 changed = True
+            else:
+                # substring fallback
+                for key, tex in mapping.items():
+                    if key in nm or nm in key:
+                        formulas_data[i]["latex"] = tex
+                        changed = True
+                        break
     if changed:
         save_formulas_data(formulas_data)
 

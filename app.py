@@ -126,7 +126,6 @@ def load_formulas_data():
     return []
 
 formulas_data = load_formulas_data()
-seed_top10_examples()
 
 def save_formulas_data(data):
     p = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "formulas.json")
@@ -230,6 +229,8 @@ def seed_top10_examples():
                     changed = True
     if changed:
         save_formulas_data(formulas_data)
+
+seed_top10_examples()
 
 drill_questions = {
     'Financial': [

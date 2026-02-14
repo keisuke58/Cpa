@@ -1242,17 +1242,35 @@ st.sidebar.markdown("""
         🚀 STUDYING
     </a>
     """, unsafe_allow_html=True)
-st.markdown("""
-<div style="display:flex;gap:8px;align-items:center;margin-top:6px;">
-  <a href="https://drive.google.com/drive/u/" target="_blank" style="display:inline-flex;align-items:center;background:#e8f0fe;color:#1a73e8 !important;padding:10px 16px;border-radius:8px;font-weight:600;text-decoration:none;border:1px solid #1a73e8;">
-    <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#1a73e8;margin-right:8px;"></span>
-    Google Drive
-  </a>
-  <a href="https://notebooklm.google.com/notebook/" target="_blank" style="display:inline-flex;align-items:center;background:#000;color:#ffffff !important;padding:10px 16px;border-radius:8px;font-weight:700;text-decoration:none;">
-    NotebookLM
-  </a>
-</div>
-""", unsafe_allow_html=True)
+gl_c1, gl_c2, gl_c3 = st.columns([1, 1, 1])
+with gl_c1:
+    st.markdown("""
+    <a href="https://drive.google.com/drive/u/" target="_blank" style="display:inline-flex;align-items:center;background:#e8f0fe;color:#1a73e8 !important;padding:10px 16px;border-radius:8px;font-weight:600;text-decoration:none;border:1px solid #1a73e8;">
+      <span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:#1a73e8;margin-right:8px;"></span>
+      Google Drive
+    </a>
+    """, unsafe_allow_html=True)
+with gl_c2:
+    st.markdown("""
+    <a href="https://notebooklm.google.com/notebook/" target="_blank" style="display:inline-flex;align-items:center;background:#000;color:#ffffff !important;padding:10px 16px;border-radius:8px;font-weight:700;text-decoration:none;">
+      NotebookLM
+    </a>
+    """, unsafe_allow_html=True)
+with gl_c3:
+    if st.button("Drills", key="quick_drills"):
+        st.session_state['nav'] = "Drills 🔧"
+        st.rerun()
+
+_nav_items = ["Dashboard 📊", "My Syllabus 📚", "Official Checklist ✅", "Revisions 🧭", "Vocabulary 📖", "Formulas 📐", "English Prep 🌐", "Old Exams 📄", "Study Timer ⏱️", "Mock Exams 📝", "Scores 📈", "Wrong Answers 📕", "Drills 🔧", "Exam Mode ⏲️", "Survival Mode ⚡", "Analytics 📊", "Roadmap 🗺️", "Big 4 Job Hunting 💼", "Company Directory 🏢", "Future 🚀"]
+_per_row = 3
+for _i in range(0, len(_nav_items), _per_row):
+    _row = _nav_items[_i:_i+_per_row]
+    _cols = st.columns(len(_row))
+    for _j, _label in enumerate(_row):
+        with _cols[_j]:
+            if st.button(_label, key=f"topnav_{_i}_{_j}", use_container_width=True):
+                st.session_state['nav'] = _label
+                st.rerun()
 
 st.sidebar.markdown("---")
 with st.sidebar.expander("📅 Official Schedule (Edit)"):
@@ -1274,7 +1292,7 @@ with st.sidebar.expander("📅 Official Schedule (Edit)"):
         save_data(st.session_state.data)
         st.toast("Official schedule saved", icon="✅")
         official_schedule = edit_rows
-page = st.sidebar.radio("Navigation", ["Dashboard 📊", "My Syllabus 📚", "Official Checklist ✅", "Revisions 🧭", "Vocabulary 📖", "Formulas 📐", "English Prep 🌐", "Old Exams 📄", "Study Timer ⏱️", "Mock Exams 📝", "Scores 📈", "Wrong Answers 📕", "Drills 🔧", "Exam Mode ⏲️", "Survival Mode ⚡", "Analytics 📊", "Roadmap 🗺️", "Big 4 Job Hunting 💼", "Company Directory 🏢", "Future 🚀"])
+page = st.sidebar.radio("Navigation", ["Dashboard 📊", "My Syllabus 📚", "Official Checklist ✅", "Revisions 🧭", "Vocabulary 📖", "Formulas 📐", "English Prep 🌐", "Old Exams 📄", "Study Timer ⏱️", "Mock Exams 📝", "Scores 📈", "Wrong Answers 📕", "Drills 🔧", "Exam Mode ⏲️", "Survival Mode ⚡", "Analytics 📊", "Roadmap 🗺️", "Big 4 Job Hunting 💼", "Company Directory 🏢", "EDINET 🧾", "Future 🚀"], key="nav")
 
 if page == "Dashboard 📊":
     st.header("Dashboard 🚀")
@@ -2775,8 +2793,8 @@ elif page == "Drills 🔧":
             else:
                 st.session_state['selected_tags'] = []
             st.session_state['kw_filter'] = st.text_input("Keyword filter (optional)", value=st.session_state.get('kw_filter', ''), key="kw_filter_input")
-            st.session_state['shuffle_opts'] = st.checkbox("Shuffle answer options", value=st.session_state.get('shuffle_opts', True), key="shuffle_opts")
-            st.session_state['qcount_drill'] = st.number_input("Question count", min_value=5, max_value=50, value=int(st.session_state.get('qcount_drill', 20) or 20), step=1, key="qcount_drill")
+            st.checkbox("Shuffle answer options", value=st.session_state.get('shuffle_opts', True), key="shuffle_opts")
+            st.number_input("Question count", min_value=5, max_value=50, value=int(st.session_state.get('qcount_drill', 20) or 20), step=1, key="qcount_drill")
 
         if st.button("Start / Restart Quiz"):
             import random
@@ -5070,4 +5088,373 @@ elif page == "Future 🚀":
             st.write("*   **30s**: Family trips to Hawaii/Okinawa.")
             st.write("*   **40s**: World Cruise (Post-Exit).")
             st.write("*   **Hobbies**: Hiking, Coding, Wine Tasting.")
+elif page == "EDINET 🧾":
+    st.header("EDINET Analytics")
+    api_key = st.text_input("EDINET_API_KEY", value=os.environ.get("EDINET_API_KEY", ""), type="password")
+    if api_key:
+        os.environ["EDINET_API_KEY"] = api_key
+    try:
+        import importlib
+        edinet_tools = importlib.import_module("edinet_tools")
+    except Exception:
+        st.error("edinet-tools が未インストールです。")
+        st.code("pip install edinet-tools")
+        st.stop()
+    tab_s, tab_d, tab_g = st.tabs(["検索/解析", "データセット", "グラフ(GNN用)"])
+    with tab_s:
+        mode = st.radio("検索方法", ["ティッカー", "会社名"], horizontal=True)
+        default_q = "7203" if mode == "ティッカー" else "トヨタ自動車"
+        query = st.text_input("入力", value=default_q)
+        doc_type_map = {"Securities Report 120（有価証券報告書）": "120", "Quarterly Report 140": "140"}
+        doc_choice = st.selectbox("書類種別", list(doc_type_map.keys()))
+        days = st.number_input("過去日数", min_value=1, max_value=3650, value=365, step=1)
+        if st.button("提出書類を検索"):
+            with st.spinner("検索中..."):
+                try:
+                    entity = edinet_tools.entity(query)
+                    docs = entity.documents(days=int(days), doc_type=doc_type_map[doc_choice])
+                    if not docs:
+                        st.warning("該当書類が見つかりません。")
+                    else:
+                        df = pd.DataFrame([{"doc_id": getattr(d, "doc_id", ""), "filed": getattr(d, "filing_datetime", ""), "type": getattr(d, "doc_type_name", ""), "code": getattr(d, "doc_type_code", "")} for d in docs])
+                        st.dataframe(df, use_container_width=True)
+                        if st.button("最新を解析"):
+                            doc = docs[0]
+                            report = None
+                            try:
+                                _ = doc.fetch()
+                                report = doc.parse()
+                            except Exception as e:
+                                st.error(f"解析エラー: {e}")
+                            if report is not None:
+                                info = {}
+                                for f in ["accounting_standard", "net_sales", "operating_income", "net_income", "total_assets", "total_liabilities", "equity", "operating_cash_flow"]:
+                                    if hasattr(report, f):
+                                        info[f] = getattr(report, f)
+                                if info:
+                                    st.subheader("主要指標")
+                                    st.dataframe(pd.DataFrame([info]), use_container_width=True)
+                                data = {}
+                                if hasattr(report, "to_dict"):
+                                    try:
+                                        data = report.to_dict()
+                                    except Exception:
+                                        data = {}
+                                if data:
+                                    st.subheader("構造化データ")
+                                    st.json(data)
+                                    try:
+                                        st.download_button("JSONをダウンロード", data=json.dumps(data, ensure_ascii=False, indent=2), file_name=f"{getattr(doc,'doc_id','report')}.json", mime="application/json")
+                                    except Exception:
+                                        pass
+                except Exception as e:
+                    st.error(f"エラー: {e}")
+    with tab_d:
+        tickers_text = st.text_area("ティッカー一覧（カンマ・スペース区切り）", "7203 6758 9984 8306")
+        days_ds = st.number_input("過去日数（例: 3650で概ね10年）", min_value=30, max_value=3650, value=1095, step=30)
+        run_ds = st.button("データセット作成")
+        if run_ds:
+            rows = []
+            feat_rows = []
+            tickers = [t.strip() for t in tickers_text.replace(",", " ").split() if t.strip()]
+            bar = st.progress(0)
+            total = max(1, len(tickers))
+            for i, t in enumerate(tickers):
+                try:
+                    ent = edinet_tools.entity(t)
+                    ds = ent.documents(days=int(days_ds), doc_type="120")
+                    if not ds:
+                        continue
+                    d = ds[0]
+                    try:
+                        _ = d.fetch()
+                        rep = d.parse()
+                    except Exception:
+                        continue
+                    record = {"ticker": t}
+                    fields = ["net_sales", "operating_income", "net_income", "total_assets", "total_liabilities", "equity", "operating_cash_flow"]
+                    for f in fields:
+                        record[f] = getattr(rep, f) if hasattr(rep, f) else None
+                    record["accounting_standard"] = getattr(rep, "accounting_standard", None) if hasattr(rep, "accounting_standard") else None
+                    rows.append(record)
+                finally:
+                    bar.progress(min(1.0, (i + 1) / total))
+            if rows:
+                df = pd.DataFrame(rows)
+                df_num = df.select_dtypes(include=[np.number]).copy()
+                eps = 1e-9
+                opm = (df["operating_income"].astype(float) / (df["net_sales"].astype(float) + eps)).fillna(0.0)
+                roe = (df["net_income"].astype(float) / (df["equity"].astype(float) + eps)).fillna(0.0)
+                eqr = (df["equity"].astype(float) / (df["total_assets"].astype(float) + eps)).fillna(0.0)
+                ocfm = (df["operating_cash_flow"].astype(float) / (df["net_sales"].astype(float) + eps)).fillna(0.0)
+                x = np.stack([opm.values, roe.values, eqr.values, ocfm.values], axis=1).astype(np.float64)
+                df_feat = pd.DataFrame(x, columns=["op_margin", "roe", "equity_ratio", "ocf_margin"])
+                out = pd.concat([df[["ticker", "accounting_standard"]], df_feat], axis=1)
+                st.subheader("特徴量")
+                st.dataframe(out, use_container_width=True)
+                try:
+                    import io
+                    buf_csv = io.BytesIO()
+                    out.to_csv(buf_csv, index=False, encoding="utf-8")
+                    st.download_button("features.csv をダウンロード", data=buf_csv.getvalue(), file_name="features.csv", mime="text/csv")
+                    buf_json = io.BytesIO()
+                    buf_json.write(json.dumps(rows, ensure_ascii=False, indent=2).encode("utf-8"))
+                    st.download_button("raw.json をダウンロード", data=buf_json.getvalue(), file_name="raw.json", mime="application/json")
+                    buf_npz = io.BytesIO()
+                    np.savez(buf_npz, x=x, tickers=np.array(df["ticker"].values), feature_names=np.array(["op_margin", "roe", "equity_ratio", "ocf_margin"]))
+                    st.download_button("x_feature.npz をダウンロード", data=buf_npz.getvalue(), file_name="x_feature.npz", mime="application/octet-stream")
+                except Exception:
+                    pass
+            else:
+                st.warning("データを作成できませんでした。")
+    with tab_g:
+        st.markdown("上で作成した特徴量から類似度グラフを作成します。")
+        k = st.number_input("近傍数（k）", min_value=1, max_value=10, value=3, step=1)
+        x_npz = st.file_uploader("x_feature.npz を選択", type=["npz"])
+        if st.button("グラフ生成"):
+            if x_npz is None:
+                st.warning("特徴量ファイルをアップロードしてください。")
+            else:
+                try:
+                    import io
+                    x_npz.seek(0)
+                    data = np.load(x_npz)
+                    x = data["x"]
+                    names = data["tickers"].astype(str)
+                    n = x.shape[0]
+                    xn = x / (np.linalg.norm(x, axis=1, keepdims=True) + 1e-9)
+                    sim = xn @ xn.T
+                    edges = []
+                    for i in range(n):
+                        idx = np.argsort(sim[i])[::-1]
+                        idx = [j for j in idx if j != i][: int(k)]
+                        for j in idx:
+                            edges.append([i, j])
+                            edges.append([j, i])
+                    edge_index = np.array(edges, dtype=np.int64).T if edges else np.zeros((2, 0), dtype=np.int64)
+                    deg = pd.Series(edge_index[0]).value_counts().reindex(range(n), fill_value=0) if edge_index.shape[1] > 0 else pd.Series([0] * n)
+                    st.subheader("グラフ統計")
+                    st.write(f"ノード数: {n}")
+                    st.write(f"エッジ数: {edge_index.shape[1]}")
+                    st.write(f"平均次数: {float(deg.mean()):.2f}")
+                    try:
+                        import io
+                        buf_e = io.BytesIO()
+                        np.save(buf_e, edge_index)
+                        st.download_button("edge_index.npy をダウンロード", data=buf_e.getvalue(), file_name="edge_index.npy", mime="application/octet-stream")
+                        df_nodes = pd.DataFrame({"name": names})
+                        buf_n = io.BytesIO()
+                        df_nodes.to_csv(buf_n, index=False, encoding="utf-8")
+                        st.download_button("nodes.csv をダウンロード", data=buf_n.getvalue(), file_name="nodes.csv", mime="text/csv")
+                    except Exception:
+                        pass
+                except Exception as e:
+                    st.error(f"エラー: {e}")
+        st.divider()
+        st.markdown("最小GCNで特徴量の自己再構成学習を行います。")
+        up_x = st.file_uploader("x_feature.npz を選択（学習用）", type=["npz"], key="gcn_x")
+        up_e = st.file_uploader("edge_index.npy を選択", type=["npy"], key="gcn_e")
+        hidden = st.number_input("隠れ次元", min_value=8, max_value=256, value=64, step=8)
+        epochs = st.number_input("エポック数", min_value=10, max_value=2000, value=200, step=10)
+        lr = st.number_input("学習率", min_value=1e-4, max_value=1e-1, value=1e-2, step=1e-3, format="%.4f")
+        do_norm = st.checkbox("特徴量を標準化する", value=True)
+        run_train = st.button("GCN学習開始")
+        if run_train:
+            try:
+                import torch
+                import torch.nn as nn
+                import torch.nn.functional as F
+            except Exception:
+                st.error("torch が未インストールです。")
+                st.code("pip install torch --index-url https://download.pytorch.org/whl/cpu")
+                st.stop()
+            if up_x is None or up_e is None:
+                st.warning("x_feature.npz と edge_index.npy を指定してください。")
+            else:
+                try:
+                    import io
+                    up_x.seek(0)
+                    d = np.load(up_x)
+                    X = d["x"].astype(np.float32)
+                    names = d["tickers"].astype(str)
+                    up_e.seek(0)
+                    EI = np.load(up_e)
+                    if EI.shape[0] != 2:
+                        st.error("edge_index.npy は形状 (2, E) を想定しています。")
+                        st.stop()
+                    n = X.shape[0]
+                    if do_norm:
+                        mu = X.mean(axis=0, keepdims=True)
+                        sd = X.std(axis=0, keepdims=True) + 1e-9
+                        Xn = (X - mu) / sd
+                    else:
+                        Xn = X
+                    src = torch.tensor(EI[0], dtype=torch.long)
+                    dst = torch.tensor(EI[1], dtype=torch.long)
+                    loop_i = torch.arange(n, dtype=torch.long)
+                    src = torch.cat([src, loop_i], dim=0)
+                    dst = torch.cat([dst, loop_i], dim=0)
+                    deg = torch.zeros(n, dtype=torch.float32)
+                    deg.index_add_(0, src, torch.ones_like(src, dtype=torch.float32))
+                    deg.index_add_(0, dst, torch.ones_like(dst, dtype=torch.float32))
+                    deg = torch.clamp(deg, min=1.0)
+                    norm = 1.0 / torch.sqrt(deg[dst] * deg[src])
+                    Xin = torch.tensor(Xn, dtype=torch.float32)
+                    in_dim = Xin.shape[1]
+                    class GCN(nn.Module):
+                        def __init__(self, in_dim, hidden, out_dim):
+                            super().__init__()
+                            self.W0 = nn.Linear(in_dim, hidden, bias=False)
+                            self.W1 = nn.Linear(hidden, out_dim, bias=False)
+                            self.dp = nn.Dropout(p=0.5)
+                        def agg(self, H):
+                            S = self.W0(H)
+                            Z = torch.zeros_like(S)
+                            Z.index_add_(0, dst, S[src] * norm.unsqueeze(1))
+                            return Z
+                        def forward(self, X):
+                            H = F.relu(self.agg(X))
+                            H = self.dp(H)
+                            S = self.W1(H)
+                            Z = torch.zeros_like(S)
+                            Z.index_add_(0, dst, S[src] * norm.unsqueeze(1))
+                            return Z, H
+                    model = GCN(in_dim, int(hidden), in_dim)
+                    opt = torch.optim.Adam(model.parameters(), lr=float(lr), weight_decay=5e-4)
+                    losses = []
+                    ph = st.empty()
+                    for ep in range(int(epochs)):
+                        model.train()
+                        opt.zero_grad()
+                        Z, H = model(Xin)
+                        loss = F.mse_loss(Z, Xin)
+                        loss.backward()
+                        opt.step()
+                        losses.append(float(loss.detach().cpu().numpy()))
+                        if (ep + 1) % 10 == 0 or ep == 0:
+                            ph.line_chart({"loss": losses})
+                    Z, H = model(Xin)
+                    Emb = H.detach().cpu().numpy()
+                    st.success("学習完了")
+                    st.subheader("最終損失")
+                    st.write(f"{losses[-1]:.6f}")
+                    try:
+                        import io
+                        buf_np = io.BytesIO()
+                        np.save(buf_np, Emb)
+                        st.download_button("embeddings.npy をダウンロード", data=buf_np.getvalue(), file_name="embeddings.npy", mime="application/octet-stream")
+                        df_emb = pd.DataFrame(Emb, columns=[f"z{i+1}" for i in range(Emb.shape[1])])
+                        df_emb.insert(0, "name", names)
+                        buf_csv = io.BytesIO()
+                        df_emb.to_csv(buf_csv, index=False, encoding="utf-8")
+                        st.download_button("embeddings.csv をダウンロード", data=buf_csv.getvalue(), file_name="embeddings.csv", mime="text/csv")
+                    except Exception:
+                        pass
+                except Exception as e:
+                    st.error(f"エラー: {e}")
+        st.divider()
+        st.markdown("デモ（即実行）: ランダム生成の小規模データでグラフ作成とGCN学習をワンクリックで実行します。APIキー不要。")
+        demo_n = st.number_input("ノード数（デモ）", min_value=50, max_value=1000, value=200, step=50)
+        demo_k = st.number_input("近傍数（デモ）", min_value=1, max_value=10, value=3, step=1, key="demo_k")
+        if st.button("デモを走らせる"):
+            try:
+                import numpy.random as npr
+                npr.seed(42)
+                c = 4
+                centers = np.array([[0.15, 0.08, 0.35, 0.06],
+                                    [0.08, 0.12, 0.45, 0.09],
+                                    [0.20, 0.05, 0.30, 0.03],
+                                    [0.10, 0.09, 0.40, 0.08]], dtype=np.float64)
+                lab = npr.randint(0, c, size=int(demo_n))
+                X = centers[lab] + npr.normal(0.0, 0.02, size=(int(demo_n), 4))
+                X = np.clip(X, -0.2, 0.8).astype(np.float64)
+                names = np.array([f"DEMO{i+1:04d}" for i in range(int(demo_n))])
+                xn = X / (np.linalg.norm(X, axis=1, keepdims=True) + 1e-9)
+                sim = xn @ xn.T
+                edges = []
+                for i in range(int(demo_n)):
+                    idx = np.argsort(sim[i])[::-1]
+                    idx = [j for j in idx if j != i][: int(demo_k)]
+                    for j in idx:
+                        edges.append([i, j])
+                        edges.append([j, i])
+                edge_index = np.array(edges, dtype=np.int64).T if edges else np.zeros((2, 0), dtype=np.int64)
+                st.write(f"ノード数: {int(demo_n)} / エッジ数: {edge_index.shape[1]}")
+                try:
+                    import torch
+                    import torch.nn as nn
+                    import torch.nn.functional as F
+                except Exception:
+                    st.error("torch が未インストールです。")
+                    st.code("pip install torch --index-url https://download.pytorch.org/whl/cpu")
+                    st.stop()
+                n = int(demo_n)
+                Xf = X.astype(np.float32)
+                mu = Xf.mean(axis=0, keepdims=True)
+                sd = Xf.std(axis=0, keepdims=True) + 1e-9
+                Xn = (Xf - mu) / sd
+                src = torch.tensor(edge_index[0], dtype=torch.long)
+                dst = torch.tensor(edge_index[1], dtype=torch.long)
+                loop_i = torch.arange(n, dtype=torch.long)
+                src = torch.cat([src, loop_i], dim=0)
+                dst = torch.cat([dst, loop_i], dim=0)
+                deg = torch.zeros(n, dtype=torch.float32)
+                deg.index_add_(0, src, torch.ones_like(src, dtype=torch.float32))
+                deg.index_add_(0, dst, torch.ones_like(dst, dtype=torch.float32))
+                deg = torch.clamp(deg, min=1.0)
+                norm = 1.0 / torch.sqrt(deg[dst] * deg[src])
+                Xin = torch.tensor(Xn, dtype=torch.float32)
+                in_dim = Xin.shape[1]
+                hidden_demo = 64
+                class GCN(nn.Module):
+                    def __init__(self, in_dim, hidden, out_dim):
+                        super().__init__()
+                        self.W0 = nn.Linear(in_dim, hidden, bias=False)
+                        self.W1 = nn.Linear(hidden, out_dim, bias=False)
+                        self.dp = nn.Dropout(p=0.5)
+                    def agg(self, H):
+                        S = self.W0(H)
+                        Z = torch.zeros_like(S)
+                        Z.index_add_(0, dst, S[src] * norm.unsqueeze(1))
+                        return Z
+                    def forward(self, X):
+                        H = F.relu(self.agg(X))
+                        H = self.dp(H)
+                        S = self.W1(H)
+                        Z = torch.zeros_like(S)
+                        Z.index_add_(0, dst, S[src] * norm.unsqueeze(1))
+                        return Z, H
+                model = GCN(in_dim, hidden_demo, in_dim)
+                opt = torch.optim.Adam(model.parameters(), lr=1e-2, weight_decay=5e-4)
+                losses = []
+                ph = st.empty()
+                for ep in range(200):
+                    model.train()
+                    opt.zero_grad()
+                    Z, H = model(Xin)
+                    loss = F.mse_loss(Z, Xin)
+                    loss.backward()
+                    opt.step()
+                    losses.append(float(loss.detach().cpu().numpy()))
+                    if (ep + 1) % 10 == 0 or ep == 0:
+                        ph.line_chart({"loss": losses})
+                Z, H = model(Xin)
+                Emb = H.detach().cpu().numpy()
+                st.success("デモ学習が完了しました。")
+                st.write(f"最終損失: {losses[-1]:.6f}")
+                try:
+                    import io
+                    buf_npz = io.BytesIO()
+                    np.savez(buf_npz, x=X, tickers=names, feature_names=np.array(["op_margin","roe","equity_ratio","ocf_margin"]))
+                    st.download_button("demo_x_feature.npz をダウンロード", data=buf_npz.getvalue(), file_name="demo_x_feature.npz", mime="application/octet-stream")
+                    buf_e = io.BytesIO()
+                    np.save(buf_e, edge_index)
+                    st.download_button("demo_edge_index.npy をダウンロード", data=buf_e.getvalue(), file_name="demo_edge_index.npy", mime="application/octet-stream")
+                    buf_emb = io.BytesIO()
+                    np.save(buf_emb, Emb)
+                    st.download_button("demo_embeddings.npy をダウンロード", data=buf_emb.getvalue(), file_name="demo_embeddings.npy", mime="application/octet-stream")
+                except Exception:
+                    pass
+            except Exception as e:
+                st.error(f"エラー: {e}")
 
